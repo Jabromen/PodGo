@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PodGo</string>
+    <string name="action_settings">Settings</string>
+    <string name="enter_the_rss_feed_url">Enter the RSS feed URL:</string>
+    <string name="new_podcast_ok">OK</string>
+    <string name="new_podcast_cancel">Cancel</string>
+    <string name="default_podcast_title_list_item">Podcast Title</string>
+    <string name="podcast_image_list_item">Podcast Image</string>
+</resources>
