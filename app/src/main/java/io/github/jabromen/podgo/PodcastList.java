@@ -72,6 +72,19 @@ public class PodcastList implements List<Podcast> {
         return podcastList.contains(o);
     }
 
+    public boolean contains(String title) {
+        try {
+            for (Podcast p : podcastList) {
+                if (p.getTitle().equals(title)) {
+                    return true;
+                }
+            }
+        } catch (MalformedFeedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     @NonNull
     @Override
     public Iterator<Podcast> iterator() {

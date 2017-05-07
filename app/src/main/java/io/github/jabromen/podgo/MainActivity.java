@@ -37,7 +37,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends AppCompatActivity implements NewPodcastFragment.OnDataPass {
+public class MainActivity extends AppCompatActivity implements NewPodcastFragment.OnDataPass, DownloadPodcastTaskFragment.TaskCallbacks {
+
+    private static final String TAG_TASK_FRAGMENT = "task_fragment";
+    private DownloadPodcastTaskFragment mTaskFragment;
 
     private PodcastList podcastList;
     private ListView podcastListView;
@@ -65,6 +68,10 @@ public class MainActivity extends AppCompatActivity implements NewPodcastFragmen
         ListAdapter listAdapter = new PodcastListAdapter(this, podcastList);
         podcastListView = (ListView) findViewById(R.id.podcastListMain);
         podcastListView.setAdapter(listAdapter);
+
+        // Find download task fragment if exists
+        mTaskFragment = (DownloadPodcastTaskFragment)
+                getFragmentManager().findFragmentByTag(TAG_TASK_FRAGMENT);
     }
 
     @Override
@@ -104,31 +111,59 @@ public class MainActivity extends AppCompatActivity implements NewPodcastFragmen
 
     //
     public void addNewPodcast(String feed) {
-        // Toast used for debugging
-        Toast.makeText(getApplicationContext(), "Received URL: " + feed, Toast.LENGTH_SHORT).show();
 
-        new RetrievePodcastXmlTask().execute(feed);
+        if (feed == null)
+            return;
+
+        // Find download task fragment if exists
+        mTaskFragment = (DownloadPodcastTaskFragment)
+                getFragmentManager().findFragmentByTag(TAG_TASK_FRAGMENT);
+
+        // If doesn't exist, start new download task fragment
+        if (mTaskFragment == null) {
+
+            mTaskFragment = new DownloadPodcastTaskFragment();
+
+            // Pass feed URL to task
+            Bundle bundle = new Bundle();
+            bundle.putString("URL", feed);
+            mTaskFragment.setArguments(bundle);
+
+            getFragmentManager().beginTransaction().add(mTaskFragment, TAG_TASK_FRAGMENT).commit();
+        }
+        else {
+            Toast.makeText(this, "Other podcast info being downloaded", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    // Helper class to asynchronously download XML feed from URL and build Podcast object
-    private class RetrievePodcastXmlTask extends AsyncTask<String, Void, Podcast> {
-        @Override
-        protected Podcast doInBackground(String... params) {
+    @Override
+    public void onPreExecute() {
+        Toast.makeText(this, "Downloading Podcast Info", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCancelled(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPostExecute(Podcast podcast) {
+        if (podcast != null) {
             try {
-                return new Podcast(new URL(params[0]));
-            } catch (MalformedFeedException | MalformedURLException | InvalidFeedException e) {
+                if (!podcastList.contains(podcast.getTitle())) {
+                    podcastList.add(podcast);
+                    PodcastSaver.savePodcastInfo(getApplicationContext(), podcast);
+                    ((BaseAdapter) podcastListView.getAdapter()).notifyDataSetChanged();
+                    Toast.makeText(this, "Added " + podcast.getTitle(), Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(this, podcast.getTitle() + " Already Saved", Toast.LENGTH_SHORT).show();
+                }
+            } catch (MalformedFeedException e) {
                 e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Podcast podcast) {
-            if (podcast != null) {
-                podcastList.add(podcast);
-                PodcastSaver.savePodcastInfo(getApplicationContext(), podcast);
-                ((BaseAdapter) podcastListView.getAdapter()).notifyDataSetChanged();
+                Toast.makeText(this, "Error: Malformed Feed", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
 }

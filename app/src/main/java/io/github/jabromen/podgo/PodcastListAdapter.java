@@ -7,8 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.icosillion.podengine.exceptions.MalformedFeedException;
 import com.icosillion.podengine.models.Podcast;
@@ -32,7 +34,7 @@ public class PodcastListAdapter extends ArrayAdapter<Podcast> {
 
         View view = layoutInflater.inflate(R.layout.podcast_list_item, parent, false);
 
-        Podcast podcast = getItem(position);
+        final Podcast podcast = getItem(position);
 
         TextView textView = (TextView) view.findViewById(R.id.podcastTitleListItem);
 

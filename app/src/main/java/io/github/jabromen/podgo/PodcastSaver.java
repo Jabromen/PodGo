@@ -39,13 +39,10 @@ class PodcastSaver {
             File file = getPodcastStorageDir(context, title);
             try {
                 File xmlFile = new File(file.getPath() + "/feed.xml");
-                if (xmlFile.createNewFile()) {
-                    FileUtils.writeStringToFile(xmlFile, xml, Charset.forName("UTF-8"));
-                }
+                FileUtils.writeStringToFile(xmlFile, xml, Charset.forName("UTF-8"));
+
                 File urlFile = new File(file.getPath() + "/url.txt");
-                if (urlFile.createNewFile()) {
-                    FileUtils.writeStringToFile(urlFile, url, Charset.forName("UTF-8"));
-                }
+                FileUtils.writeStringToFile(urlFile, url, Charset.forName("UTF-8"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
