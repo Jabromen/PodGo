@@ -40,6 +40,7 @@ public class PodcastListAdapter extends ArrayAdapter<Podcast> {
 
         try {
             textView.setText(podcast.getTitle());
+
         } catch (MalformedFeedException | NullPointerException e) {
             e.printStackTrace();
         }

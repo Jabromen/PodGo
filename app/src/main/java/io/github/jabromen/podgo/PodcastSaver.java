@@ -1,6 +1,7 @@
 package io.github.jabromen.podgo;
 
 import android.content.Context;
+import android.media.Image;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Xml;
@@ -16,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 
@@ -52,12 +54,43 @@ class PodcastSaver {
         }
     }
 
+    public static File getPodcastImage(Context context, String title) {
+        File dir = getPodcastStorageDir(context, title);
+        File image = new File(dir.getPath() + "/image.png");
+
+        if (image.exists()) {
+            return image;
+        }
+        else {
+            return null;
+        }
+    }
+
     private static File getPodcastStorageDir(Context context, String title) {
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS), title);
         if (!file.mkdirs()) {
             Log.e("PodcastSaver", "Directory not created");
         }
         return file;
+    }
+
+    public static Podcast loadPodcastFromFile(Context context, String title) {
+        File file = getPodcastStorageDir(context, title);
+
+        File xmlFile = new File(file.getPath() + "/feed.xml");
+        File urlFile = new File(file.getPath() + "/url.txt");
+        if (!xmlFile.exists() || !urlFile.exists())
+            return null;
+        try {
+            String xml = FileUtils.readFileToString(xmlFile, Charset.forName("UTF-8"));
+            String url = FileUtils.readFileToString(urlFile, Charset.forName("UTF-8"));
+
+            return new Podcast(xml, new URL(url));
+
+        } catch (IOException | MalformedFeedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
 

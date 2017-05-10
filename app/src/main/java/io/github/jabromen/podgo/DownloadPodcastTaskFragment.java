@@ -62,6 +62,7 @@ public class DownloadPodcastTaskFragment extends Fragment {
         protected Podcast doInBackground(String... params) {
             try {
                 return new Podcast(new URL(params[0]));
+
             } catch (MalformedFeedException e) {
                 e.printStackTrace();
                 message = "Error: Malformed feed";

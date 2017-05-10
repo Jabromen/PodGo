@@ -6,4 +6,8 @@
     <string name="new_podcast_cancel">Cancel</string>
     <string name="default_podcast_title_list_item">Podcast Title</string>
     <string name="podcast_image_list_item">Podcast Image</string>
+    <string name="title_activity_podcast_acitivity">PodcastAcitivity</string>
+    <string name="episode_title_list_item">Episode Title</string>
+    <string name="load_all_episodes">Load All Episodes</string>
+    <string name="filter_episodes">Filter Episodes</string>
 </resources>
