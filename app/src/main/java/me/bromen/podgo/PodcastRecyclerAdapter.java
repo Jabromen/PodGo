@@ -22,7 +22,7 @@ import java.util.List;
 public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecyclerAdapter.PodcastViewHolder> {
 
     interface OnClickCallbacks {
-        void podcastSelected(String podcastTitle);
+        void onPodcastSelected(String podcastTitle);
     }
 
     private Context context;
@@ -77,7 +77,7 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
             selectPodcast.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mCallbacks.podcastSelected(titleView.getText().toString());
+                    mCallbacks.onPodcastSelected(titleView.getText().toString());
                 }
             });
         }
