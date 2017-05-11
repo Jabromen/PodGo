@@ -82,4 +82,8 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
             });
         }
     }
+
+    public void refreshList() {
+        notifyDataSetChanged();
+    }
 }

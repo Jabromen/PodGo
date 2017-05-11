@@ -9,11 +9,11 @@
     tools:showIn="@layout/activity_main"
     android:orientation="vertical">
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/podcastListMain"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-    </ListView>
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
@@ -20,7 +22,8 @@ import com.icosillion.podengine.models.Podcast;
 import java.net.MalformedURLException;
 
 public class MainActivity extends AppCompatActivity
-        implements NewPodcastFragment.OnDataPass, DownloadPodcastTaskFragment.TaskCallbacks, DownloadImageTaskFragment.TaskCallBacks {
+        implements NewPodcastFragment.OnDataPass, DownloadPodcastTaskFragment.TaskCallbacks,
+        DownloadImageTaskFragment.TaskCallBacks, PodcastRecyclerAdapter.OnClickCallbacks {
 
     private static final String TAG_TASK_FRAGMENT = "task_fragment";
     private DownloadPodcastTaskFragment mTaskFragment;
@@ -29,7 +32,8 @@ public class MainActivity extends AppCompatActivity
     private DownloadImageTaskFragment mImageTaskFragment;
 
     private PodcastList podcastList;
-    private ListView podcastListView;
+    private RecyclerView podcastListView;
+    private RecyclerView.Adapter podcastListAdapter;
 
     private boolean isDownloadingXml;
     private boolean isDownloadingImage;
@@ -95,33 +99,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void setUpPodcastList() {
-        // Set up listview displaying podcasts
-        ListAdapter listAdapter = new PodcastListAdapter(this, podcastList);
-        podcastListView = (ListView) findViewById(R.id.podcastListMain);
-        podcastListView.setAdapter(listAdapter);
+        podcastListView = (RecyclerView) findViewById(R.id.podcastListMain);
 
-        podcastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 1);
+        podcastListView.setLayoutManager(layoutManager);
+        podcastListView.setHasFixedSize(true);
 
-                // Temp fix to avoid crashing when changing activity while download task is running
-                if (isDownloadingXml || isDownloadingImage) {
-                    return;
-                }
-
-                Podcast selectedPodcast = (Podcast) parent.getAdapter().getItem(position);
-
-                try {
-                    Intent podActivity = new Intent(getApplicationContext(), PodcastAcitivity.class);
-                    podActivity.putExtra("TITLE", selectedPodcast.getTitle());
-
-                    startActivity(podActivity);
-
-                } catch (MalformedFeedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        podcastListAdapter = new PodcastRecyclerAdapter(podcastList);
+        podcastListView.setAdapter(podcastListAdapter);
     }
 
     // What to do when data is received from new podcast dialog fragment
@@ -188,7 +173,7 @@ public class MainActivity extends AppCompatActivity
                 if (!podcastList.contains(podcast.getTitle())) {
                     podcastList.add(podcast);
                     PodcastSaver.savePodcastInfo(getApplicationContext(), podcast);
-                    ((BaseAdapter) podcastListView.getAdapter()).notifyDataSetChanged();
+                    ((PodcastRecyclerAdapter) podcastListAdapter).refreshList();
                     Toast.makeText(this, "Added " + podcast.getTitle(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, podcast.getTitle() + " Already Saved", Toast.LENGTH_SHORT).show();
@@ -232,6 +217,19 @@ public class MainActivity extends AppCompatActivity
     public void onPostExecuteImage(Bitmap bitmap, String title) {
         isDownloadingImage = false;
         PodcastSaver.savePodcastImage(this, title, bitmap, true);
-        ((BaseAdapter) podcastListView.getAdapter()).notifyDataSetChanged();
+        ((PodcastRecyclerAdapter) podcastListAdapter).refreshList();
+    }
+
+    @Override
+    public void podcastSelected(String podcastTitle) {
+        // Temp fix to avoid crashing when changing activity while download task is running
+        if (isDownloadingXml || isDownloadingImage) {
+            return;
+        }
+
+        Intent podActivity = new Intent(getApplicationContext(), PodcastAcitivity.class);
+        podActivity.putExtra("TITLE", podcastTitle);
+
+        startActivity(podActivity);
     }
 }
