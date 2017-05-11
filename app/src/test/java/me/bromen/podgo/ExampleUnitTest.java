@@ -1,4 +1,4 @@
-package io.github.jabromen.podgo;
+package me.bromen.podgo;
 
 import org.junit.Test;
 

@@ -1,11 +1,10 @@
-package io.github.jabromen.podgo;
+package me.bromen.podgo;
 
 import android.app.Fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.icosillion.podengine.exceptions.InvalidFeedException;
 import com.icosillion.podengine.exceptions.MalformedFeedException;
@@ -21,9 +20,9 @@ import java.net.URL;
 public class DownloadPodcastTaskFragment extends Fragment {
 
     interface TaskCallbacks {
-        void onPreExecute();
-        void onCancelled(String message);
-        void onPostExecute(Podcast podcast);
+        void onPreExecuteXML();
+        void onCancelledXML(String message);
+        void onPostExecuteXML(Podcast podcast);
     }
 
     private TaskCallbacks mCallbacks;
@@ -82,14 +81,14 @@ public class DownloadPodcastTaskFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             if (mCallbacks != null) {
-                mCallbacks.onPreExecute();
+                mCallbacks.onPreExecuteXML();
             }
         }
 
         @Override
         protected void onPostExecute(Podcast podcast) {
             if (mCallbacks != null) {
-                mCallbacks.onPostExecute(podcast);
+                mCallbacks.onPostExecuteXML(podcast);
             }
             getActivity().getFragmentManager().beginTransaction().remove(thisFragment).commit();
         }
@@ -97,9 +96,8 @@ public class DownloadPodcastTaskFragment extends Fragment {
         @Override
         protected void onCancelled() {
             if (mCallbacks != null) {
-                mCallbacks.onCancelled(message);
+                mCallbacks.onCancelledXML(message);
             }
-            getActivity().getFragmentManager().popBackStack();
             getActivity().getFragmentManager().beginTransaction().remove(thisFragment).commit();
         }
     }

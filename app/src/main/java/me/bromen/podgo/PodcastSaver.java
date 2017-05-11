@@ -1,10 +1,10 @@
-package io.github.jabromen.podgo;
+package me.bromen.podgo;
 
 import android.content.Context;
-import android.media.Image;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
-import android.util.Xml;
 
 import com.icosillion.podengine.exceptions.MalformedFeedException;
 import com.icosillion.podengine.models.Podcast;
@@ -12,14 +12,12 @@ import com.icosillion.podengine.models.Podcast;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 
 /**
  * Created by jeff on 5/6/17.
@@ -54,12 +52,40 @@ class PodcastSaver {
         }
     }
 
-    public static File getPodcastImage(Context context, String title) {
+    static void savePodcastImage(Context context, String podcast, Bitmap image, boolean overWriteFile) {
+
+        OutputStream os = null;
+
+        File dir = getPodcastStorageDir(context, podcast);
+        File imageFile = new File(dir.getPath() + "/podcastImage.png");
+
+        if (imageFile.exists()) {
+            if (overWriteFile) {
+                imageFile.delete();
+                imageFile = new File(dir.getPath() + "/podcastImage.png");
+            }
+            else {
+                return;
+            }
+        }
+        try {
+            os = new FileOutputStream(imageFile);
+            image.compress(Bitmap.CompressFormat.PNG, 100, os);
+            os.flush();
+            os.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Bitmap getPodcastImage(Context context, String title) {
         File dir = getPodcastStorageDir(context, title);
-        File image = new File(dir.getPath() + "/image.png");
+        File image = new File(dir.getPath() + "/podcastImage.png");
 
         if (image.exists()) {
-            return image;
+            return BitmapFactory.decodeFile(image.getPath());
         }
         else {
             return null;
@@ -67,11 +93,7 @@ class PodcastSaver {
     }
 
     private static File getPodcastStorageDir(Context context, String title) {
-        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS), title);
-        if (!file.mkdirs()) {
-            Log.e("PodcastSaver", "Directory not created");
-        }
-        return file;
+        return new File(context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS), title);
     }
 
     public static Podcast loadPodcastFromFile(Context context, String title) {

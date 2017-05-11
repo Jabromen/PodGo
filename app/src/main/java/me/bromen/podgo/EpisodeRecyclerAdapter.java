@@ -1,4 +1,4 @@
-package io.github.jabromen.podgo;
+package me.bromen.podgo;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,7 +36,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
     @Override
     public void onBindViewHolder(EpisodeViewHolder holder, int position) {
         try {
-            holder.titleView.setText(episodeList.get(position).getTitle());
+            holder.titleView.setText(episodeList.get(position).getTitle().replace("\n", " "));
         } catch (MalformedFeedException e) {
             e.printStackTrace();
         }

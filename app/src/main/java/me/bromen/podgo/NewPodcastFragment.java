@@ -1,4 +1,4 @@
-package io.github.jabromen.podgo;
+package me.bromen.podgo;
 
 import android.app.Dialog;
 import android.app.DialogFragment;

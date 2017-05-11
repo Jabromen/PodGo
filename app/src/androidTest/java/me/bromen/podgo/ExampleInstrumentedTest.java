@@ -1,4 +1,4 @@
-package io.github.jabromen.podgo;
+package me.bromen.podgo;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

@@ -1,5 +1,7 @@
-package io.github.jabromen.podgo;
+package me.bromen.podgo;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -38,6 +40,13 @@ public class PodcastAcitivity extends AppCompatActivity {
 
         String title = getIntent().getStringExtra("TITLE");
         getSupportActionBar().setTitle(title);
+
+        Bitmap bitmap = PodcastSaver.getPodcastImage(this, title);
+
+        if (bitmap != null) {
+            ImageView imageView = (ImageView) findViewById(R.id.podcast_toolbar_image);
+            imageView.setImageBitmap(bitmap);
+        }
 
         podcast = PodcastSaver.loadPodcastFromFile(this, title);
 
