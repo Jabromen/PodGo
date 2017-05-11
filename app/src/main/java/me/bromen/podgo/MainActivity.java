@@ -158,16 +158,16 @@ public class MainActivity extends AppCompatActivity
     public void onPostExecuteXML(Podcast podcast) {
         isDownloadingXml = false;
 
-        try {
-            downloadPodcastImage(podcast.getImageURL().toString(), podcast.getTitle());
-        } catch (MalformedURLException | MalformedFeedException e) {
-            e.printStackTrace();
+        if (tryAddPodcastToList(podcast)) {
+            try {
+                downloadPodcastImage(podcast.getImageURL().toString(), podcast.getTitle());
+            } catch (MalformedURLException | MalformedFeedException e) {
+                e.printStackTrace();
+            }
         }
-
-        tryAddPodcastToList(podcast);
     }
 
-    void tryAddPodcastToList(Podcast podcast) {
+    boolean tryAddPodcastToList(Podcast podcast) {
         if (podcast != null) {
             try {
                 if (!podcastList.contains(podcast.getTitle())) {
@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity
                     PodcastSaver.savePodcastInfo(getApplicationContext(), podcast);
                     ((PodcastRecyclerAdapter) podcastListAdapter).refreshList();
                     Toast.makeText(this, "Added " + podcast.getTitle(), Toast.LENGTH_SHORT).show();
+                    return true;
                 } else {
                     Toast.makeText(this, podcast.getTitle() + " Already Saved", Toast.LENGTH_SHORT).show();
                 }
@@ -183,6 +184,7 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, "Error: Malformed Feed", Toast.LENGTH_SHORT).show();
             }
         }
+        return false;
     }
 
     void downloadPodcastImage(String url, String podcastTitle) {
