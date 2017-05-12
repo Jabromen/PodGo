@@ -23,7 +23,7 @@ import java.nio.charset.Charset;
  * Created by jeff on 5/6/17.
  */
 
-class PodcastSaver {
+class PodcastFileUtils {
 
     static void savePodcastInfo(Context context, Podcast podcast) {
         String url = podcast.getFeedURL().toString();
@@ -47,7 +47,7 @@ class PodcastSaver {
                 e.printStackTrace();
             }
             for (File f:file.listFiles()) {
-                Log.e("PodcastSaver", f.getPath());
+                Log.e("PodcastFileUtils", f.getPath());
             }
         }
     }
@@ -57,12 +57,12 @@ class PodcastSaver {
         OutputStream os = null;
 
         File dir = getPodcastStorageDir(context, podcast);
-        File imageFile = new File(dir.getPath() + "/podcastImage.png");
+        File imageFile = new File(dir, "podcastImage.png");
 
         if (imageFile.exists()) {
             if (overWriteFile) {
                 imageFile.delete();
-                imageFile = new File(dir.getPath() + "/podcastImage.png");
+                imageFile = new File(dir, "podcastImage.png");
             }
             else {
                 return;
@@ -82,7 +82,7 @@ class PodcastSaver {
 
     public static Bitmap getPodcastImage(Context context, String title) {
         File dir = getPodcastStorageDir(context, title);
-        File image = new File(dir.getPath() + "/podcastImage.png");
+        File image = new File(dir, "podcastImage.png");
 
         if (image.exists()) {
             return BitmapFactory.decodeFile(image.getPath());
@@ -92,15 +92,31 @@ class PodcastSaver {
         }
     }
 
-    private static File getPodcastStorageDir(Context context, String title) {
-        return new File(context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS), title);
+    public static File getPodcastStorageDir(Context context, String title) {
+        File podcastDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS), title);
+
+        if (!podcastDir.exists()) {
+            podcastDir.mkdirs();
+        }
+
+        return podcastDir;
+    }
+
+    public static File getEpisodeAudioFile(Context context, String podcastTitle, String episodeTitle) {
+        File podcastDir = getPodcastStorageDir(context, podcastTitle);
+
+        return new File(podcastDir, episodeTitle + ".mp3");
+    }
+
+    public static boolean isEpisodeDownloaded(Context context, String podcastTitle, String episodeTitle) {
+        return getEpisodeAudioFile(context, podcastTitle, episodeTitle).exists();
     }
 
     public static Podcast loadPodcastFromFile(Context context, String title) {
-        File file = getPodcastStorageDir(context, title);
+        File dir = getPodcastStorageDir(context, title);
 
-        File xmlFile = new File(file.getPath() + "/feed.xml");
-        File urlFile = new File(file.getPath() + "/url.txt");
+        File xmlFile = new File(dir, "feed.xml");
+        File urlFile = new File(dir, "url.txt");
         if (!xmlFile.exists() || !urlFile.exists())
             return null;
         try {
@@ -112,6 +128,16 @@ class PodcastSaver {
         } catch (IOException | MalformedFeedException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static void deletePodcast(Context context, String podcastTitle) {
+        File podcastDir = getPodcastStorageDir(context, podcastTitle);
+
+        try {
+            FileUtils.deleteDirectory(podcastDir);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

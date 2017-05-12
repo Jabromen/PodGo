@@ -2,7 +2,9 @@ package me.bromen.podgo;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity
 
     private boolean isDownloadingXml;
     private boolean isDownloadingImage;
+
+    private boolean isDeletingPodcast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,16 @@ public class MainActivity extends AppCompatActivity
             NewPodcastFragment fragment = new NewPodcastFragment();
             fragment.show(getFragmentManager(), "Dialog");
             return true;
+        }
+        else if (id == R.id.action_delete_podcast) {
+            if (!isDeletingPodcast) {
+                isDeletingPodcast = true;
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorRed)));
+            }
+            else {
+                isDeletingPodcast = false;
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorPrimary)));
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -166,7 +180,7 @@ public class MainActivity extends AppCompatActivity
             try {
                 if (!podcastList.contains(podcast.getTitle())) {
                     podcastList.add(podcast);
-                    PodcastSaver.savePodcastInfo(getApplicationContext(), podcast);
+                    PodcastFileUtils.savePodcastInfo(getApplicationContext(), podcast);
                     ((PodcastRecyclerAdapter) podcastAdapter).refreshList();
                     Toast.makeText(this, "Added " + podcast.getTitle(), Toast.LENGTH_SHORT).show();
                     return true;
@@ -212,20 +226,29 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPostExecuteImage(Bitmap bitmap, String title) {
         isDownloadingImage = false;
-        PodcastSaver.savePodcastImage(this, title, bitmap, true);
+        PodcastFileUtils.savePodcastImage(this, title, bitmap, true);
         ((PodcastRecyclerAdapter) podcastAdapter).refreshList();
     }
 
     @Override
     public void onPodcastSelected(String podcastTitle) {
-        // Temp fix to avoid crashing when changing activity while download task is running
-        if (isDownloadingXml || isDownloadingImage) {
-            return;
+        if (!isDeletingPodcast) {
+
+            // Temp fix to avoid crashing when changing activity while download task is running
+            if (isDownloadingXml || isDownloadingImage) {
+                return;
+            }
+
+            Intent podActivity = new Intent(getApplicationContext(), PodcastAcitivity.class);
+            podActivity.putExtra("TITLE", podcastTitle);
+
+            startActivity(podActivity);
         }
-
-        Intent podActivity = new Intent(getApplicationContext(), PodcastAcitivity.class);
-        podActivity.putExtra("TITLE", podcastTitle);
-
-        startActivity(podActivity);
+        else {
+            if (podcastList.remove(podcastTitle)) {
+                PodcastFileUtils.deletePodcast(this, podcastTitle);
+                ((PodcastRecyclerAdapter) podcastAdapter).refreshList();
+            }
+        }
     }
 }

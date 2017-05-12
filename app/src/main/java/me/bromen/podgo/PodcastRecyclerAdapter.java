@@ -53,7 +53,7 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
         }
 
         holder.titleView.setText(title);
-        holder.imageView.setImageBitmap(PodcastSaver.getPodcastImage(context, title));
+        holder.imageView.setImageBitmap(PodcastFileUtils.getPodcastImage(context, title));
 
     }
 

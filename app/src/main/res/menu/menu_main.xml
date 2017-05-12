@@ -11,8 +11,14 @@
     <item
         android:id="@+id/action_new_podcast"
         android:orderInCategory="200"
-        android:title="Add New Podcast"
+        android:title="@string/action_new_podcast"
         app:showAsAction="ifRoom|withText"
         android:icon="@mipmap/ic_rss_feed"
         />
+
+    <item
+        android:id="@+id/action_delete_podcast"
+        android:orderInCategory="300"
+        android:title="@string/action_delete_podcast"
+        app:showAsAction="never"/>
 </menu>

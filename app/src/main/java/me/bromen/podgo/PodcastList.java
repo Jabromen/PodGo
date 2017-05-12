@@ -115,6 +115,20 @@ public class PodcastList implements List<Podcast> {
         return podcastList.remove(o);
     }
 
+    public boolean remove(String title) {
+        for (Podcast p : podcastList) {
+            try {
+                if (p.getTitle().equals(title)) {
+                    remove(p);
+                    return true;
+                }
+            } catch (MalformedFeedException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean containsAll(@NonNull Collection<?> c) {
         return podcastList.containsAll(c);
