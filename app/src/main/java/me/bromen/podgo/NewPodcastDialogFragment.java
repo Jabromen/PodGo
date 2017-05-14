@@ -16,18 +16,18 @@ import android.widget.EditText;
  * Created by jeff on 5/5/17.
  */
 
-public class NewPodcastFragment extends DialogFragment {
+public class NewPodcastDialogFragment extends DialogFragment {
 
     // Interface used to pass data back to the calling activity
     interface OnDataPass {
-        void onDataPass(String data);
+        void onPassUrl(String data);
     }
 
     OnDataPass dataPasser;
 
     // Pass data back to the calling activity
     public void passData(String data) {
-        dataPasser.onDataPass(data);
+        dataPasser.onPassUrl(data);
     }
 
     @Override

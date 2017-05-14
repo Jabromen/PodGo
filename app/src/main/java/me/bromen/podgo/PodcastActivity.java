@@ -16,9 +16,10 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.icosillion.podengine.models.Episode;
 import com.icosillion.podengine.models.Podcast;
 
-public class PodcastAcitivity extends AppCompatActivity {
+public class PodcastActivity extends AppCompatActivity {
 
     private RecyclerView episodeView;
     private RecyclerView.Adapter episodeListAdapter;

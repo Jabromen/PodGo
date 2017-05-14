@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/coordinator_layout"
-    tools:context="me.bromen.podgo.PodcastAcitivity">
+    tools:context="me.bromen.podgo.PodcastActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"

@@ -86,6 +86,11 @@ public class DownloadImageTaskFragment extends Fragment {
                 IOUtils.closeQuietly(is);
             }
 
+            if (bitmap == null) {
+                message = "Can't Retrieve Image";
+                cancel(true);
+            }
+
             return bitmap;
         }
 

@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="me.bromen.podgo.PodcastAcitivity"
+            android:name="me.bromen.podgo.PodcastActivity"
             android:label="@string/title_activity_podcast_acitivity"
             android:parentActivityName="me.bromen.podgo.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">

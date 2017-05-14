@@ -1,6 +1,8 @@
 package me.bromen.podgo;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
 
     interface OnClickCallbacks {
         void onPodcastSelected(String podcastTitle);
+        void onOptionsSelected(String podcastTitle);
     }
 
     private Context context;
@@ -53,7 +56,11 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
         }
 
         holder.titleView.setText(title);
-        holder.imageView.setImageBitmap(PodcastFileUtils.getPodcastImage(context, title));
+
+        Bitmap image = PodcastFileUtils.getPodcastImage(context, title);
+        if (image != null) {
+            holder.imageView.setImageBitmap(image);
+        }
 
     }
 
@@ -66,21 +73,34 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
 
         TextView titleView;
         ImageView imageView;
-        LinearLayout selectPodcast;
+        ImageView optionsView;
 
         public PodcastViewHolder(View itemView) {
             super(itemView);
             titleView = (TextView) itemView.findViewById(R.id.podcastTitleListItem);
             imageView = (ImageView) itemView.findViewById(R.id.podcastImageListItem);
-            selectPodcast = (LinearLayout) itemView.findViewById(R.id.selectPodcastListItem);
+            optionsView = (ImageView) itemView.findViewById(R.id.podcastOptionListItem);
 
-            selectPodcast.setOnClickListener(new View.OnClickListener() {
+            imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mCallbacks.onPodcastSelected(titleView.getText().toString());
                 }
             });
+
+            optionsView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mCallbacks.onOptionsSelected(titleView.getText().toString());
+                }
+            });
         }
+    }
+
+    public void updateList(PodcastList newList) {
+        podcastList = new ArrayList<>();
+        podcastList.addAll(newList);
+        refreshList();
     }
 
     public void refreshList() {

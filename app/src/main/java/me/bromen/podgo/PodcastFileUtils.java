@@ -3,6 +3,7 @@ package me.bromen.podgo;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.os.Environment;
 import android.util.Log;
 
@@ -70,7 +71,7 @@ class PodcastFileUtils {
         }
         try {
             os = new FileOutputStream(imageFile);
-            image.compress(Bitmap.CompressFormat.PNG, 100, os);
+            image.compress(Bitmap.CompressFormat.PNG, 10, os);
             os.flush();
             os.close();
         } catch (FileNotFoundException e) {
@@ -85,7 +86,9 @@ class PodcastFileUtils {
         File image = new File(dir, "podcastImage.png");
 
         if (image.exists()) {
-            return BitmapFactory.decodeFile(image.getPath());
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+            return ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(image.getPath(), options), 150, 150);
         }
         else {
             return null;

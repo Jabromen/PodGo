@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50sp"
     android:orientation="horizontal">
 
     <ImageView
-        android:id="@+id/podcastImageListItem"
+        android:id="@+id/episodeImageListItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center|start"
+        android:layout_centerVertical="true"
         android:src="@mipmap/ic_temp_podcast_icon"
         android:contentDescription="@string/podcast_image_list_item"/>
 
@@ -16,8 +16,24 @@
         android:id="@+id/episodeTitleListItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center|start"
+        android:layout_toRightOf="@id/episodeImageListItem"
+        android:layout_centerVertical="true"
         android:text="@string/episode_title_list_item"
         android:textSize="20sp"/>
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/episodePlayDownload"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:src="@mipmap/ic_download" />
+
+    <ProgressBar
+        android:id="@+id/episodeDownloadProgress"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" />
+
+</RelativeLayout>

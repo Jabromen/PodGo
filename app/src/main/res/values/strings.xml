@@ -13,4 +13,5 @@
     <string name="podcast_image">Podcast Image</string>
     <string name="action_new_podcast">Add New Podcast</string>
     <string name="action_delete_podcast">Delete Podcast</string>
+    <string name="podcast_options">Podcast Options</string>
 </resources>

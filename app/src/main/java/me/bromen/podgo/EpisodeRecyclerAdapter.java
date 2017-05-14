@@ -4,6 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +21,13 @@ import java.util.List;
 
 public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecyclerAdapter.EpisodeViewHolder> {
 
+    interface OnClickCallbacks {
+        void onEpisodeSelected();
+        void onPlayDownloadSelected();
+    }
+
     private List<Episode> episodeList = new ArrayList<>();
+    OnClickCallbacks mCallbacks;
 
     EpisodeRecyclerAdapter(List<Episode> episodeList) {
         this.episodeList = episodeList;
@@ -50,15 +58,20 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
     public class EpisodeViewHolder extends RecyclerView.ViewHolder {
 
         TextView titleView;
+        ImageView playDownloadView;
+        ProgressBar progressBar;
 
         public EpisodeViewHolder(final View itemView) {
             super(itemView);
-            titleView = (TextView) itemView.findViewById(R.id.episodeTitleListItem);
 
-            titleView.setOnClickListener(new View.OnClickListener() {
+            titleView = (TextView) itemView.findViewById(R.id.episodeTitleListItem);
+            playDownloadView = (ImageView) itemView.findViewById(R.id.episodePlayDownload);
+            progressBar = (ProgressBar) itemView.findViewById(R.id.episodeDownloadProgress);
+
+            playDownloadView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(itemView.getContext(), titleView.getText(), Toast.LENGTH_SHORT).show();
+
                 }
             });
         }
