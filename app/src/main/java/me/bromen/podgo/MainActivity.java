@@ -1,49 +1,36 @@
 package me.bromen.podgo;
 
 import android.app.FragmentManager;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.icosillion.podengine.exceptions.MalformedFeedException;
 import com.icosillion.podengine.models.Podcast;
 
-import java.net.MalformedURLException;
-import java.util.HashMap;
-
 public class MainActivity extends AppCompatActivity
         implements NewPodcastDialogFragment.OnDataPass, DownloadPodcastTaskFragment.TaskCallbacks,
-        DownloadImageTaskFragment.TaskCallBacks, PodcastRecyclerAdapter.OnClickCallbacks,
-        PodcastOptionDialogFragment.OnDataPass{
+        PodcastRecyclerAdapter.OnClickCallbacks, PodcastOptionDialogFragment.OnDataPass {
 
     private static final String XML_TASK_FRAGMENT = "xml_task_fragment";
     private DownloadPodcastTaskFragment mXmlTaskFragment;
 
-    private static final String IMAGE_TASK_FRAGMENT = "image_task_fragment";
-    private DownloadImageTaskFragment mImageTaskFragment;
-
-    public static final String PODCAST_LIST_TAG = "podcast_list_fragment";
+    private static final String PODCAST_LIST_TAG = "podcast_list_fragment";
 
     private PodcastList podcastList;
-
-    private RecyclerView podcastView;
-    private RecyclerView.Adapter podcastAdapter;
-
-    private boolean isDownloadingXml;
-    private boolean isDownloadingImage;
-
-    private boolean isDeletingPodcast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setUpPodcastList();
+        if (savedInstanceState != null) {
+            podcastList = (PodcastList) savedInstanceState.getSerializable("PODCASTLIST");
+        }
+        else {
+            setUpPodcastList();
+        }
         setUpDownloadFragments();
 
         PodcastListFragment fragment = new PodcastListFragment();
@@ -54,16 +41,16 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("PODCASTLIST", podcastList);
+    }
+
     public void setUpDownloadFragments() {
         // Find download task fragments
         mXmlTaskFragment = (DownloadPodcastTaskFragment)
                 getFragmentManager().findFragmentByTag(XML_TASK_FRAGMENT);
-
-        mImageTaskFragment = (DownloadImageTaskFragment)
-                getFragmentManager().findFragmentByTag(IMAGE_TASK_FRAGMENT);
-
-        isDownloadingXml = mXmlTaskFragment != null;
-        isDownloadingImage = mImageTaskFragment != null;
     }
 
     public void setUpPodcastList() {
@@ -71,8 +58,6 @@ public class MainActivity extends AppCompatActivity
         podcastList = new PodcastList();
         podcastList.loadPodcastInfo(this);
     }
-
-
 
     // What to do when data is received from new podcast dialog fragment
     @Override
@@ -109,26 +94,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPreExecuteXML() {
-        isDownloadingXml = true;
         Toast.makeText(this, "Downloading Podcast Info", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onCancelledXML(String message) {
-        isDownloadingXml = false;
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onPostExecuteXML(Podcast podcast) {
-        isDownloadingXml = false;
 
         if (tryAddPodcastToList(podcast)) {
-            try {
-                downloadPodcastImage(podcast.getImageURL().toString(), podcast.getTitle());
-            } catch (MalformedURLException | MalformedFeedException e) {
-                e.printStackTrace();
-            }
+            updatePodcastView();
         }
     }
 
@@ -136,9 +114,8 @@ public class MainActivity extends AppCompatActivity
         if (podcast != null) {
             try {
                 if (!podcastList.contains(podcast.getTitle())) {
-                    podcastList.add(podcast);
+                    podcastList.add(new PodcastShell(podcast));
                     PodcastFileUtils.savePodcastInfo(getApplicationContext(), podcast);
-                    updatePodcastView();
                     Toast.makeText(this, "Added " + podcast.getTitle(), Toast.LENGTH_SHORT).show();
                     return true;
                 } else {
@@ -150,41 +127,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
         return false;
-    }
-
-    void downloadPodcastImage(String url, String podcastTitle) {
-
-        // Find download task fragment if exists
-        mImageTaskFragment = (DownloadImageTaskFragment)
-                getFragmentManager().findFragmentByTag(IMAGE_TASK_FRAGMENT);
-
-        if (mImageTaskFragment == null) {
-            mImageTaskFragment = new DownloadImageTaskFragment();
-
-            Bundle bundle = new Bundle();
-            bundle.putString("URL", url);
-            bundle.putString("TITLE", podcastTitle);
-            mImageTaskFragment.setArguments(bundle);
-
-            getFragmentManager().beginTransaction().add(mImageTaskFragment, IMAGE_TASK_FRAGMENT).commit();
-        }
-    }
-
-    @Override
-    public void onPreExecuteImage() {
-        isDownloadingImage = true;
-    }
-
-    @Override
-    public void onCancelledImage(String message) {
-        isDownloadingImage = false;
-    }
-
-    @Override
-    public void onPostExecuteImage(Bitmap bitmap, String title) {
-        isDownloadingImage = false;
-        PodcastFileUtils.savePodcastImage(this, title, bitmap, true);
-        updatePodcastView();
     }
 
     public PodcastList getPodcastList() {
@@ -213,7 +155,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPodcastSelected(String podcastTitle) {
-
+        Toast.makeText(this, podcastTitle, Toast.LENGTH_SHORT).show();
     }
 
     @Override

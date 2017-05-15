@@ -2,6 +2,7 @@ package me.bromen.podgo;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,9 +12,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.icosillion.podengine.exceptions.MalformedFeedException;
 import com.icosillion.podengine.models.Podcast;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +33,9 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
 
     private Context context;
     private OnClickCallbacks mCallbacks;
-    private List<Podcast> podcastList = new ArrayList<>();
+    private List<PodcastShell> podcastList = new ArrayList<>();
 
-    PodcastRecyclerAdapter(List<Podcast> podcastList) {
+    PodcastRecyclerAdapter(List<PodcastShell> podcastList) {
         this.podcastList = podcastList;
     }
 
@@ -47,21 +50,32 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
 
     @Override
     public void onBindViewHolder(PodcastViewHolder holder, int position) {
-        String title = "";
-        try {
-            title = podcastList.get(position).getTitle();
-        } catch (MalformedFeedException e) {
-            e.printStackTrace();
-            holder.titleView.setText("ERROR: Malformed Feed");
-        }
+
+        String title = podcastList.get(position).getTitle();
+        String url = podcastList.get(position).getImageUrl();
 
         holder.titleView.setText(title);
 
-        Bitmap image = PodcastFileUtils.getPodcastImage(context, title);
-        if (image != null) {
-            holder.imageView.setImageBitmap(image);
-        }
+        setUpImageView(context, holder.imageView, title, url);
 
+    }
+
+    private void setUpImageView(Context context, ImageView imageView, String title, String url) {
+        if (PodcastFileUtils.imageFileIsSaved(context, title)) {
+            Glide.with(context)
+                    .load(PodcastFileUtils.getPodcastImageFile(context, title))
+                    .asBitmap()
+                    .override(150, 150)
+                    .centerCrop()
+                    .into(imageView);
+        }
+        else {
+            Glide.with(context)
+                    .load(Uri.parse(url))
+                    .asBitmap()
+                    .centerCrop()
+                    .into(new FileTarget(PodcastFileUtils.getPodcastImageFile(context, title).getPath(), 150, 150, context, imageView));
+        }
     }
 
     @Override

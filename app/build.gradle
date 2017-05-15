@@ -38,6 +38,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.icosillion.podengine:podengine:2.0'
     testCompile 'junit:junit:4.12'
-    compile group: 'dom4j', name: 'dom4j', version:'20040902.021138'
-    compile group: 'commons-io', name: 'commons-io', version:'2.5'
+    compile 'dom4j:dom4j:20040902.021138'
+    compile 'commons-io:commons-io:2.5'
+    compile 'com.github.bumptech.glide:glide:3.8.0'
 }

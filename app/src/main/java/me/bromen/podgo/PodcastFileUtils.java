@@ -58,12 +58,12 @@ class PodcastFileUtils {
         OutputStream os = null;
 
         File dir = getPodcastStorageDir(context, podcast);
-        File imageFile = new File(dir, "podcastImage.png");
+        File imageFile = new File(dir, "podcastImage.jpg");
 
         if (imageFile.exists()) {
             if (overWriteFile) {
                 imageFile.delete();
-                imageFile = new File(dir, "podcastImage.png");
+                imageFile = new File(dir, "podcastImage.jpg");
             }
             else {
                 return;
@@ -83,7 +83,7 @@ class PodcastFileUtils {
 
     public static Bitmap getPodcastImage(Context context, String title) {
         File dir = getPodcastStorageDir(context, title);
-        File image = new File(dir, "podcastImage.png");
+        File image = new File(dir, "podcastImage.jpg");
 
         if (image.exists()) {
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -93,6 +93,15 @@ class PodcastFileUtils {
         else {
             return null;
         }
+    }
+
+    public static File getPodcastImageFile(Context context, String title) {
+        File dir = getPodcastStorageDir(context, title);
+        return new File(dir, "podcastImage.jpg");
+    }
+
+    public static boolean imageFileIsSaved(Context context, String title) {
+        return getPodcastImageFile(context, title).exists();
     }
 
     public static File getPodcastStorageDir(Context context, String title) {

@@ -12,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -24,9 +25,9 @@ import java.util.ListIterator;
  * Created by jeff on 5/6/17.
  */
 
-public class PodcastList implements List<Podcast> {
+public class PodcastList implements List<PodcastShell>, Serializable {
 
-    private List<Podcast> podcastList = new ArrayList<Podcast>();
+    private List<PodcastShell> podcastList = new ArrayList<>();
 
     void loadPodcastInfo(Context context) {
 
@@ -48,7 +49,11 @@ public class PodcastList implements List<Podcast> {
                 String xml = FileUtils.readFileToString(xmlFile, Charset.forName("UTF-8"));
                 String url = FileUtils.readFileToString(urlFile, Charset.forName("UTF-8"));
 
-                podcastList.add(new Podcast(xml, new URL(url)));
+                Podcast podcast = new Podcast(xml);
+
+                podcastList.add(new PodcastShell(podcast.getTitle(), podcast.getEpisodes().size(),
+                        url, podcast.getImageURL().toString()));
+
             } catch (IOException | MalformedFeedException e) {
                 e.printStackTrace();
             }
@@ -71,28 +76,25 @@ public class PodcastList implements List<Podcast> {
     }
 
     public boolean contains(String title) {
-        try {
-            for (Podcast p : podcastList) {
-                if (p.getTitle().equals(title)) {
-                    return true;
-                }
+
+        for (PodcastShell p : podcastList) {
+            if (p.getTitle().equals(title)) {
+                return true;
             }
-        } catch (MalformedFeedException e) {
-            e.printStackTrace();
         }
         return false;
     }
 
     @NonNull
     @Override
-    public Iterator<Podcast> iterator() {
+    public Iterator<PodcastShell> iterator() {
         return podcastList.iterator();
     }
 
     @NonNull
     @Override
-    public Podcast[] toArray() {
-        Podcast[] array = new Podcast[podcastList.size()];
+    public PodcastShell[] toArray() {
+        PodcastShell[] array = new PodcastShell[podcastList.size()];
         for (int i = 0; i < podcastList.size(); i++) {
             array[i] = podcastList.get(i);
         }
@@ -106,7 +108,7 @@ public class PodcastList implements List<Podcast> {
     }
 
     @Override
-    public boolean add(Podcast podcast) {
+    public boolean add(PodcastShell podcast) {
         return podcastList.add(podcast);
     }
 
@@ -116,14 +118,11 @@ public class PodcastList implements List<Podcast> {
     }
 
     public boolean remove(String title) {
-        for (Podcast p : podcastList) {
-            try {
-                if (p.getTitle().equals(title)) {
-                    remove(p);
-                    return true;
-                }
-            } catch (MalformedFeedException e) {
-                e.printStackTrace();
+        for (PodcastShell p : podcastList) {
+
+            if (p.getTitle().equals(title)) {
+                remove(p);
+                return true;
             }
         }
         return false;
@@ -135,12 +134,12 @@ public class PodcastList implements List<Podcast> {
     }
 
     @Override
-    public boolean addAll(@NonNull Collection<? extends Podcast> c) {
+    public boolean addAll(@NonNull Collection<? extends PodcastShell> c) {
         return podcastList.addAll(c);
     }
 
     @Override
-    public boolean addAll(int index, @NonNull Collection<? extends Podcast> c) {
+    public boolean addAll(int index, @NonNull Collection<? extends PodcastShell> c) {
         return podcastList.addAll(index, c);
     }
 
@@ -160,22 +159,22 @@ public class PodcastList implements List<Podcast> {
     }
 
     @Override
-    public Podcast get(int index) {
+    public PodcastShell get(int index) {
         return podcastList.get(index);
     }
 
     @Override
-    public Podcast set(int index, Podcast element) {
+    public PodcastShell set(int index, PodcastShell element) {
         return podcastList.set(index, element);
     }
 
     @Override
-    public void add(int index, Podcast element) {
+    public void add(int index, PodcastShell element) {
         podcastList.add(index, element);
     }
 
     @Override
-    public Podcast remove(int index) {
+    public PodcastShell remove(int index) {
         return podcastList.remove(index);
     }
 
@@ -190,19 +189,19 @@ public class PodcastList implements List<Podcast> {
     }
 
     @Override
-    public ListIterator<Podcast> listIterator() {
+    public ListIterator<PodcastShell> listIterator() {
         return podcastList.listIterator();
     }
 
     @NonNull
     @Override
-    public ListIterator<Podcast> listIterator(int index) {
+    public ListIterator<PodcastShell> listIterator(int index) {
         return podcastList.listIterator(index);
     }
 
     @NonNull
     @Override
-    public List<Podcast> subList(int fromIndex, int toIndex) {
+    public List<PodcastShell> subList(int fromIndex, int toIndex) {
         return podcastList.subList(fromIndex, toIndex);
     }
 }
