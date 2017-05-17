@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by jeff on 5/13/17.
+ * UI Component Fragment for the list of saved podcasts
  */
 
 public class PodcastListFragment extends Fragment {
@@ -76,12 +76,9 @@ public class PodcastListFragment extends Fragment {
             return true;
         }
         else if (id == R.id.action_new_podcast) {
-            // Bring up new podcast dialog fragment
+            // Bring up new podcast dialog fragment, results handled via callbacks in MainActivity
             NewPodcastDialogFragment fragment = new NewPodcastDialogFragment();
             fragment.show(getFragmentManager(), "new_podcast_dialog");
-            return true;
-        }
-        else if (id == R.id.action_delete_podcast) {
             return true;
         }
 
@@ -91,7 +88,7 @@ public class PodcastListFragment extends Fragment {
     private void setUpPodcastView() {
 
         RecyclerView.LayoutManager layoutManager =
-                new GridLayoutManager(getActivity(), DisplayUtils.calculateNoOfColumns(getActivity(), 3));
+                new GridLayoutManager(getActivity(), DisplayUtils.calculateNoOfColumns(getActivity(), 125, 3));
         podcastView.setLayoutManager(layoutManager);
         podcastView.setHasFixedSize(true);
 

@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="me.github.jabromen.podgo.io.jabromen.podgo.MainActivity">
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
@@ -13,12 +14,6 @@
         android:orderInCategory="200"
         android:title="@string/action_new_podcast"
         app:showAsAction="ifRoom|withText"
-        android:icon="@mipmap/ic_rss_feed"
-        />
+        android:icon="@drawable/ic_action_new_podcast" />
 
-    <item
-        android:id="@+id/action_delete_podcast"
-        android:orderInCategory="300"
-        android:title="@string/action_delete_podcast"
-        app:showAsAction="never"/>
 </menu>

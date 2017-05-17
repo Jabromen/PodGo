@@ -8,7 +8,7 @@ import java.net.MalformedURLException;
 
 /**
  * Shell class that mimics a Podcast object.
- * It holds only the data necessary to build the UI.
+ * It holds only the data necessary to build the UI and perform basic functions.
  */
 
 public class PodcastShell implements Serializable {

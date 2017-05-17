@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * Created by jeff on 5/6/17.
+ * Custom list class for holding PodcastShell objects
  */
 
 public class PodcastList implements List<PodcastShell>, Serializable {
@@ -43,16 +43,15 @@ public class PodcastList implements List<PodcastShell>, Serializable {
         for (String dir : directories) {
             File xmlFile = new File(file.getPath() + "/" + dir + "/feed.xml");
             File urlFile = new File(file.getPath() + "/" + dir + "/url.txt");
+
             if (!xmlFile.exists() || !urlFile.exists())
                 continue;
+
             try {
                 String xml = FileUtils.readFileToString(xmlFile, Charset.forName("UTF-8"));
                 String url = FileUtils.readFileToString(urlFile, Charset.forName("UTF-8"));
 
-                Podcast podcast = new Podcast(xml);
-
-                podcastList.add(new PodcastShell(podcast.getTitle(), podcast.getEpisodes().size(),
-                        url, podcast.getImageURL().toString()));
+                podcastList.add(new PodcastShell(new Podcast(xml, new URL(url))));
 
             } catch (IOException | MalformedFeedException e) {
                 e.printStackTrace();
