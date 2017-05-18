@@ -9,17 +9,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.icosillion.podengine.exceptions.MalformedFeedException;
+import com.icosillion.podengine.models.Episode;
 import com.icosillion.podengine.models.Podcast;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NewPodcastDialogFragment.OnDataPass, PodcastRecyclerAdapter.OnClickCallbacks,
-        PodcastOptionDialogFragment.OnDataPass, XmlResultReceiver.Receiver {
+        PodcastOptionDialogFragment.OnDataPass, XmlResultReceiver.Receiver,
+        EpisodeRecyclerAdapter.OnClickCallbacks {
 
     private static final String PODCAST_LIST_TAG = "podcast_list_fragment";
+    private static final String EPISODE_LIST_TAG = "episode_list_fragment";
 
+    private String selectedPodcast;
     private PodcastList podcastList;
 
     public XmlResultReceiver xmlReceiver;
@@ -32,18 +37,19 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState != null) {
             podcastList = (PodcastList) savedInstanceState.getSerializable("PODCASTLIST");
             xmlReceiver = savedInstanceState.getParcelable("RECEIVER");
+            selectedPodcast = savedInstanceState.getString("SELECTEDPODCAST");
         }
         else {
             setUpPodcastList();
             setUpXmlReceiver();
+
+            PodcastListFragment fragment = new PodcastListFragment();
+
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fragment_main, fragment, PODCAST_LIST_TAG)
+                    .commit();
         }
-
-        PodcastListFragment fragment = new PodcastListFragment();
-
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_main, fragment, PODCAST_LIST_TAG)
-                .commit();
     }
 
     @Override
@@ -64,6 +70,19 @@ public class MainActivity extends AppCompatActivity
 
         outState.putSerializable("PODCASTLIST", podcastList);
         outState.putParcelable("RECEIVER", xmlReceiver);
+        outState.putString("SELECTEDPODCAST", selectedPodcast);
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fm = getFragmentManager();
+
+        if (fm.getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStackImmediate();
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
     // Initial setup for podcastList
@@ -88,7 +107,33 @@ public class MainActivity extends AppCompatActivity
     // User selects a podcast
     @Override
     public void onPodcastSelected(String podcastTitle) {
-        Toast.makeText(this, podcastTitle, Toast.LENGTH_SHORT).show();
+
+        selectedPodcast = podcastTitle;
+
+        EpisodeListFragment fragment = new EpisodeListFragment();
+
+        FragmentTransaction transaction = getFragmentManager()
+                .beginTransaction();
+
+        transaction.replace(R.id.fragment_main, fragment, EPISODE_LIST_TAG);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
+    }
+
+    @Override
+    public void onEpisodeSelected(String podcastTitle, String episodeTitle) {
+        Toast.makeText(this, episodeTitle, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFilterEpisodes(int position) {
+        EpisodeListFragment episodeListFragment =
+                (EpisodeListFragment) getFragmentManager().findFragmentByTag(EPISODE_LIST_TAG);
+
+        if (episodeListFragment != null) {
+            episodeListFragment.filterEpisodes(position);
+        }
     }
 
     // Display podcast options menu
@@ -177,6 +222,11 @@ public class MainActivity extends AppCompatActivity
         return podcastList;
     }
 
+    // Getter for selected podcast for use in fragment
+    public String getSelectedPodcast() {
+        return selectedPodcast;
+    }
+
     // Updates the podcast view with the current state of the podcastList
     public void updatePodcastView() {
         PodcastListFragment podcastListFragment =
@@ -194,5 +244,4 @@ public class MainActivity extends AppCompatActivity
             updatePodcastView();
         }
     }
-
 }

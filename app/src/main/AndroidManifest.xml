@@ -24,15 +24,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="me.bromen.podgo.PodcastActivity"
-            android:label="@string/title_activity_podcast_acitivity"
-            android:parentActivityName="me.bromen.podgo.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="me.bromen.podgo.MainActivity" />
-        </activity>
     </application>
 
 </manifest>
