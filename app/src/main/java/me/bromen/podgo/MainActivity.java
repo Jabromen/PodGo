@@ -161,7 +161,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onDownloadPlaySelected(String podcastTitle, String episodeTitle, String episodeUrl) {
-        if (isDownloading(podcastTitle, episodeTitle)) {
+        if (episodeUrl.equals("")) {
+            Toast.makeText(this, "Invalid URL", Toast.LENGTH_SHORT).show();
+        }
+        else if (isDownloading(podcastTitle, episodeTitle)) {
             episodeDownloads.cancelDownload(this, podcastTitle, episodeTitle);
         }
         else if (PodcastFileUtils.isEpisodeDownloaded(this, podcastTitle, episodeTitle)) {

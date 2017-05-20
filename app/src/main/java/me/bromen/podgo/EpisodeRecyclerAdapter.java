@@ -86,7 +86,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 title = episodeList.get(position - 1).getTitle();
                 url = episodeList.get(position - 1).getEnclosure().getURL().toString();
 
-            } catch (MalformedFeedException | MalformedURLException e) {
+            } catch (MalformedFeedException | MalformedURLException | NullPointerException e) {
                 e.printStackTrace();
             }
 
@@ -101,7 +101,10 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
             int img_id;
 
-            if (((MainActivity) context).isDownloading(podcastTitle, title)) {
+            if (url.equals("")) {
+                img_id = R.mipmap.ic_error;
+            }
+            else if (((MainActivity) context).isDownloading(podcastTitle, title)) {
                 img_id = R.mipmap.ic_cancel;
             }
             else if (PodcastFileUtils.isEpisodeDownloaded(context, podcastTitle, title)) {
