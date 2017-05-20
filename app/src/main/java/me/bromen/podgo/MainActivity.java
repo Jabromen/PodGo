@@ -1,7 +1,12 @@
 package me.bromen.podgo;
 
+import android.app.DownloadManager;
 import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.FragmentTransaction;
 import android.os.Handler;
@@ -9,12 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.icosillion.podengine.exceptions.MalformedFeedException;
-import com.icosillion.podengine.models.Episode;
 import com.icosillion.podengine.models.Podcast;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NewPodcastDialogFragment.OnDataPass, PodcastRecyclerAdapter.OnClickCallbacks,
@@ -27,7 +30,10 @@ public class MainActivity extends AppCompatActivity
     private String selectedPodcast;
     private PodcastList podcastList;
 
+    private EpisodeDownloads episodeDownloads;
+
     public XmlResultReceiver xmlReceiver;
+    private BroadcastReceiver downloadReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +44,15 @@ public class MainActivity extends AppCompatActivity
             podcastList = (PodcastList) savedInstanceState.getSerializable("PODCASTLIST");
             xmlReceiver = savedInstanceState.getParcelable("RECEIVER");
             selectedPodcast = savedInstanceState.getString("SELECTEDPODCAST");
+            episodeDownloads = (EpisodeDownloads) savedInstanceState.getSerializable("EPISODEDOWNLOADS");
+            episodeDownloads.validateDownloads(this);
         }
         else {
             setUpPodcastList();
             setUpXmlReceiver();
+            setUpDownloadReceiver();
+
+            episodeDownloads = new EpisodeDownloads();
 
             PodcastListFragment fragment = new PodcastListFragment();
 
@@ -55,12 +66,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         xmlReceiver.setReceiver(this);
+        setUpDownloadReceiver();
         super.onResume();
     }
 
     @Override
     protected void onPause() {
         xmlReceiver.setReceiver(null);
+        unregisterReceiver(downloadReceiver);
         super.onPause();
     }
 
@@ -71,6 +84,7 @@ public class MainActivity extends AppCompatActivity
         outState.putSerializable("PODCASTLIST", podcastList);
         outState.putParcelable("RECEIVER", xmlReceiver);
         outState.putString("SELECTEDPODCAST", selectedPodcast);
+        outState.putSerializable("EPISODEDOWNLOADS", episodeDownloads);
     }
 
     @Override
@@ -98,10 +112,29 @@ public class MainActivity extends AppCompatActivity
         xmlReceiver.setReceiver(this);
     }
 
+    public void setUpDownloadReceiver() {
+        IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+
+        downloadReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                long reference = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+
+                episodeDownloads.completeDownload(reference);
+
+                Toast.makeText(getApplicationContext(), "Download Complete", Toast.LENGTH_SHORT).show();
+
+                refreshEpisodeView();
+            }
+        };
+
+        registerReceiver(downloadReceiver, intentFilter);
+    }
+
     // What to do when data is received from new podcast dialog fragment
     @Override
     public void onPassUrl(String data) {
-        addNewPodcast(data);
+        downloadPodcastXml(data, false);
     }
 
     // User selects a podcast
@@ -124,6 +157,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onEpisodeSelected(String podcastTitle, String episodeTitle) {
         Toast.makeText(this, episodeTitle, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDownloadPlaySelected(String podcastTitle, String episodeTitle, String episodeUrl) {
+        if (isDownloading(podcastTitle, episodeTitle)) {
+            episodeDownloads.cancelDownload(this, podcastTitle, episodeTitle);
+        }
+        else if (PodcastFileUtils.isEpisodeDownloaded(this, podcastTitle, episodeTitle)) {
+            Toast.makeText(this, "Play Episode", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            episodeDownloads.startDownload(this, Uri.parse(episodeUrl), podcastTitle, episodeTitle);
+            refreshEpisodeView();
+        }
     }
 
     @Override
@@ -151,6 +198,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPassPodcastOption(PodcastOptionDialogFragment.OptionSelected option, String title) {
         switch (option) {
+            case OPTION_REFRESH:
+                downloadPodcastXml(podcastList.get(title).getFeedUrl(), true);
+                Toast.makeText(this, "Refreshing " + title, Toast.LENGTH_SHORT).show();
+                break;
+
             case OPTION_DELETE:
                 deletePodcast(title);
                 break;
@@ -164,10 +216,17 @@ public class MainActivity extends AppCompatActivity
         if (resultCode == XmlResultReceiver.SUCCESS) {
             String feedUrl = resultData.getString("URL");
             String feedXml = resultData.getString("XML");
+            boolean refresh = resultData.getBoolean("REFRESH");
+
 
             try {
-                if (tryAddPodcastToList(new Podcast(feedXml, new URL(feedUrl)))) {
-                    updatePodcastView();
+                if (!refresh) {
+                    if (tryAddPodcastToList(new Podcast(feedXml, new URL(feedUrl)))) {
+                        updatePodcastView();
+                    }
+                }
+                else {
+                    refreshPodcastInList(new Podcast(feedXml, new URL(feedUrl)));
                 }
             } catch (MalformedFeedException e) {
                 e.printStackTrace();
@@ -184,11 +243,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Add a new podcast from URL
-    public void addNewPodcast(String feed) {
+    public void downloadPodcastXml(String feed, boolean refresh) {
 
         Intent xmlIntent = new Intent(MainActivity.this, XmlRequestService.class);
         xmlIntent.putExtra("URL", feed);
         xmlIntent.putExtra("RECEIVER", xmlReceiver);
+        xmlIntent.putExtra("REFRESH", refresh);
         startService(xmlIntent);
 
     }
@@ -211,6 +271,25 @@ public class MainActivity extends AppCompatActivity
             }
         }
         return false;
+    }
+
+    void refreshPodcastInList(Podcast podcast) {
+        if (podcast != null) {
+            PodcastShell podShell = new PodcastShell(podcast);
+
+            int index = podcastList.indexOf(podShell.getTitle());
+
+            int oldNumEpisodes = podcastList.get(index).getNumEpisodes();
+            int newNumEpisodes = podShell.getNumEpisodes();
+
+            podcastList.remove(index);
+            podcastList.add(index, podShell);
+
+            PodcastFileUtils.savePodcastInfo(getApplicationContext(), podcast);
+
+            Toast.makeText(this, Integer.toString(newNumEpisodes - oldNumEpisodes) + " New Episodes",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     // Getter for podcast list for use in fragment
@@ -243,5 +322,18 @@ public class MainActivity extends AppCompatActivity
             PodcastFileUtils.deletePodcast(this, podcastTitle);
             updatePodcastView();
         }
+    }
+
+    public void refreshEpisodeView() {
+        EpisodeListFragment episodeListFragment =
+                (EpisodeListFragment) getFragmentManager().findFragmentByTag(EPISODE_LIST_TAG);
+
+        if (episodeListFragment != null) {
+            episodeListFragment.refreshEpisodes();
+        }
+    }
+
+    public boolean isDownloading(String podcastTitle, String episodeTitle) {
+        return episodeDownloads.isDownloading(this, podcastTitle, episodeTitle);
     }
 }

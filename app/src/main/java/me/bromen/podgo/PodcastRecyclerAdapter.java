@@ -74,7 +74,8 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
                     .load(Uri.parse(url))
                     .asBitmap()
                     .centerCrop()
-                    .into(new FileTarget(PodcastFileUtils.getPodcastImageFile(context, title).getPath(), 150, 150, context, imageView));
+                    .into(new FileTarget(PodcastFileUtils.getPodcastImageFile(context, title).getPath(),
+                            300, 300, context, imageView, 150, 150));
         }
     }
 

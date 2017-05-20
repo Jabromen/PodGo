@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.regex.Pattern;
 
 /**
  * Created by jeff on 5/6/17.
@@ -53,59 +54,17 @@ class PodcastFileUtils {
         }
     }
 
-    static void savePodcastImage(Context context, String podcast, Bitmap image, boolean overWriteFile) {
-
-        OutputStream os = null;
-
-        File dir = getPodcastStorageDir(context, podcast);
-        File imageFile = new File(dir, "podcastImage.jpg");
-
-        if (imageFile.exists()) {
-            if (overWriteFile) {
-                imageFile.delete();
-                imageFile = new File(dir, "podcastImage.jpg");
-            }
-            else {
-                return;
-            }
-        }
-        try {
-            os = new FileOutputStream(imageFile);
-            image.compress(Bitmap.CompressFormat.PNG, 10, os);
-            os.flush();
-            os.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static Bitmap getPodcastImage(Context context, String title) {
-        File dir = getPodcastStorageDir(context, title);
-        File image = new File(dir, "podcastImage.jpg");
-
-        if (image.exists()) {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.RGB_565;
-            return ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(image.getPath(), options), 150, 150);
-        }
-        else {
-            return null;
-        }
-    }
-
-    public static File getPodcastImageFile(Context context, String title) {
+    static File getPodcastImageFile(Context context, String title) {
         File dir = getPodcastStorageDir(context, title);
         return new File(dir, "podcastImage.jpg");
     }
 
-    public static boolean imageFileIsSaved(Context context, String title) {
+    static boolean imageFileIsSaved(Context context, String title) {
         return getPodcastImageFile(context, title).exists();
     }
 
-    public static File getPodcastStorageDir(Context context, String title) {
-        File podcastDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS), title);
+    static File getPodcastStorageDir(Context context, String title) {
+        File podcastDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS), sanitizeName(title));
 
         if (!podcastDir.exists()) {
             podcastDir.mkdirs();
@@ -114,17 +73,17 @@ class PodcastFileUtils {
         return podcastDir;
     }
 
-    public static File getEpisodeAudioFile(Context context, String podcastTitle, String episodeTitle) {
+    static File getEpisodeAudioFile(Context context, String podcastTitle, String episodeTitle) {
         File podcastDir = getPodcastStorageDir(context, podcastTitle);
 
-        return new File(podcastDir, episodeTitle + ".mp3");
+        return new File(podcastDir, sanitizeName(episodeTitle) + ".mp3");
     }
 
-    public static boolean isEpisodeDownloaded(Context context, String podcastTitle, String episodeTitle) {
+    static boolean isEpisodeDownloaded(Context context, String podcastTitle, String episodeTitle) {
         return getEpisodeAudioFile(context, podcastTitle, episodeTitle).exists();
     }
 
-    public static Podcast loadPodcastFromFile(Context context, String title) {
+    static Podcast loadPodcastFromFile(Context context, String title) {
         File dir = getPodcastStorageDir(context, title);
 
         File xmlFile = new File(dir, "feed.xml");
@@ -143,7 +102,7 @@ class PodcastFileUtils {
         }
     }
 
-    public static void deletePodcast(Context context, String podcastTitle) {
+    static void deletePodcast(Context context, String podcastTitle) {
         File podcastDir = getPodcastStorageDir(context, podcastTitle);
 
         try {
@@ -151,6 +110,10 @@ class PodcastFileUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    static String sanitizeName(String name) {
+        return name.replaceAll("[|#%&\\?*<\":>+/']", "_");
     }
 }
 

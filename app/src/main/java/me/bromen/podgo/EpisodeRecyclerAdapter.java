@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.icosillion.podengine.exceptions.MalformedFeedException;
 import com.icosillion.podengine.models.Episode;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,17 +32,18 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     interface OnClickCallbacks {
         void onEpisodeSelected(String podcastTitle, String episodeTitle);
+        void onDownloadPlaySelected(String podcastTitle, String episodeTitle, String episodeUrl);
         void onFilterEpisodes(int position);
     }
 
     private int startingFilter;
     private String podcastTitle;
-    private List<Episode> episodeList = new ArrayList<>();
+    private EpisodeList episodeList = new EpisodeList();
 
     private Context context;
     OnClickCallbacks mCallbacks;
 
-    EpisodeRecyclerAdapter(List<Episode> episodeList, String podcastTitle, int startingFilter) {
+    EpisodeRecyclerAdapter(EpisodeList episodeList, String podcastTitle, int startingFilter) {
         this.episodeList = episodeList;
         this.podcastTitle = podcastTitle;
         this.startingFilter = startingFilter;
@@ -66,7 +68,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
         if (holder instanceof EpisodeViewHolderHeader) {
             ((EpisodeViewHolderHeader) holder).titleView.setText(podcastTitle);
@@ -78,12 +80,17 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     .into(((EpisodeViewHolderHeader) holder).podcastImageView);
         }
         else if (holder instanceof EpisodeViewHolderItem) {
+            String title = "";
+            String url = "";
             try {
-                ((EpisodeViewHolderItem) holder).titleView.setText(episodeList.get(position - 1).getTitle());
+                title = episodeList.get(position - 1).getTitle();
+                url = episodeList.get(position - 1).getEnclosure().getURL().toString();
 
-            } catch (MalformedFeedException e) {
+            } catch (MalformedFeedException | MalformedURLException e) {
                 e.printStackTrace();
             }
+
+            ((EpisodeViewHolderItem) holder).titleView.setText(title);
 
             Glide.with(context)
                     .load(PodcastFileUtils.getPodcastImageFile(context, podcastTitle))
@@ -91,12 +98,40 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     .override(50, 50)
                     .centerCrop()
                     .into(((EpisodeViewHolderItem) holder).episodeImageView);
+
+            int img_id;
+
+            if (((MainActivity) context).isDownloading(podcastTitle, title)) {
+                img_id = R.mipmap.ic_cancel;
+            }
+            else if (PodcastFileUtils.isEpisodeDownloaded(context, podcastTitle, title)) {
+                img_id = R.mipmap.ic_play;
+            }
+            else {
+                img_id = R.mipmap.ic_download;
+            }
+
+            Glide.with(context)
+                    .load(img_id)
+                    .asBitmap()
+                    .into(((EpisodeViewHolderItem) holder).downloadPlayButton);
+
+            final String finalTitle = title;
+            final String finalUrl = url;
+            ((EpisodeViewHolderItem) holder).downloadPlayButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    mCallbacks.onDownloadPlaySelected(podcastTitle, finalTitle, finalUrl);
+
+                }
+            });
         }
     }
 
     @Override
     public int getItemCount() {
-        return episodeList.size();
+        return episodeList.size() + 1;
     }
 
     @Override
@@ -118,6 +153,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         TextView titleView;
         ImageView episodeImageView;
         RelativeLayout selectEpisode;
+        ImageView downloadPlayButton;
 
         public EpisodeViewHolderItem(final View itemView) {
             super(itemView);
@@ -125,6 +161,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             titleView = (TextView) itemView.findViewById(R.id.episodeTitle);
             episodeImageView = (ImageView) itemView.findViewById(R.id.episodeImage);
             selectEpisode = (RelativeLayout) itemView.findViewById(R.id.selectEpisode);
+            downloadPlayButton = (ImageView) itemView.findViewById(R.id.episodeDownloadPlayButton);
 
             selectEpisode.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -170,10 +207,14 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void updateList(List<Episode> newList) {
-        episodeList = new ArrayList<>();
+        episodeList = new EpisodeList();
 
         episodeList.addAll(newList);
 
+        notifyDataSetChanged();
+    }
+
+    public void refreshList() {
         notifyDataSetChanged();
     }
 }

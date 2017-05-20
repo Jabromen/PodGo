@@ -25,20 +25,21 @@ public class FileTarget extends SimpleTarget<Bitmap> {
     private boolean setView;
     private Context context;
     private ImageView imageView;
-    private int width;
-    private int height;
+    private int viewWidth;
+    private int viewHeight;
 
     public FileTarget(String filename, int width, int height) {
         this(filename, width, height, Bitmap.CompressFormat.JPEG, 70);
         setView = false;
     }
 
-    public FileTarget(String filename, int width, int height, Context context, ImageView imageView) {
+    public FileTarget(String filename, int width, int height,
+                      Context context, ImageView imageView, int viewWidth, int viewHeight) {
         this(filename, width, height, Bitmap.CompressFormat.JPEG, 70);
         this.context = context;
         this.imageView = imageView;
-        this.width = width;
-        this.height = height;
+        this.viewWidth = viewWidth;
+        this.viewHeight = viewHeight;
         setView = true;
     }
 
@@ -68,7 +69,7 @@ public class FileTarget extends SimpleTarget<Bitmap> {
             Glide.with(context)
                     .load(new File(filename))
                     .asBitmap()
-                    .override(width, height)
+                    .override(viewWidth, viewHeight)
                     .centerCrop()
                     .into(imageView);
         }

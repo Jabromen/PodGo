@@ -14,9 +14,10 @@ import android.view.View;
 
 public class PodcastOptionDialogFragment extends DialogFragment {
 
-    CharSequence options[] = new CharSequence[] {"Delete Podcast"};
+    CharSequence options[] = new CharSequence[] {"Refresh Feed", "Delete Podcast"};
 
     enum OptionSelected {
+        OPTION_REFRESH,
         OPTION_DELETE
     }
 

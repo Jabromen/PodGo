@@ -162,6 +162,16 @@ public class PodcastList implements List<PodcastShell>, Serializable {
         return podcastList.get(index);
     }
 
+    public PodcastShell get(String title) {
+
+        for (PodcastShell pod : podcastList) {
+            if (pod.getTitle().equals(title)) {
+                return pod;
+            }
+        }
+        return null;
+    }
+
     @Override
     public PodcastShell set(int index, PodcastShell element) {
         return podcastList.set(index, element);
@@ -180,6 +190,17 @@ public class PodcastList implements List<PodcastShell>, Serializable {
     @Override
     public int indexOf(Object o) {
         return podcastList.indexOf(o);
+    }
+
+    public int indexOf(String title) {
+
+        for (int i = 0; i < podcastList.size(); i++) {
+
+            if (podcastList.get(i).getTitle().equals(title)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override

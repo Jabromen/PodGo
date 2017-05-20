@@ -21,6 +21,7 @@ import com.icosillion.podengine.exceptions.MalformedFeedException;
 import com.icosillion.podengine.models.Episode;
 import com.icosillion.podengine.models.Podcast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class EpisodeListFragment extends Fragment {
 
     private int filterOption;
     private String podcastTitle;
-    private List<Episode> episodeList;
+    private EpisodeList episodeList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,7 +70,8 @@ public class EpisodeListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         podcastTitle = ((MainActivity) getActivity()).getSelectedPodcast();
-        episodeList = PodcastFileUtils.loadPodcastFromFile(getActivity(), podcastTitle).getEpisodes();
+        episodeList = new EpisodeList();
+        episodeList.addAll(PodcastFileUtils.loadPodcastFromFile(getActivity(), podcastTitle).getEpisodes());
 
         if (mToolbar != null) {
             ((MainActivity) getActivity()).setSupportActionBar(mToolbar);
@@ -119,10 +121,48 @@ public class EpisodeListFragment extends Fragment {
                 ((EpisodeRecyclerAdapter) episodeAdapter).updateList(episodeList.subList(0, index));
                 break;
 
-            // TODO: Add filters for downloaded and not downloaded episodes
+            // Show All Downloaded Episodes
+            case 2:
+                List<Episode> downloaded = new ArrayList<>();
+
+                for (Episode ep : episodeList) {
+                    if (isEpisodeDownloaded(ep)) {
+                        downloaded.add(ep);
+                    }
+                }
+                ((EpisodeRecyclerAdapter) episodeAdapter).updateList(downloaded);
+                break;
+
+            // Show All Not Downloaded Episodes
+            case 3:
+                List<Episode> notDownloaded = new ArrayList<>();
+
+                for (Episode ep : episodeList) {
+                    if (!isEpisodeDownloaded(ep)) {
+                        notDownloaded.add(ep);
+                    }
+                }
+                ((EpisodeRecyclerAdapter) episodeAdapter).updateList(notDownloaded);
+                break;
+
             default:
                 Toast.makeText(getActivity(), "Option Not Implemented Yet", Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    private boolean isEpisodeDownloaded(Episode ep) {
+        try {
+            return PodcastFileUtils.isEpisodeDownloaded(getActivity(), podcastTitle, ep.getTitle());
+
+        } catch (MalformedFeedException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public void refreshEpisodes() {
+        ((EpisodeRecyclerAdapter) episodeAdapter).refreshList();
     }
 }

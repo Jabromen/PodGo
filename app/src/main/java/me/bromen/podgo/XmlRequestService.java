@@ -31,6 +31,7 @@ public class XmlRequestService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         String feedUrl = intent.getStringExtra("URL");
         ResultReceiver receiver = intent.getParcelableExtra("RECEIVER");
+        boolean refresh = intent.getBooleanExtra("REFRESH", false);
 
         try {
             URL url = new URL(feedUrl);
@@ -41,6 +42,7 @@ public class XmlRequestService extends IntentService {
             Bundle bundle = new Bundle();
             bundle.putString("URL", feedUrl);
             bundle.putString("XML", xmlFeed);
+            bundle.putBoolean("REFRESH", refresh);
 
             receiver.send(XmlResultReceiver.SUCCESS, bundle);
 
