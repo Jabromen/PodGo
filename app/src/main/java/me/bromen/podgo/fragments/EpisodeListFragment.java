@@ -1,28 +1,28 @@
-package me.bromen.podgo;
+package me.bromen.podgo.fragments;
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
-
-import com.icosillion.podengine.exceptions.MalformedFeedException;
-import com.icosillion.podengine.models.Episode;
-import com.icosillion.podengine.models.Podcast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import me.bromen.podgo.adapters.EpisodeRecyclerAdapter;
+import me.bromen.podgo.activities.MainActivity;
+import me.bromen.podgo.structures.FeedItem;
+import me.bromen.podgo.utilities.PodcastFileUtils;
+import me.bromen.podgo.R;
 
 /**
  * Created by jeff on 5/17/17.
@@ -35,8 +35,9 @@ public class EpisodeListFragment extends Fragment {
     private RecyclerView.Adapter episodeAdapter;
 
     private int filterOption;
+    private long id;
     private String podcastTitle;
-    private EpisodeList episodeList;
+    private List<FeedItem> itemList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,16 +70,15 @@ public class EpisodeListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        podcastTitle = ((MainActivity) getActivity()).getSelectedPodcast();
-        episodeList = new EpisodeList();
-        episodeList.addAll(PodcastFileUtils.loadPodcastFromFile(getActivity(), podcastTitle).getEpisodes());
+        id = ((MainActivity) getActivity()).getSelectedPodcastId();
+        podcastTitle = ((MainActivity) getActivity()).getFeedList().getFromId(id).getTitle();
+
+        new LoadEpisodesTask().execute(id);
 
         if (mToolbar != null) {
             ((MainActivity) getActivity()).setSupportActionBar(mToolbar);
             mToolbar.setTitle(podcastTitle);
         }
-
-        setUpEpisodeView();
     }
 
     @Override
@@ -94,13 +94,27 @@ public class EpisodeListFragment extends Fragment {
         inflater.inflate(R.menu.menu_podcast_acitivity, menu);
     }
 
+    public class LoadEpisodesTask extends AsyncTask<Long, Void, List<FeedItem>> {
+
+        @Override
+        protected List<FeedItem> doInBackground(Long... id) {
+            return ((MainActivity) getActivity()).getDbHelper().loadFeedItems(id[0]);
+        }
+
+        @Override
+        protected void onPostExecute(List<FeedItem> feedItems) {
+            itemList = feedItems;
+            setUpEpisodeView();
+        }
+    }
+
     private void setUpEpisodeView() {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
 
         episodeView.setLayoutManager(layoutManager);
         episodeView.setHasFixedSize(true);
 
-        episodeAdapter = new EpisodeRecyclerAdapter(episodeList, podcastTitle, filterOption);
+        episodeAdapter = new EpisodeRecyclerAdapter(itemList, podcastTitle, filterOption);
         episodeView.setAdapter(episodeAdapter);
     }
 
@@ -112,20 +126,20 @@ public class EpisodeListFragment extends Fragment {
 
             // Show All Episodes
             case 0:
-                ((EpisodeRecyclerAdapter) episodeAdapter).updateList(episodeList);
+                ((EpisodeRecyclerAdapter) episodeAdapter).updateList(itemList);
                 break;
 
             // Show Most Recent 7 Episodes
             case 1:
-                int index = episodeList.size() < 7 ? episodeList.size() : 7;
-                ((EpisodeRecyclerAdapter) episodeAdapter).updateList(episodeList.subList(0, index));
+                int index = itemList.size() < 7 ? itemList.size() : 7;
+                ((EpisodeRecyclerAdapter) episodeAdapter).updateList(itemList.subList(0, index));
                 break;
 
             // Show All Downloaded Episodes
             case 2:
-                List<Episode> downloaded = new ArrayList<>();
+                List<FeedItem> downloaded = new ArrayList<>();
 
-                for (Episode ep : episodeList) {
+                for (FeedItem ep : itemList) {
                     if (isEpisodeDownloaded(ep)) {
                         downloaded.add(ep);
                     }
@@ -135,9 +149,9 @@ public class EpisodeListFragment extends Fragment {
 
             // Show All Not Downloaded Episodes
             case 3:
-                List<Episode> notDownloaded = new ArrayList<>();
+                List<FeedItem> notDownloaded = new ArrayList<>();
 
-                for (Episode ep : episodeList) {
+                for (FeedItem ep : itemList) {
                     if (!isEpisodeDownloaded(ep)) {
                         notDownloaded.add(ep);
                     }
@@ -151,15 +165,8 @@ public class EpisodeListFragment extends Fragment {
         }
     }
 
-    private boolean isEpisodeDownloaded(Episode ep) {
-        try {
-            return PodcastFileUtils.isEpisodeDownloaded(getActivity(), podcastTitle, ep.getTitle());
-
-        } catch (MalformedFeedException e) {
-            e.printStackTrace();
-        }
-
-        return false;
+    private boolean isEpisodeDownloaded(FeedItem ep) {
+        return PodcastFileUtils.isEpisodeDownloaded(getActivity(), podcastTitle, ep.getTitle());
     }
 
     public void refreshEpisodes() {

@@ -1,4 +1,4 @@
-package me.bromen.podgo;
+package me.bromen.podgo.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -16,21 +16,21 @@ public class PodcastOptionDialogFragment extends DialogFragment {
 
     CharSequence options[] = new CharSequence[] {"Refresh Feed", "Delete Podcast"};
 
-    enum OptionSelected {
+    public enum OptionSelected {
         OPTION_REFRESH,
         OPTION_DELETE
     }
 
-    interface OnDataPass {
-        void onPassPodcastOption(OptionSelected option, String title);
+    public interface OnDataPass {
+        void onPassPodcastOption(OptionSelected option, long podcastId);
     }
 
-    OnDataPass mCallbacks;
-    private String podcastTitle;
+    private OnDataPass mCallbacks;
+    private long podcastId;
 
-    public void passOption(OptionSelected option, String title) {
+    public void passOption(OptionSelected option, long podcastId) {
         if (mCallbacks != null) {
-            mCallbacks.onPassPodcastOption(option, title);
+            mCallbacks.onPassPodcastOption(option, podcastId);
         }
     }
 
@@ -39,7 +39,7 @@ public class PodcastOptionDialogFragment extends DialogFragment {
 
         mCallbacks = (OnDataPass) getActivity();
 
-        podcastTitle = getArguments().getString("TITLE");
+        podcastId = getArguments().getLong("ID");
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -49,7 +49,7 @@ public class PodcastOptionDialogFragment extends DialogFragment {
                     confirmDelete();
                 }
                 else {
-                    passOption(OptionSelected.values()[which], podcastTitle);
+                    passOption(OptionSelected.values()[which], podcastId);
                 }
             }
         });
@@ -65,7 +65,7 @@ public class PodcastOptionDialogFragment extends DialogFragment {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        passOption(OptionSelected.OPTION_DELETE, podcastTitle);
+                        passOption(OptionSelected.OPTION_DELETE, podcastId);
                     }
                 })
                 .setNegativeButton("No", null)

@@ -1,24 +1,24 @@
-package me.bromen.podgo;
+package me.bromen.podgo.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.icosillion.podengine.exceptions.MalformedFeedException;
-import com.icosillion.podengine.models.Podcast;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import me.bromen.podgo.downloads.FileTarget;
+import me.bromen.podgo.structures.Feed;
+import me.bromen.podgo.structures.FeedList;
+import me.bromen.podgo.utilities.PodcastFileUtils;
+import me.bromen.podgo.R;
 
 /**
  * Created by jeff on 5/11/17.
@@ -26,17 +26,17 @@ import java.util.List;
 
 public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecyclerAdapter.PodcastViewHolder> {
 
-    interface OnClickCallbacks {
-        void onPodcastSelected(String podcastTitle);
-        void onOptionsSelected(String podcastTitle);
+    public interface OnClickCallbacks {
+        void onPodcastSelected(long podcastId);
+        void onOptionsSelected(long podcastId);
     }
 
     private Context context;
     private OnClickCallbacks mCallbacks;
-    private List<PodcastShell> podcastList = new ArrayList<>();
+    private FeedList feedList = new FeedList();
 
-    PodcastRecyclerAdapter(List<PodcastShell> podcastList) {
-        this.podcastList = podcastList;
+    public PodcastRecyclerAdapter(FeedList feedList) {
+        this.feedList = feedList;
     }
 
     @Override
@@ -49,15 +49,28 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
     }
 
     @Override
-    public void onBindViewHolder(PodcastViewHolder holder, int position) {
+    public void onBindViewHolder(PodcastViewHolder holder, final int position) {
 
-        String title = podcastList.get(position).getTitle();
-        String url = podcastList.get(position).getImageUrl();
+        String title = feedList.get(position).getTitle();
+        String url = feedList.get(position).getImageUrl();
 
         holder.titleView.setText(title);
 
         setUpImageView(context, holder.imageView, title, url);
 
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallbacks.onPodcastSelected(feedList.get(position).getId());
+            }
+        });
+
+        holder.optionsView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallbacks.onOptionsSelected(feedList.get(position).getId());
+            }
+        });
     }
 
     private void setUpImageView(Context context, ImageView imageView, String title, String url) {
@@ -81,7 +94,7 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
 
     @Override
     public int getItemCount() {
-        return podcastList.size();
+        return feedList != null ? feedList.size() : 0;
     }
 
     public class PodcastViewHolder extends RecyclerView.ViewHolder {
@@ -95,26 +108,12 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
             titleView = (TextView) itemView.findViewById(R.id.podcastTitleListItem);
             imageView = (ImageView) itemView.findViewById(R.id.podcastImageListItem);
             optionsView = (ImageView) itemView.findViewById(R.id.podcastOptionListItem);
-
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mCallbacks.onPodcastSelected(titleView.getText().toString());
-                }
-            });
-
-            optionsView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mCallbacks.onOptionsSelected(titleView.getText().toString());
-                }
-            });
         }
     }
 
-    public void updateList(PodcastList newList) {
-        podcastList = new ArrayList<>();
-        podcastList.addAll(newList);
+    public void updateList(FeedList newList) {
+        feedList = new FeedList();
+        feedList.addAll(newList);
         refreshList();
     }
 

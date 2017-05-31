@@ -1,4 +1,4 @@
-package me.bromen.podgo;
+package me.bromen.podgo.fragments;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import me.bromen.podgo.R;
+
 /**
  * Created by jeff on 5/5/17.
  */
@@ -19,7 +21,7 @@ import android.widget.EditText;
 public class NewPodcastDialogFragment extends DialogFragment {
 
     // Interface used to pass data back to the calling activity
-    interface OnDataPass {
+    public interface OnDataPass {
         void onPassUrl(String data);
     }
 

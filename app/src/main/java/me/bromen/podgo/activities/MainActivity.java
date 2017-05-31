@@ -1,4 +1,4 @@
-package me.bromen.podgo;
+package me.bromen.podgo.activities;
 
 import android.app.DownloadManager;
 import android.app.FragmentManager;
@@ -7,32 +7,46 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.FragmentTransaction;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
-import com.icosillion.podengine.exceptions.MalformedFeedException;
-import com.icosillion.podengine.models.Podcast;
-
-import java.net.MalformedURLException;
-import java.net.URL;
+import me.bromen.podgo.downloads.EpisodeDownloads;
+import me.bromen.podgo.adapters.EpisodeRecyclerAdapter;
+import me.bromen.podgo.fragments.NewPodcastDialogFragment;
+import me.bromen.podgo.storage.PodcastDbContract;
+import me.bromen.podgo.storage.PodcastDbHelper;
+import me.bromen.podgo.structures.Feed;
+import me.bromen.podgo.structures.FeedList;
+import me.bromen.podgo.utilities.PodcastFileUtils;
+import me.bromen.podgo.fragments.PodcastListFragment;
+import me.bromen.podgo.fragments.PodcastOptionDialogFragment;
+import me.bromen.podgo.adapters.PodcastRecyclerAdapter;
+import me.bromen.podgo.R;
+import me.bromen.podgo.downloads.FeedRequestService;
+import me.bromen.podgo.downloads.FeedResultReceiver;
+import me.bromen.podgo.fragments.EpisodeListFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NewPodcastDialogFragment.OnDataPass, PodcastRecyclerAdapter.OnClickCallbacks,
-        PodcastOptionDialogFragment.OnDataPass, XmlResultReceiver.Receiver,
+        PodcastOptionDialogFragment.OnDataPass, FeedResultReceiver.Receiver,
         EpisodeRecyclerAdapter.OnClickCallbacks {
 
     private static final String PODCAST_LIST_TAG = "podcast_list_fragment";
     private static final String EPISODE_LIST_TAG = "episode_list_fragment";
 
-    private String selectedPodcast;
-    private PodcastList podcastList;
+    private long selectedPodcastId;
+    private FeedList feedList;
+
+    private PodcastDbHelper dbHelper;
 
     private EpisodeDownloads episodeDownloads;
 
-    public XmlResultReceiver xmlReceiver;
+    public FeedResultReceiver xmlReceiver;
     private BroadcastReceiver downloadReceiver;
 
     @Override
@@ -40,17 +54,18 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        dbHelper = new PodcastDbHelper(getApplicationContext());
+
         if (savedInstanceState != null) {
-            podcastList = (PodcastList) savedInstanceState.getSerializable("PODCASTLIST");
+            feedList = (FeedList) savedInstanceState.getSerializable("FEEDLIST");
             xmlReceiver = savedInstanceState.getParcelable("RECEIVER");
-            selectedPodcast = savedInstanceState.getString("SELECTEDPODCAST");
+            selectedPodcastId = savedInstanceState.getLong("SELECTEDPODCASTID");
             episodeDownloads = (EpisodeDownloads) savedInstanceState.getSerializable("EPISODEDOWNLOADS");
             episodeDownloads.validateDownloads(this);
         }
         else {
             setUpPodcastList();
             setUpXmlReceiver();
-            setUpDownloadReceiver();
 
             episodeDownloads = new EpisodeDownloads();
 
@@ -78,12 +93,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onDestroy() {
+        dbHelper.close();
+        super.onDestroy();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putSerializable("PODCASTLIST", podcastList);
+        outState.putSerializable("FEEDLIST", feedList);
         outState.putParcelable("RECEIVER", xmlReceiver);
-        outState.putString("SELECTEDPODCAST", selectedPodcast);
+        outState.putLong("SELECTEDPODCASTID", selectedPodcastId);
         outState.putSerializable("EPISODEDOWNLOADS", episodeDownloads);
     }
 
@@ -101,14 +122,59 @@ public class MainActivity extends AppCompatActivity
 
     // Initial setup for podcastList
     public void setUpPodcastList() {
-        // Load saved podcast info from files
-        podcastList = new PodcastList();
-        podcastList.loadPodcastInfo(this);
+        new LoadFeedListTask().execute(PodcastDbContract.ORDER_ALPHA_ASC);
     }
 
-    // Initial setup for XmlResultReceiver
+    public class LoadFeedListTask extends AsyncTask<Integer, Void, FeedList> {
+
+        protected FeedList doInBackground(Integer... options) {
+            return dbHelper.loadAllFeeds(options[0]);
+        }
+
+        @Override
+        protected void onPostExecute(FeedList list) {
+            feedList = list;
+            updatePodcastView();
+        }
+    }
+
+    public class SaveFeedDbTask extends AsyncTask<Feed, Void, Void> {
+
+        protected Void doInBackground(Feed... feed) {
+            feed[0].setId(dbHelper.saveFeed(feed[0]));
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            updatePodcastView();
+        }
+    }
+
+    public class RefreshFeedDbTask extends AsyncTask<Feed, Void, Void> {
+
+        protected Void doInBackground(Feed... feed) {
+            dbHelper.updateFeed(feed[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            updatePodcastView();
+        }
+    }
+
+    public class DeleteFeedTask extends AsyncTask<Long, Void, Void> {
+
+        protected Void doInBackground(Long... id) {
+            dbHelper.deleteFeed(id[0]);
+            return null;
+        }
+    }
+
+    // Initial setup for FeedResultReceiver
     public void setUpXmlReceiver() {
-        xmlReceiver = new XmlResultReceiver(new Handler());
+        xmlReceiver = new FeedResultReceiver(new Handler());
         xmlReceiver.setReceiver(this);
     }
 
@@ -139,9 +205,11 @@ public class MainActivity extends AppCompatActivity
 
     // User selects a podcast
     @Override
-    public void onPodcastSelected(String podcastTitle) {
+    public void onPodcastSelected(long podcastId) {
 
-        selectedPodcast = podcastTitle;
+        Log.d("ID", ""+podcastId);
+
+        selectedPodcastId = podcastId;
 
         EpisodeListFragment fragment = new EpisodeListFragment();
 
@@ -188,9 +256,9 @@ public class MainActivity extends AppCompatActivity
 
     // Display podcast options menu
     @Override
-    public void onOptionsSelected(String podcastTitle) {
+    public void onOptionsSelected(long podcastId) {
         Bundle bundle = new Bundle();
-        bundle.putString("TITLE", podcastTitle);
+        bundle.putLong("ID", podcastId);
 
         PodcastOptionDialogFragment dialog = new PodcastOptionDialogFragment();
         dialog.setArguments(bundle);
@@ -199,47 +267,39 @@ public class MainActivity extends AppCompatActivity
 
     // What to do when a specific podcast option is selected
     @Override
-    public void onPassPodcastOption(PodcastOptionDialogFragment.OptionSelected option, String title) {
+    public void onPassPodcastOption(PodcastOptionDialogFragment.OptionSelected option, long podcastId) {
         switch (option) {
             case OPTION_REFRESH:
-                downloadPodcastXml(podcastList.get(title).getFeedUrl(), true);
-                Toast.makeText(this, "Refreshing " + title, Toast.LENGTH_SHORT).show();
+                Log.d("ID: ", ""+podcastId);
+                downloadPodcastXml(feedList.getFromId(podcastId).getFeedUrl(), true);
+                Toast.makeText(this, "Refreshing " + feedList.getFromId(podcastId).getTitle(), Toast.LENGTH_SHORT).show();
                 break;
 
             case OPTION_DELETE:
-                deletePodcast(title);
+                deletePodcast(podcastId);
                 break;
         }
     }
 
-    // What to do when a result is received from XmlRequestService
+    // What to do when a result is received from FeedRequestService
     @Override
     public void onReceiveResult(int resultCode, Bundle resultData) {
 
-        if (resultCode == XmlResultReceiver.SUCCESS) {
-            String feedUrl = resultData.getString("URL");
-            String feedXml = resultData.getString("XML");
+        if (resultCode == FeedResultReceiver.SUCCESS) {
+
             boolean refresh = resultData.getBoolean("REFRESH");
+            Feed feed = (Feed) resultData.getSerializable("FEED");
 
-
-            try {
-                if (!refresh) {
-                    if (tryAddPodcastToList(new Podcast(feedXml, new URL(feedUrl)))) {
-                        updatePodcastView();
-                    }
+            if (!refresh) {
+                if (tryAddPodcastToList(feed)) {
+                    new SaveFeedDbTask().execute(feed);
                 }
-                else {
-                    refreshPodcastInList(new Podcast(feedXml, new URL(feedUrl)));
-                }
-            } catch (MalformedFeedException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Failed to parse feed", Toast.LENGTH_SHORT).show();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Malformed URL", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                new RefreshFeedDbTask().execute(feed);
             }
         }
-        else if (resultCode == XmlResultReceiver.FAILURE) {
+        else if (resultCode == FeedResultReceiver.FAILURE) {
             Toast.makeText(this, "Failed to retrieve feed", Toast.LENGTH_SHORT).show();
         }
 
@@ -248,7 +308,7 @@ public class MainActivity extends AppCompatActivity
     // Add a new podcast from URL
     public void downloadPodcastXml(String feed, boolean refresh) {
 
-        Intent xmlIntent = new Intent(MainActivity.this, XmlRequestService.class);
+        Intent xmlIntent = new Intent(MainActivity.this, FeedRequestService.class);
         xmlIntent.putExtra("URL", feed);
         xmlIntent.putExtra("RECEIVER", xmlReceiver);
         xmlIntent.putExtra("REFRESH", refresh);
@@ -257,56 +317,51 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Try to add a podcast to the list, returns true if added, false if not
-    boolean tryAddPodcastToList(Podcast podcast) {
-        if (podcast != null) {
-            try {
-                if (!podcastList.contains(podcast.getTitle())) {
-                    podcastList.add(new PodcastShell(podcast));
-                    PodcastFileUtils.savePodcastInfo(getApplicationContext(), podcast);
-                    Toast.makeText(this, "Added " + podcast.getTitle(), Toast.LENGTH_SHORT).show();
-                    return true;
-                } else {
-                    Toast.makeText(this, podcast.getTitle() + " Already Saved", Toast.LENGTH_SHORT).show();
-                }
-            } catch (MalformedFeedException e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Error: Malformed Feed", Toast.LENGTH_SHORT).show();
+    boolean tryAddPodcastToList(Feed feed) {
+        if (feed != null) {
+            if (!feedList.contains(feed.getTitle())) {
+                feedList.add(feed);
+                Toast.makeText(this, "Added " + feed.getTitle(), Toast.LENGTH_SHORT).show();
+                return true;
+            } else {
+                Toast.makeText(this, feed.getTitle() + " Already Saved", Toast.LENGTH_SHORT).show();
             }
         }
         return false;
     }
 
-    void refreshPodcastInList(Podcast podcast) {
-        if (podcast != null) {
-            PodcastShell podShell = new PodcastShell(podcast);
+    void refreshPodcastInList(Feed feed) {
+        if (feed != null) {
 
-            int index = podcastList.indexOf(podShell.getTitle());
+            int index = feedList.indexOf(feed.getTitle());
 
-            int oldNumEpisodes = podcastList.get(index).getNumEpisodes();
-            int newNumEpisodes = podShell.getNumEpisodes();
+//            int oldNumEpisodes = feedList.get(index).getNumEpisodes();
+//            int newNumEpisodes = podShell.getNumEpisodes();
 
-            podcastList.remove(index);
-            podcastList.add(index, podShell);
+            feedList.remove(index);
+            feedList.add(index, feed);
 
-            PodcastFileUtils.savePodcastInfo(getApplicationContext(), podcast);
+            new RefreshFeedDbTask().execute(feed);
 
-            Toast.makeText(this, Integer.toString(newNumEpisodes - oldNumEpisodes) + " New Episodes",
-                    Toast.LENGTH_SHORT).show();
+//            PodcastFileUtils.savePodcastInfo(getApplicationContext(), podcast);
+
+//            Toast.makeText(this, Integer.toString(newNumEpisodes - oldNumEpisodes) + " New Episodes",
+//                    Toast.LENGTH_SHORT).show();
         }
     }
 
     // Getter for podcast list for use in fragment
-    public PodcastList getPodcastList() {
-        if (podcastList == null) {
-            podcastList = new PodcastList();
-            podcastList.loadPodcastInfo(this);
-        }
-        return podcastList;
+    public FeedList getFeedList() {
+        return feedList;
+    }
+
+    public PodcastDbHelper getDbHelper() {
+        return dbHelper;
     }
 
     // Getter for selected podcast for use in fragment
-    public String getSelectedPodcast() {
-        return selectedPodcast;
+    public long getSelectedPodcastId() {
+        return selectedPodcastId;
     }
 
     // Updates the podcast view with the current state of the podcastList
@@ -315,14 +370,16 @@ public class MainActivity extends AppCompatActivity
                 (PodcastListFragment) getFragmentManager().findFragmentByTag(PODCAST_LIST_TAG);
 
         if (podcastListFragment != null) {
-            podcastListFragment.updatePodcastView(podcastList);
+            podcastListFragment.updatePodcastView(feedList);
         }
     }
 
     // Removes a podcast from the list, deletes its local files, and updates the podcast view
-    public void deletePodcast(String podcastTitle) {
-        if (podcastList.remove(podcastTitle)) {
-            PodcastFileUtils.deletePodcast(this, podcastTitle);
+    public void deletePodcast(long podcastId) {
+        String title = feedList.getFromId(podcastId).getTitle();
+        if (feedList.removeFromId(podcastId) != null) {
+            new DeleteFeedTask().execute(podcastId);
+            PodcastFileUtils.deletePodcast(this, title);
             updatePodcastView();
         }
     }

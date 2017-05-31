@@ -1,4 +1,4 @@
-package me.bromen.podgo;
+package me.bromen.podgo.downloads;
 
 import android.app.DownloadManager;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.os.Environment;
 
 import java.io.Serializable;
 import java.util.HashMap;
+
+import me.bromen.podgo.utilities.PodcastFileUtils;
 
 /**
  * Created by jeff on 5/19/17.

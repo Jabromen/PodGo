@@ -13,9 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name="XmlRequestService"/>
+        <service android:name=".downloads.FeedRequestService"/>
         <activity
-            android:name="me.bromen.podgo.MainActivity"
+            android:name="me.bromen.podgo.activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

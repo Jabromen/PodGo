@@ -1,4 +1,4 @@
-package me.bromen.podgo;
+package me.bromen.podgo.downloads;
 
 import android.content.Context;
 import android.graphics.Bitmap;

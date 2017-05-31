@@ -1,4 +1,4 @@
-package me.bromen.podgo;
+package me.bromen.podgo.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,18 +8,19 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.icosillion.podengine.exceptions.MalformedFeedException;
-import com.icosillion.podengine.models.Episode;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import me.bromen.podgo.structures.FeedItem;
+import me.bromen.podgo.utilities.PodcastFileUtils;
+import me.bromen.podgo.R;
+import me.bromen.podgo.activities.MainActivity;
 
 /**
  * Created by jeff on 5/9/17.
@@ -30,7 +31,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    interface OnClickCallbacks {
+    public interface OnClickCallbacks {
         void onEpisodeSelected(String podcastTitle, String episodeTitle);
         void onDownloadPlaySelected(String podcastTitle, String episodeTitle, String episodeUrl);
         void onFilterEpisodes(int position);
@@ -38,12 +39,12 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private int startingFilter;
     private String podcastTitle;
-    private EpisodeList episodeList = new EpisodeList();
+    private List<FeedItem> episodeList = new ArrayList<>();
 
     private Context context;
-    OnClickCallbacks mCallbacks;
+    private OnClickCallbacks mCallbacks;
 
-    EpisodeRecyclerAdapter(EpisodeList episodeList, String podcastTitle, int startingFilter) {
+    public EpisodeRecyclerAdapter(List<FeedItem> episodeList, String podcastTitle, int startingFilter) {
         this.episodeList = episodeList;
         this.podcastTitle = podcastTitle;
         this.startingFilter = startingFilter;
@@ -84,9 +85,9 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             String url = "";
             try {
                 title = episodeList.get(position - 1).getTitle();
-                url = episodeList.get(position - 1).getEnclosure().getURL().toString();
+                url = episodeList.get(position - 1).getEnclosure().getUrl();
 
-            } catch (MalformedFeedException | MalformedURLException | NullPointerException e) {
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
 
@@ -209,8 +210,8 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-    public void updateList(List<Episode> newList) {
-        episodeList = new EpisodeList();
+    public void updateList(List<FeedItem> newList) {
+        episodeList = new ArrayList<>();
 
         episodeList.addAll(newList);
 

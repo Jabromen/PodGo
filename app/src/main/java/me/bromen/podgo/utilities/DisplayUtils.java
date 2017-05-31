@@ -1,4 +1,4 @@
-package me.bromen.podgo;
+package me.bromen.podgo.utilities;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
