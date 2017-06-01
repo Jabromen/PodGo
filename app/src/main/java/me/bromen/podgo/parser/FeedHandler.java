@@ -1,8 +1,5 @@
 package me.bromen.podgo.parser;
 
-import android.content.Context;
-import android.util.Log;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -23,9 +20,9 @@ public class FeedHandler extends DefaultHandler {
     private final String RSS = "rss";
     private final String CHANNEL = "channel";
     private final String ITEM = "item";
+
     private final String ITUNESIMAGE = "itunes:image";
     private final String ENCLOSURE = "enclosure";
-
     private final String TITLE = "title";
     private final String LINK = "link";
     private final String URL = "url";
@@ -40,7 +37,7 @@ public class FeedHandler extends DefaultHandler {
     private boolean bLink = false;
     private boolean bPubDate = false;
 
-    private Stack<String> typeStack = new Stack<>();
+    private Stack<String> tagStack = new Stack<>();
 
     private Feed feed;
     private FeedItem item;
@@ -49,36 +46,36 @@ public class FeedHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException, EmptyStackException {
 
         if (RSS.equalsIgnoreCase(qName)) {
-            if (typeStack.isEmpty()) {
-                typeStack.add(RSS);
+            if (tagStack.isEmpty()) {
+                tagStack.add(RSS);
             }
             else {
                 throw new SAXException("Invalid rss placement");
             }
         }
         else if (CHANNEL.equalsIgnoreCase(qName)) {
-            if (RSS.equalsIgnoreCase(typeStack.peek())) {
+            if (RSS.equalsIgnoreCase(tagStack.peek())) {
                 feed = new Feed();
-                typeStack.add(CHANNEL);
+                tagStack.add(CHANNEL);
             }
             else {
                 throw new SAXException("Invalid channel placement");
             }
         }
         else if (ITEM.equalsIgnoreCase(qName)) {
-            if (CHANNEL.equalsIgnoreCase(typeStack.peek())) {
+            if (CHANNEL.equalsIgnoreCase(tagStack.peek())) {
                 item = new FeedItem();
-                typeStack.add(ITEM);
+                tagStack.add(ITEM);
             }
             else {
                 throw new SAXException("Invalid item placement");
             }
         }
         else if (ITUNESIMAGE.equalsIgnoreCase(qName)) {
-            if (CHANNEL.equalsIgnoreCase(typeStack.peek())) {
+            if (CHANNEL.equalsIgnoreCase(tagStack.peek())) {
                 feed.setImageUrl(attributes.getValue(HREF));
             }
-            else if (ITEM.equalsIgnoreCase(typeStack.peek())) {
+            else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
                 // TODO: Add functionality for individual episode images
             }
         }
@@ -95,7 +92,7 @@ public class FeedHandler extends DefaultHandler {
             bPubDate = true;
         }
         else if (ENCLOSURE.equalsIgnoreCase(qName)) {
-            if (ITEM.equalsIgnoreCase(typeStack.peek())) {
+            if (ITEM.equalsIgnoreCase(tagStack.peek())) {
                 String url = attributes.getValue(URL);
                 String type = attributes.getType(TYPE);
                 String length = attributes.getType(LENGTH);
@@ -115,24 +112,24 @@ public class FeedHandler extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException, EmptyStackException {
         if (RSS.equalsIgnoreCase(qName)) {
-            typeStack.pop();
+            tagStack.pop();
         }
         else if (CHANNEL.equalsIgnoreCase(qName)) {
-            typeStack.pop();
+            tagStack.pop();
         }
         else if (ITEM.equalsIgnoreCase(qName)) {
             feed.getFeedItems().add(item);
-            typeStack.pop();
+            tagStack.pop();
         }
     }
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (bTitle) {
-            if (CHANNEL.equalsIgnoreCase(typeStack.peek())) {
+            if (CHANNEL.equalsIgnoreCase(tagStack.peek())) {
                 feed.setTitle(new String(ch, start, length));
             }
-            else if (ITEM.equalsIgnoreCase(typeStack.peek())) {
+            else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
                 item.setTitle(new String(ch, start, length));
             }
             else {
@@ -141,10 +138,10 @@ public class FeedHandler extends DefaultHandler {
             bTitle = false;
         }
         else if (bDescription) {
-            if (CHANNEL.equalsIgnoreCase(typeStack.peek())) {
+            if (CHANNEL.equalsIgnoreCase(tagStack.peek())) {
                 feed.setDescription(new String(ch, start, length));
             }
-            else if (ITEM.equalsIgnoreCase(typeStack.peek())) {
+            else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
                 item.setDescription(new String(ch, start, length));
             }
             else {
@@ -153,10 +150,10 @@ public class FeedHandler extends DefaultHandler {
             bDescription = false;
         }
         else if (bLink) {
-            if (CHANNEL.equalsIgnoreCase(typeStack.peek())) {
+            if (CHANNEL.equalsIgnoreCase(tagStack.peek())) {
                 feed.setLink(new String(ch, start, length));
             }
-            else if (ITEM.equalsIgnoreCase(typeStack.peek())) {
+            else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
                 item.setLink(new String(ch, start, length));
             }
             else {
@@ -165,10 +162,10 @@ public class FeedHandler extends DefaultHandler {
             bLink = false;
         }
         else if (bPubDate) {
-            if (CHANNEL.equalsIgnoreCase(typeStack.peek())) {
+            if (CHANNEL.equalsIgnoreCase(tagStack.peek())) {
 
             }
-            else if (ITEM.equalsIgnoreCase(typeStack.peek())) {
+            else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
                 item.setPubDate(new String(ch, start, length));
             }
             else {
