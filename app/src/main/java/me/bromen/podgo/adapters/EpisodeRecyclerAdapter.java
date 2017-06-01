@@ -102,7 +102,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
             int img_id;
 
-            if (url.equals("")) {
+            if (url == null) {
                 img_id = R.mipmap.ic_error;
             }
             else if (((MainActivity) context).isDownloading(podcastTitle, title)) {

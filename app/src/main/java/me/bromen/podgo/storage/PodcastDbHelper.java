@@ -59,15 +59,20 @@ public class PodcastDbHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public void updateFeed(Feed feed) {
+    public int updateFeed(Feed feed) {
         SQLiteDatabase db = getWritableDatabase();
+
+        int newItems = 0;
 
         for (FeedItem item: feed.getFeedItems()) {
             if (getFeedItemCount(feed.getId(), item.getTitle()) == 0) {
                 break;
             }
             saveFeedItem(item, feed.getId());
+            newItems++;
         }
+
+        return newItems;
     }
 
     public void saveFeedItem(FeedItem item, long id) {
@@ -79,9 +84,11 @@ public class PodcastDbHelper extends SQLiteOpenHelper {
         values.put(PodcastDbContract.KEY_DESCRIPTION, item.getDescription());
         values.put(PodcastDbContract.KEY_LINK, item.getLink());
         values.put(PodcastDbContract.KEY_PUBDATE, item.getPubDate());
-        values.put(PodcastDbContract.KEY_ENCLOSUREURL, item.getEnclosure().getUrl());
-        values.put(PodcastDbContract.KEY_ENCLOSURETYPE, item.getEnclosure().getType());
-        values.put(PodcastDbContract.KEY_ENCLOSURELENGTH, item.getEnclosure().getLength());
+        if (item.getEnclosure() != null) {
+            values.put(PodcastDbContract.KEY_ENCLOSUREURL, item.getEnclosure().getUrl());
+            values.put(PodcastDbContract.KEY_ENCLOSURETYPE, item.getEnclosure().getType());
+            values.put(PodcastDbContract.KEY_ENCLOSURELENGTH, item.getEnclosure().getLength());
+        }
         values.put(PodcastDbContract.KEY_FEEDPLACE, item.getFeedPlace());
 
         db.insert(PodcastDbContract.TABLE_NAME_FEED_ITEMS, null, values);

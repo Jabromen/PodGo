@@ -151,15 +151,15 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public class RefreshFeedDbTask extends AsyncTask<Feed, Void, Void> {
+    public class RefreshFeedDbTask extends AsyncTask<Feed, Void, Integer> {
 
-        protected Void doInBackground(Feed... feed) {
-            dbHelper.updateFeed(feed[0]);
-            return null;
+        protected Integer doInBackground(Feed... feed) {
+            return dbHelper.updateFeed(feed[0]);
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Integer newItems) {
+            Toast.makeText(getApplicationContext(), newItems + " Episodes Added", Toast.LENGTH_SHORT).show();
             updatePodcastView();
         }
     }
@@ -335,18 +335,10 @@ public class MainActivity extends AppCompatActivity
 
             int index = feedList.indexOf(feed.getTitle());
 
-//            int oldNumEpisodes = feedList.get(index).getNumEpisodes();
-//            int newNumEpisodes = podShell.getNumEpisodes();
-
             feedList.remove(index);
             feedList.add(index, feed);
 
             new RefreshFeedDbTask().execute(feed);
-
-//            PodcastFileUtils.savePodcastInfo(getApplicationContext(), podcast);
-
-//            Toast.makeText(this, Integer.toString(newNumEpisodes - oldNumEpisodes) + " New Episodes",
-//                    Toast.LENGTH_SHORT).show();
         }
     }
 
