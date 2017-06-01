@@ -49,7 +49,12 @@ public class FeedHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException, EmptyStackException {
 
         if (RSS.equalsIgnoreCase(qName)) {
-            typeStack.add(RSS);
+            if (typeStack.isEmpty()) {
+                typeStack.add(RSS);
+            }
+            else {
+                throw new SAXException("Invalid rss placement");
+            }
         }
         else if (CHANNEL.equalsIgnoreCase(qName)) {
             if (RSS.equalsIgnoreCase(typeStack.peek())) {
