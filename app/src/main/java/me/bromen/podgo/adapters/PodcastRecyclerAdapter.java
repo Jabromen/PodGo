@@ -24,7 +24,8 @@ import me.bromen.podgo.R;
  * Created by jeff on 5/11/17.
  */
 
-public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecyclerAdapter.PodcastViewHolder> {
+public class
+PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecyclerAdapter.PodcastViewHolder> {
 
     public interface OnClickCallbacks {
         void onPodcastSelected(long podcastId);

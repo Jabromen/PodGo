@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import me.bromen.podgo.adapters.ItunesRecyclerAdapter;
 import me.bromen.podgo.downloads.EpisodeDownloads;
 import me.bromen.podgo.adapters.EpisodeRecyclerAdapter;
 import me.bromen.podgo.fragments.NewPodcastDialogFragment;
@@ -34,7 +35,7 @@ import me.bromen.podgo.fragments.EpisodeListFragment;
 public class MainActivity extends AppCompatActivity
         implements NewPodcastDialogFragment.OnDataPass, PodcastRecyclerAdapter.OnClickCallbacks,
         PodcastOptionDialogFragment.OnDataPass, FeedResultReceiver.Receiver,
-        EpisodeRecyclerAdapter.OnClickCallbacks {
+        EpisodeRecyclerAdapter.OnClickCallbacks, ItunesRecyclerAdapter.OnClickCallbacks {
 
     private static final String PODCAST_LIST_TAG = "podcast_list_fragment";
     private static final String EPISODE_LIST_TAG = "episode_list_fragment";
@@ -303,6 +304,11 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, "Failed to retrieve feed", Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    @Override
+    public void onItunesPodcastSelected(String feedUrl) {
+        downloadPodcastXml(feedUrl, false);
     }
 
     // Add a new podcast from URL

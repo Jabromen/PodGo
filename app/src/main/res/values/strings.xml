@@ -17,4 +17,7 @@
     <string name="episode_image">Episode Image</string>
     <string name="episode_title">Episode Title</string>
     <string name="podcast_title">Podcast Title</string>
+    <string name="search_itunes">Search Itunes</string>
+    <string name="search_hint">Search Itunes</string>
+    <string name="add_new_feed">Add New Feed</string>
 </resources>

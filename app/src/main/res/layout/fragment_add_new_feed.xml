@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Search for a Podcast through Itunes"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:paddingTop="10dp"/>
+
+    <Button
+        android:id="@+id/search_itunes_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/search_itunes"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Manually enter a feed URL"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:paddingTop="10dp"/>
+
+    <EditText
+        android:id="@+id/feed_url_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="www.podcast.com/feed"
+        android:inputType="textUri"/>
+
+    <Button
+        android:id="@+id/feed_url_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter Feed URL"
+        android:textSize="16sp"/>
+
+</LinearLayout>
