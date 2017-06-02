@@ -22,10 +22,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import me.bromen.podgo.R;
+import me.bromen.podgo.activities.MainActivity;
 import me.bromen.podgo.adapters.ItunesRecyclerAdapter;
 import me.bromen.podgo.structures.ItunesPodcast;
 import okhttp3.OkHttpClient;
@@ -38,20 +41,20 @@ import okhttp3.Response;
 
 public class ItunesSearchFragment extends Fragment {
 
-    public static final String ITUNES_SEARCH_TAG = "itunes_search";
+    public static final String TAG = "itunes_search";
     private static final String ITUNES_SEARCH_URL = "https://itunes.apple.com/search?media=podcast&term=%s";
 
     private Toolbar mToolbar;
+    private SearchView searchView;
     private RecyclerView searchResultsView;
     private RecyclerView.Adapter searchAdapter;
 
-    private List<ItunesPodcast> podcastList;
+    private List<ItunesPodcast> podcastList = new ArrayList<>();;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        podcastList = new ArrayList<>();
     }
 
     @Nullable
@@ -69,17 +72,28 @@ public class ItunesSearchFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (mToolbar != null) {
+            ((MainActivity) getActivity()).setSupportActionBar(mToolbar);
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.d("MenuCreate", "Called");
         inflater.inflate(R.menu.menu_itunes_search, menu);
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        SearchView searchView = (SearchView) menu.findItem(R.id.itunes_search).getActionView();
+        Log.d("MenuPrepare", "Called");
+        searchView = (SearchView) menu.findItem(R.id.itunes_search).getActionView();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                searchView.clearFocus();
                 search(query);
                 return true;
             }
@@ -89,6 +103,13 @@ public class ItunesSearchFragment extends Fragment {
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        JSONArray jsonArray = new JSONArray(podcastList);
+        outState.putString("PODCASTLIST", jsonArray.toString());
     }
 
     private void setUpSearchResultsView() {

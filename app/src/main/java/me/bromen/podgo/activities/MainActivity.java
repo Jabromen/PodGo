@@ -1,6 +1,7 @@
 package me.bromen.podgo.activities;
 
 import android.app.DownloadManager;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 import me.bromen.podgo.adapters.ItunesRecyclerAdapter;
 import me.bromen.podgo.downloads.EpisodeDownloads;
 import me.bromen.podgo.adapters.EpisodeRecyclerAdapter;
+import me.bromen.podgo.fragments.AddNewFeedFragment;
+import me.bromen.podgo.fragments.ItunesSearchFragment;
 import me.bromen.podgo.fragments.NewPodcastDialogFragment;
 import me.bromen.podgo.storage.PodcastDbContract;
 import me.bromen.podgo.storage.PodcastDbHelper;
@@ -32,13 +35,19 @@ import me.bromen.podgo.downloads.FeedRequestService;
 import me.bromen.podgo.downloads.FeedResultReceiver;
 import me.bromen.podgo.fragments.EpisodeListFragment;
 
+import static me.bromen.podgo.activities.MainActivity.MainFragments.EpisodeList;
+
 public class MainActivity extends AppCompatActivity
         implements NewPodcastDialogFragment.OnDataPass, PodcastRecyclerAdapter.OnClickCallbacks,
         PodcastOptionDialogFragment.OnDataPass, FeedResultReceiver.Receiver,
         EpisodeRecyclerAdapter.OnClickCallbacks, ItunesRecyclerAdapter.OnClickCallbacks {
 
-    private static final String PODCAST_LIST_TAG = "podcast_list_fragment";
-    private static final String EPISODE_LIST_TAG = "episode_list_fragment";
+    public enum MainFragments {
+        PodcastList,
+        EpisodeList,
+        AddNewFeed,
+        ItunesSearch
+    }
 
     private long selectedPodcastId;
     private FeedList feedList;
@@ -74,7 +83,7 @@ public class MainActivity extends AppCompatActivity
 
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_main, fragment, PODCAST_LIST_TAG)
+                    .add(R.id.fragment_main, fragment, PodcastListFragment.TAG)
                     .commit();
         }
     }
@@ -143,6 +152,7 @@ public class MainActivity extends AppCompatActivity
 
         protected Void doInBackground(Feed... feed) {
             feed[0].setId(dbHelper.saveFeed(feed[0]));
+            feed[0].setFeedItems(null);
             return null;
         }
 
@@ -210,17 +220,48 @@ public class MainActivity extends AppCompatActivity
 
         Log.d("ID", ""+podcastId);
 
-        selectedPodcastId = podcastId;
+        Bundle args = new Bundle();
+        args.putLong("ID", podcastId);
+        args.putString("TITLE", feedList.getFromId(podcastId).getTitle());
 
-        EpisodeListFragment fragment = new EpisodeListFragment();
+        createNewFragment(EpisodeList, args);
+    }
 
-        FragmentTransaction transaction = getFragmentManager()
-                .beginTransaction();
+    public void createNewFragment(MainFragments type, Bundle arguments) {
+        Fragment fragment;
+        String tag;
+        switch (type) {
+            case PodcastList:
+                fragment = new PodcastListFragment();
+                tag = PodcastListFragment.TAG;
+                break;
 
-        transaction.replace(R.id.fragment_main, fragment, EPISODE_LIST_TAG);
-        transaction.addToBackStack(null);
+            case EpisodeList:
+                fragment = new EpisodeListFragment();
+                tag = EpisodeListFragment.TAG;
+                break;
 
-        transaction.commit();
+            case AddNewFeed:
+                fragment = new AddNewFeedFragment();
+                tag = AddNewFeedFragment.TAG;
+                break;
+
+            case ItunesSearch:
+                fragment = new ItunesSearchFragment();
+                tag = ItunesSearchFragment.TAG;
+                break;
+
+            default:
+                return;
+        }
+        if (arguments != null) {
+            fragment.setArguments(arguments);
+        }
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_main, fragment, tag)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -248,7 +289,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFilterEpisodes(int position) {
         EpisodeListFragment episodeListFragment =
-                (EpisodeListFragment) getFragmentManager().findFragmentByTag(EPISODE_LIST_TAG);
+                (EpisodeListFragment) getFragmentManager().findFragmentByTag(EpisodeListFragment.TAG);
 
         if (episodeListFragment != null) {
             episodeListFragment.filterEpisodes(position);
@@ -365,7 +406,7 @@ public class MainActivity extends AppCompatActivity
     // Updates the podcast view with the current state of the podcastList
     public void updatePodcastView() {
         PodcastListFragment podcastListFragment =
-                (PodcastListFragment) getFragmentManager().findFragmentByTag(PODCAST_LIST_TAG);
+                (PodcastListFragment) getFragmentManager().findFragmentByTag(PodcastListFragment.TAG);
 
         if (podcastListFragment != null) {
             podcastListFragment.updatePodcastView(feedList);
@@ -384,7 +425,7 @@ public class MainActivity extends AppCompatActivity
 
     public void refreshEpisodeView() {
         EpisodeListFragment episodeListFragment =
-                (EpisodeListFragment) getFragmentManager().findFragmentByTag(EPISODE_LIST_TAG);
+                (EpisodeListFragment) getFragmentManager().findFragmentByTag(EpisodeListFragment.TAG);
 
         if (episodeListFragment != null) {
             episodeListFragment.refreshEpisodes();

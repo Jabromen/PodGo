@@ -1,10 +1,8 @@
 package me.bromen.podgo.fragments;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -26,6 +24,8 @@ import me.bromen.podgo.activities.MainActivity;
  */
 
 public class PodcastListFragment extends Fragment {
+
+    public static final String TAG = "podcast_list_fragment";
 
     private Toolbar mToolbar;
     private RecyclerView podcastView;
@@ -85,12 +85,7 @@ public class PodcastListFragment extends Fragment {
         }
         else if (id == R.id.action_new_podcast) {
             // Bring up new podcast dialog fragment, results handled via callbacks in MainActivity
-            AddNewFeedFragment fragment = new AddNewFeedFragment();
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-            transaction.replace(R.id.fragment_main, fragment, AddNewFeedFragment.ADD_NEW_FEED_TAG);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            ((MainActivity) getActivity()).createNewFragment(MainActivity.MainFragments.AddNewFeed, null);
 
             return true;
         }
@@ -110,6 +105,8 @@ public class PodcastListFragment extends Fragment {
     }
 
     public void updatePodcastView(FeedList newList) {
-        ((PodcastRecyclerAdapter) podcastAdapter).updateList(newList);
+        if (podcastAdapter != null) {
+            ((PodcastRecyclerAdapter) podcastAdapter).updateList(newList);
+        }
     }
 }

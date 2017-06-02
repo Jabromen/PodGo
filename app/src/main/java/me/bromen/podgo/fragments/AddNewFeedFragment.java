@@ -22,7 +22,7 @@ import me.bromen.podgo.activities.MainActivity;
 
 public class AddNewFeedFragment extends Fragment {
 
-    public static final String ADD_NEW_FEED_TAG = "add_new_feed";
+    public static final String TAG = "add_new_feed";
 
     private Toolbar mToolbar;
     private EditText feedUrlEditText;
@@ -30,7 +30,6 @@ public class AddNewFeedFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -46,13 +45,7 @@ public class AddNewFeedFragment extends Fragment {
         searchItunesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ItunesSearchFragment fragment = new ItunesSearchFragment();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-                transaction.replace(R.id.fragment_main, fragment, ItunesSearchFragment.ITUNES_SEARCH_TAG);
-                transaction.addToBackStack(null);
-
-                transaction.commit();
+                ((MainActivity) getActivity()).createNewFragment(MainActivity.MainFragments.ItunesSearch, null);
             }
         });
 
@@ -81,10 +74,5 @@ public class AddNewFeedFragment extends Fragment {
         });
 
         return rootView;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
     }
 }

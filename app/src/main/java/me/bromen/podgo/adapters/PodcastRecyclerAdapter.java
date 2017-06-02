@@ -11,11 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.bromen.podgo.downloads.FileTarget;
-import me.bromen.podgo.structures.Feed;
 import me.bromen.podgo.structures.FeedList;
 import me.bromen.podgo.utilities.PodcastFileUtils;
 import me.bromen.podgo.R;
@@ -24,8 +20,7 @@ import me.bromen.podgo.R;
  * Created by jeff on 5/11/17.
  */
 
-public class
-PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecyclerAdapter.PodcastViewHolder> {
+public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecyclerAdapter.PodcastViewHolder> {
 
     public interface OnClickCallbacks {
         void onPodcastSelected(long podcastId);

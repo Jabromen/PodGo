@@ -1,13 +1,17 @@
 package me.bromen.podgo.structures;
 
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
 
 /**
  * Created by jeff on 6/1/17.
  */
 
-public class ItunesPodcast {
+public class ItunesPodcast implements Serializable {
 
     private String title;
     private String feedUrl;

@@ -20,6 +20,7 @@ import java.util.List;
 
 import me.bromen.podgo.adapters.EpisodeRecyclerAdapter;
 import me.bromen.podgo.activities.MainActivity;
+import me.bromen.podgo.structures.Feed;
 import me.bromen.podgo.structures.FeedItem;
 import me.bromen.podgo.utilities.PodcastFileUtils;
 import me.bromen.podgo.R;
@@ -29,6 +30,8 @@ import me.bromen.podgo.R;
  */
 
 public class EpisodeListFragment extends Fragment {
+
+    public static final String TAG = "episode_list_fragment";
 
     private Toolbar mToolbar;
     private RecyclerView episodeView;
@@ -70,8 +73,8 @@ public class EpisodeListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        id = ((MainActivity) getActivity()).getSelectedPodcastId();
-        podcastTitle = ((MainActivity) getActivity()).getFeedList().getFromId(id).getTitle();
+        id = getArguments().getLong("ID");
+        podcastTitle = getArguments().getString("TITLE");
 
         new LoadEpisodesTask().execute(id);
 
