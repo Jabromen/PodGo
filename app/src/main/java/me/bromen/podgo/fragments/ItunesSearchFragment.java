@@ -120,7 +120,7 @@ public class ItunesSearchFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("RESULTS", resultsList.toString());
+        outState.putString("RESULTS", resultsList != null ? resultsList.toString() : "[]");
     }
 
     private void setUpSearchResultsView() {
