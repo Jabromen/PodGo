@@ -49,12 +49,26 @@ public class ItunesSearchFragment extends Fragment {
     private RecyclerView searchResultsView;
     private RecyclerView.Adapter searchAdapter;
 
+    private JSONArray resultsList;
     private List<ItunesPodcast> podcastList = new ArrayList<>();;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (savedInstanceState != null) {
+            try {
+                resultsList = new JSONArray(savedInstanceState.getString("RESULTS"));
+
+                for (int i = 0; i < resultsList.length(); i++) {
+                    JSONObject jsonPodcast = resultsList.getJSONObject(i);
+                    podcastList.add(new ItunesPodcast(jsonPodcast));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Nullable
@@ -81,13 +95,11 @@ public class ItunesSearchFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.d("MenuCreate", "Called");
         inflater.inflate(R.menu.menu_itunes_search, menu);
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        Log.d("MenuPrepare", "Called");
         searchView = (SearchView) menu.findItem(R.id.itunes_search).getActionView();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -108,8 +120,7 @@ public class ItunesSearchFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        JSONArray jsonArray = new JSONArray(podcastList);
-        outState.putString("PODCASTLIST", jsonArray.toString());
+        outState.putString("RESULTS", resultsList.toString());
     }
 
     private void setUpSearchResultsView() {
@@ -141,7 +152,7 @@ public class ItunesSearchFragment extends Fragment {
                 if (response.isSuccessful()) {
                     String responseString = response.body().string();
                     JSONObject results = new JSONObject(responseString);
-                    JSONArray resultsList = results.getJSONArray("results");
+                    resultsList = results.getJSONArray("results");
 
                     for (int i = 0; i < resultsList.length(); i++) {
                         JSONObject jsonPodcast = resultsList.getJSONObject(i);
@@ -155,7 +166,9 @@ public class ItunesSearchFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(List<ItunesPodcast> podcastList) {
+        protected void onPostExecute(List<ItunesPodcast> searchList) {
+            podcastList = new ArrayList<>();
+            podcastList.addAll(searchList);
             ((ItunesRecyclerAdapter) searchAdapter).updateList(podcastList);
         }
     }
