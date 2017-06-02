@@ -40,7 +40,7 @@ public class EpisodeListFragment extends Fragment {
     private int filterOption;
     private long id;
     private String podcastTitle;
-    private List<FeedItem> itemList;
+    private List<FeedItem> itemList = new ArrayList<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class EpisodeListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_episode_list, container, false);
 
         mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_main);
-        mToolbar.setTitle(podcastTitle);
+        mToolbar.setTitle("Episodes");
 
         episodeView = (RecyclerView) rootView.findViewById(R.id.episodeListMain);
 
@@ -75,6 +75,8 @@ public class EpisodeListFragment extends Fragment {
 
         id = getArguments().getLong("ID");
         podcastTitle = getArguments().getString("TITLE");
+
+        setUpEpisodeView();
 
         new LoadEpisodesTask().execute(id);
 

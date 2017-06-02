@@ -218,8 +218,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPodcastSelected(long podcastId) {
 
-        Log.d("ID", ""+podcastId);
-
         Bundle args = new Bundle();
         args.putLong("ID", podcastId);
         args.putString("TITLE", feedList.getFromId(podcastId).getTitle());
