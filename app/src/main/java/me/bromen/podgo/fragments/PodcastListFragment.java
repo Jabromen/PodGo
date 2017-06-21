@@ -15,9 +15,9 @@ import android.view.ViewGroup;
 
 import me.bromen.podgo.structures.FeedList;
 import me.bromen.podgo.utilities.DisplayUtils;
-import me.bromen.podgo.adapters.PodcastRecyclerAdapter;
+import me.bromen.podgo.activities.home.mvp.view.PodcastRecyclerAdapter;
 import me.bromen.podgo.R;
-import me.bromen.podgo.activities.MainActivity;
+import me.bromen.podgo.activities.home.MainActivity;
 
 /**
  * UI Component Fragment for the list of saved podcasts
@@ -61,7 +61,7 @@ public class PodcastListFragment extends Fragment {
             ((MainActivity) getActivity()).setSupportActionBar(mToolbar);
         }
 
-        feedList = ((MainActivity) getActivity()).getFeedList();
+//        feedList = ((MainActivity) getActivity()).getFeedList();
 
         setUpPodcastView();
     }
@@ -85,7 +85,7 @@ public class PodcastListFragment extends Fragment {
         }
         else if (id == R.id.action_new_podcast) {
             // Bring up new podcast dialog fragment, results handled via callbacks in MainActivity
-            ((MainActivity) getActivity()).createNewFragment(MainActivity.MainFragments.AddNewFeed, null);
+//            ((MainActivity) getActivity()).createNewFragment(MainActivity.MainFragments.AddNewFeed, null);
 
             return true;
         }
@@ -100,7 +100,7 @@ public class PodcastListFragment extends Fragment {
         podcastView.setLayoutManager(layoutManager);
         podcastView.setHasFixedSize(true);
 
-        podcastAdapter = new PodcastRecyclerAdapter(feedList);
+        podcastAdapter = new PodcastRecyclerAdapter();
         podcastView.setAdapter(podcastAdapter);
     }
 

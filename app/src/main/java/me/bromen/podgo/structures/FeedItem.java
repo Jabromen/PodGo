@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 public class FeedItem implements Serializable {
 
-    private int feedPlace;
+    private int id;
     private String title;
     private String description;
     private String pubDate;
@@ -24,8 +24,8 @@ public class FeedItem implements Serializable {
         this(-1, title, description, pubDate, link, enclosure);
     }
 
-    public FeedItem(int feedPlace, String title, String description, String pubDate, String link, FeedItemEnclosure enclosure) {
-        this.feedPlace = feedPlace;
+    public FeedItem(int id, String title, String description, String pubDate, String link, FeedItemEnclosure enclosure) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.pubDate = pubDate;
@@ -34,7 +34,7 @@ public class FeedItem implements Serializable {
     }
 
     public FeedItem(Cursor cursor) {
-        feedPlace = cursor.getInt(0);
+        id = cursor.getInt(0);
         title = cursor.getString(1);
         description = cursor.getString(2);
         pubDate = cursor.getString(3);
@@ -42,12 +42,12 @@ public class FeedItem implements Serializable {
         enclosure = new FeedItemEnclosure(cursor.getString(5), cursor.getString(6), cursor.getString(7));
     }
 
-    public int getFeedPlace() {
-        return feedPlace;
+    public int getId() {
+        return id;
     }
 
-    public void setFeedPlace(int feedPlace) {
-        this.feedPlace = feedPlace;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {

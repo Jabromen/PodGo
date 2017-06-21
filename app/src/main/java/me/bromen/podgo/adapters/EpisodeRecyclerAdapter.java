@@ -20,7 +20,7 @@ import java.util.List;
 import me.bromen.podgo.structures.FeedItem;
 import me.bromen.podgo.utilities.PodcastFileUtils;
 import me.bromen.podgo.R;
-import me.bromen.podgo.activities.MainActivity;
+import me.bromen.podgo.activities.home.MainActivity;
 
 /**
  * Created by jeff on 5/9/17.
@@ -105,7 +105,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             if (url == null) {
                 img_id = R.mipmap.ic_error;
             }
-            else if (((MainActivity) context).isDownloading(podcastTitle, title)) {
+            else if (true/*((MainActivity) context).isDownloading(podcastTitle, title)*/) {
                 img_id = R.mipmap.ic_cancel;
             }
             else if (PodcastFileUtils.isEpisodeDownloaded(context, podcastTitle, title)) {
@@ -128,6 +128,13 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
                     mCallbacks.onDownloadPlaySelected(podcastTitle, finalTitle, finalUrl);
 
+                }
+            });
+            ((EpisodeViewHolderItem) holder).selectEpisode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //mCallbacks.onEpisodeSelected(podcastTitle, titleView.getText().toString());
+                    mCallbacks.onEpisodeSelected(podcastTitle, episodeList.get(position-1).getId()+"");
                 }
             });
         }
@@ -166,13 +173,6 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             episodeImageView = (ImageView) itemView.findViewById(R.id.episodeImage);
             selectEpisode = (RelativeLayout) itemView.findViewById(R.id.selectEpisode);
             downloadPlayButton = (ImageView) itemView.findViewById(R.id.episodeDownloadPlayButton);
-
-            selectEpisode.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mCallbacks.onEpisodeSelected(podcastTitle, titleView.getText().toString());
-                }
-            });
         }
     }
 

@@ -1,8 +1,9 @@
-package me.bromen.podgo.adapters;
+package me.bromen.podgo.activities.home.mvp.view;
 
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,16 +32,17 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
     private OnClickCallbacks mCallbacks;
     private FeedList feedList = new FeedList();
 
-    public PodcastRecyclerAdapter(FeedList feedList) {
-        this.feedList = feedList;
+    public PodcastRecyclerAdapter() {}
+
+    public PodcastRecyclerAdapter(FeedList feeds) {
+        this.feedList = feeds;
     }
 
     @Override
     public PodcastViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
-        mCallbacks = (OnClickCallbacks) context;
-        View view = LayoutInflater.from(context).inflate(R.layout.podcast_list_item, parent, false);
-
+//        mCallbacks = (OnClickCallbacks) context;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.podcast_list_item, parent, false);
         return new PodcastViewHolder(view);
     }
 
@@ -54,19 +56,9 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
 
         setUpImageView(context, holder.imageView, title, url);
 
-        holder.imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCallbacks.onPodcastSelected(feedList.get(position).getId());
-            }
-        });
+        holder.imageView.setOnClickListener(v -> mCallbacks.onPodcastSelected(feedList.get(position).getId()));
 
-        holder.optionsView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCallbacks.onOptionsSelected(feedList.get(position).getId());
-            }
-        });
+        holder.optionsView.setOnClickListener(v -> mCallbacks.onOptionsSelected(feedList.get(position).getId()));
     }
 
     private void setUpImageView(Context context, ImageView imageView, String title, String url) {
@@ -90,7 +82,7 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
 
     @Override
     public int getItemCount() {
-        return feedList != null ? feedList.size() : 0;
+        return feedList.size();
     }
 
     public class PodcastViewHolder extends RecyclerView.ViewHolder {
@@ -108,7 +100,7 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
     }
 
     public void updateList(FeedList newList) {
-        feedList = new FeedList();
+        feedList.clear();
         feedList.addAll(newList);
         refreshList();
     }

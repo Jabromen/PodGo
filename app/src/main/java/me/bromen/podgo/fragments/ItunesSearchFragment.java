@@ -7,28 +7,23 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import me.bromen.podgo.R;
-import me.bromen.podgo.activities.MainActivity;
+import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.adapters.ItunesRecyclerAdapter;
 import me.bromen.podgo.structures.ItunesPodcast;
 import okhttp3.OkHttpClient;

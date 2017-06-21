@@ -44,7 +44,7 @@ public class Feed implements Serializable {
     public void setItemPlaces() {
 
         for (int i = 1; i <= feedItems.size(); i++) {
-            feedItems.get(feedItems.size() - i).setFeedPlace(i);
+            feedItems.get(feedItems.size() - i).setId(i);
         }
     }
 

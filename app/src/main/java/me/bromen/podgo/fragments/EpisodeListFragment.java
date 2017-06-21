@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,8 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.bromen.podgo.adapters.EpisodeRecyclerAdapter;
-import me.bromen.podgo.activities.MainActivity;
-import me.bromen.podgo.structures.Feed;
+import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.structures.FeedItem;
 import me.bromen.podgo.utilities.PodcastFileUtils;
 import me.bromen.podgo.R;
@@ -103,7 +101,8 @@ public class EpisodeListFragment extends Fragment {
 
         @Override
         protected List<FeedItem> doInBackground(Long... id) {
-            return ((MainActivity) getActivity()).getDbHelper().loadFeedItems(id[0]);
+//            return ((MainActivity) getActivity()).getDbHelper().loadFeedItems(id[0]);
+            return null;
         }
 
         @Override

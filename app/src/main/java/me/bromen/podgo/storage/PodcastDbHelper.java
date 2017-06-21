@@ -1,11 +1,11 @@
 package me.bromen.podgo.storage;
 
-import android.app.DownloadManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,15 +60,15 @@ public class PodcastDbHelper extends SQLiteOpenHelper {
     }
 
     public int updateFeed(Feed feed) {
-        SQLiteDatabase db = getWritableDatabase();
 
         int newItems = 0;
+        long id = getFeedId(feed.getTitle());
 
         for (FeedItem item: feed.getFeedItems()) {
-            if (getFeedItemCount(feed.getId(), item.getTitle()) == 0) {
+            if (getFeedItemCount(id, item.getTitle()) != 0) {
                 break;
             }
-            saveFeedItem(item, feed.getId());
+            saveFeedItem(item, id);
             newItems++;
         }
 
@@ -89,7 +89,7 @@ public class PodcastDbHelper extends SQLiteOpenHelper {
             values.put(PodcastDbContract.KEY_ENCLOSURETYPE, item.getEnclosure().getType());
             values.put(PodcastDbContract.KEY_ENCLOSURELENGTH, item.getEnclosure().getLength());
         }
-        values.put(PodcastDbContract.KEY_FEEDPLACE, item.getFeedPlace());
+        values.put(PodcastDbContract.KEY_FEEDPLACE, item.getId());
 
         db.insert(PodcastDbContract.TABLE_NAME_FEED_ITEMS, null, values);
     }
@@ -111,6 +111,30 @@ public class PodcastDbHelper extends SQLiteOpenHelper {
             }
         }
         finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+    }
+
+    public long getFeedId(String title) {
+
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = getReadableDatabase();
+
+            String query = "SELECT " + PodcastDbContract.KEY_ID + " FROM " +
+                    PodcastDbContract.TABLE_NAME_FEED + " WHERE " +
+                    PodcastDbContract.KEY_TITLE + " = ?";
+
+            c = db.rawQuery(query, new String[] {title});
+            if (c.moveToFirst()) {
+                return c.getInt(0);
+            }
+            else {
+                return -1;
+            }
+        } finally {
             if (c != null) {
                 c.close();
             }

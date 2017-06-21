@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".app.PodGoApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -15,7 +16,7 @@
         android:theme="@style/AppTheme">
         <service android:name=".downloads.FeedRequestService"/>
         <activity
-            android:name="me.bromen.podgo.activities.MainActivity"
+            android:name="me.bromen.podgo.activities.home.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
