@@ -3,7 +3,6 @@ package me.bromen.podgo.activities.feeddetail;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import javax.inject.Inject;
@@ -11,7 +10,7 @@ import javax.inject.Inject;
 import me.bromen.podgo.activities.feeddetail.dagger.DaggerFeedDetailComponent;
 import me.bromen.podgo.activities.feeddetail.dagger.FeedDetailModule;
 import me.bromen.podgo.activities.feeddetail.mvp.FeedDetailPresenter;
-import me.bromen.podgo.activities.feeddetail.mvp.FeedDetailViewImpl;
+import me.bromen.podgo.activities.feeddetail.mvp.view.FeedDetailViewImpl;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailView;
 import me.bromen.podgo.app.PodGoApplication;
 

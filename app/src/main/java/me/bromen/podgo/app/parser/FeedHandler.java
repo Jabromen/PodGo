@@ -118,7 +118,9 @@ public class FeedHandler extends DefaultHandler {
             tagStack.pop();
         }
         else if (ITEM.equalsIgnoreCase(qName)) {
-            feed.getFeedItems().add(item);
+            if (verifyFeedItem(item)) {
+                feed.getFeedItems().add(item);
+            }
             tagStack.pop();
         }
     }
@@ -177,5 +179,22 @@ public class FeedHandler extends DefaultHandler {
 
     public Feed getFeed() {
         return feed;
+    }
+
+    private boolean verifyFeedItem(FeedItem item) {
+        boolean valid = true;
+        try {
+            valid = (item.getEnclosure().getLength() != null);
+            valid = valid && (item.getEnclosure().getUrl() != null);
+            valid = valid && (item.getEnclosure().getType() != null);
+        } catch (NullPointerException e) {
+            return false;
+        }
+        valid = valid && (item.getTitle() != null);
+        valid = valid && (item.getDescription() != null);
+        valid = valid && (item.getPubDate() != null);
+        valid = valid && (item.getLink() != null);
+
+        return valid;
     }
 }

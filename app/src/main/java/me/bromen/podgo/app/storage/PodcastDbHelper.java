@@ -207,6 +207,38 @@ public class PodcastDbHelper extends SQLiteOpenHelper {
         return feedList;
     }
 
+    public Feed loadFeed(long id) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] projection = {
+                PodcastDbContract.KEY_ID,
+                PodcastDbContract.KEY_TITLE,
+                PodcastDbContract.KEY_DESCRIPTION,
+                PodcastDbContract.KEY_LINK,
+                PodcastDbContract.KEY_FEEDURL,
+                PodcastDbContract.KEY_IMAGEURL
+        };
+
+        String selection = PodcastDbContract.KEY_ID + " = ?";
+        String[] selectionArgs = {Long.toString(id)};
+
+        Cursor c = null;
+        try {
+            c = db.query(PodcastDbContract.TABLE_NAME_FEED, projection, selection,
+                    selectionArgs, null, null, null);
+
+            if (c.moveToFirst()) {
+                return new Feed(c);
+            } else {
+                return null;
+            }
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+    }
+
     public List<FeedItem> loadFeedItems(long id) {
         SQLiteDatabase db = getReadableDatabase();
 

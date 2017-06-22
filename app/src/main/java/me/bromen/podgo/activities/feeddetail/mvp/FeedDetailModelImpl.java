@@ -1,5 +1,7 @@
 package me.bromen.podgo.activities.feeddetail.mvp;
 
+import android.util.Log;
+
 import me.bromen.podgo.activities.feeddetail.FeedDetailActivity;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailModel;
 import me.bromen.podgo.app.storage.PodcastDbHelper;
@@ -12,6 +14,8 @@ import me.bromen.podgo.ext.structures.FeedItem;
  */
 
 public class FeedDetailModelImpl implements FeedDetailModel {
+
+    public static String TAG = "FeedDetailModelImpl";
 
     private final FeedDetailActivity activity;
     private final PodcastDbHelper dbHelper;
@@ -26,16 +30,18 @@ public class FeedDetailModelImpl implements FeedDetailModel {
 
     @Override
     public Feed loadFeed(long feedId) throws Exception {
-        return null;
+        Feed feed = dbHelper.loadFeed(feedId);
+        feed.setFeedItems(dbHelper.loadFeedItems(feedId));
+        return feed;
     }
 
     @Override
     public void downloadEpisode(FeedItem item) throws Exception {
-
+        Log.d(TAG, "downloadEpisode(): " + item.getTitle());
     }
 
     @Override
     public void startFeedItemDetailActivity(FeedItem item) {
-
+        Log.d(TAG, "startFeedItemDetailActivity(): " + item.getTitle());
     }
 }

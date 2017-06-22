@@ -18,6 +18,9 @@ public class FeedItem implements Serializable {
 
     private FeedItemEnclosure enclosure;
 
+    private boolean isDownloading;
+    private boolean isDownloaded;
+
     public FeedItem() {}
 
     public FeedItem(String title, String description, String pubDate, String link, FeedItemEnclosure enclosure) {
@@ -88,5 +91,21 @@ public class FeedItem implements Serializable {
 
     public void setEnclosure(FeedItemEnclosure enclosure) {
         this.enclosure = enclosure;
+    }
+
+    public boolean isDownloading() {
+        return isDownloading;
+    }
+
+    public void setDownloading(boolean isDownloading) {
+        this.isDownloading = isDownloading;
+    }
+
+    public boolean isDownloaded() {
+        return isDownloaded;
+    }
+
+    public void setDownloaded(boolean isDownloaded) {
+        this.isDownloaded = isDownloaded;
     }
 }

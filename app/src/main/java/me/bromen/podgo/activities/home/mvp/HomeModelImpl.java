@@ -2,6 +2,7 @@ package me.bromen.podgo.activities.home.mvp;
 
 import android.util.Log;
 
+import me.bromen.podgo.activities.feeddetail.FeedDetailActivity;
 import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.newfeed.NewFeedActivity;
@@ -44,5 +45,6 @@ public class HomeModelImpl implements HomeModel {
     @Override
     public void startFeedDetailActivity(long id) {
         Log.d(TAG, "startFeedDetailActivity() - " + id);
+        FeedDetailActivity.start(activity, id);
     }
 }

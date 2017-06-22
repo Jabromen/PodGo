@@ -17,7 +17,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.bromen.podgo.adapters.EpisodeRecyclerAdapter;
+import me.bromen.podgo.activities.feeddetail.mvp.view.EpisodeRecyclerAdapter;
 import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.ext.structures.FeedItem;
 import me.bromen.podgo.ext.utilities.PodcastFileUtils;
@@ -118,7 +118,7 @@ public class EpisodeListFragment extends Fragment {
         episodeView.setLayoutManager(layoutManager);
         episodeView.setHasFixedSize(true);
 
-        episodeAdapter = new EpisodeRecyclerAdapter(itemList, podcastTitle, filterOption);
+        //episodeAdapter = new EpisodeRecyclerAdapter(itemList, podcastTitle, filterOption);
         episodeView.setAdapter(episodeAdapter);
     }
 
@@ -130,13 +130,13 @@ public class EpisodeListFragment extends Fragment {
 
             // Show All Episodes
             case 0:
-                ((EpisodeRecyclerAdapter) episodeAdapter).updateList(itemList);
+                //((EpisodeRecyclerAdapter) episodeAdapter).updateList(itemList);
                 break;
 
             // Show Most Recent 7 Episodes
             case 1:
                 int index = itemList.size() < 7 ? itemList.size() : 7;
-                ((EpisodeRecyclerAdapter) episodeAdapter).updateList(itemList.subList(0, index));
+                //((EpisodeRecyclerAdapter) episodeAdapter).updateList(itemList.subList(0, index));
                 break;
 
             // Show All Downloaded Episodes
@@ -148,7 +148,7 @@ public class EpisodeListFragment extends Fragment {
                         downloaded.add(ep);
                     }
                 }
-                ((EpisodeRecyclerAdapter) episodeAdapter).updateList(downloaded);
+                //((EpisodeRecyclerAdapter) episodeAdapter).updateList(downloaded);
                 break;
 
             // Show All Not Downloaded Episodes
@@ -160,7 +160,7 @@ public class EpisodeListFragment extends Fragment {
                         notDownloaded.add(ep);
                     }
                 }
-                ((EpisodeRecyclerAdapter) episodeAdapter).updateList(notDownloaded);
+                //((EpisodeRecyclerAdapter) episodeAdapter).updateList(notDownloaded);
                 break;
 
             default:

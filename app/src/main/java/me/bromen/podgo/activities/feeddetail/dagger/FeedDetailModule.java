@@ -7,7 +7,7 @@ import dagger.Provides;
 import me.bromen.podgo.activities.feeddetail.FeedDetailActivity;
 import me.bromen.podgo.activities.feeddetail.mvp.FeedDetailModelImpl;
 import me.bromen.podgo.activities.feeddetail.mvp.FeedDetailPresenter;
-import me.bromen.podgo.activities.feeddetail.mvp.FeedDetailViewImpl;
+import me.bromen.podgo.activities.feeddetail.mvp.view.FeedDetailViewImpl;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailModel;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailView;
 import me.bromen.podgo.app.storage.PodcastDbHelper;
