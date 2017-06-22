@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         presenter.onCreate();
     }
 
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

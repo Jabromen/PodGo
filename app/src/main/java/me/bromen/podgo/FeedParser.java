@@ -16,8 +16,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import rx.Single;
-
 /**
  * Created by jeff on 6/20/17.
  */
@@ -30,7 +28,7 @@ public class FeedParser {
         this.okHttpClient = okHttpClient;
     }
 
-    public Single<Feed> parseFeedFromUrl(String feedUrl) throws Throwable {
+    public Feed parseFeedFromUrl(String feedUrl) throws Exception {
         Request request = new Request.Builder().url(feedUrl).build();
 
         try {
@@ -42,17 +40,17 @@ public class FeedParser {
                 Feed feed = parseFeedFromStream(in);
                 in.close();
 
-                return Single.just(feed);
+                return feed;
             } else {
-                throw new Throwable("HTTP Response Failed");
+                throw new Exception("HTTP Response Failed");
             }
 
         } catch (IOException e) {
             e.printStackTrace();
-            throw new Throwable("IOException");
+            throw new Exception("IOException");
         } catch (SAXException e) {
             e.printStackTrace();
-            throw new Throwable("SAXException");
+            throw new Exception("SAXException");
         }
     }
 

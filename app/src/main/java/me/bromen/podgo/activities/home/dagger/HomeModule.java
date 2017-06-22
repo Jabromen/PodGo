@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import dagger.Module;
 import dagger.Provides;
+import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.activities.home.mvp.HomeModelImpl;
 import me.bromen.podgo.activities.home.mvp.HomePresenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
@@ -18,9 +19,9 @@ import me.bromen.podgo.storage.PodcastDbHelper;
 @Module
 public class HomeModule {
 
-    private final Activity activity;
+    private final MainActivity activity;
 
-    public HomeModule(Activity activity) {
+    public HomeModule(MainActivity activity) {
         this.activity = activity;
     }
 

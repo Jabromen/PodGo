@@ -1,4 +1,4 @@
-package me.bromen.podgo.activities.home.mvp.contracts;
+package me.bromen.podgo.activities;
 
 /**
  * Created by jeff on 6/20/17.

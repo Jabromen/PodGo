@@ -6,14 +6,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 
-import com.esafirm.rxdownloader.RxDownloader;
-
 import java.io.Serializable;
 import java.util.HashMap;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import me.bromen.podgo.structures.FeedItem;
 import me.bromen.podgo.utilities.PodcastFileUtils;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by jeff on 5/19/17.
@@ -41,15 +39,6 @@ public class EpisodeDownloads implements Serializable {
 
         request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_PODCASTS,
                 PodcastFileUtils.sanitizeName(item.getTitle() + " " + item.getId()) + ".mp3");
-
-        RxDownloader.getInstance(context)
-                .download(request)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(path -> {
-
-                }, throwable -> {
-
-                });
 
         reference = downloadManager.enqueue(request);
 

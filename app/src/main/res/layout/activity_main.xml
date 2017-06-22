@@ -13,12 +13,17 @@
         android:id="@+id/toolbar_main"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ToolbarTheme"
+        app:popupTheme="@style/AppTheme.NoActionBar"
         />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar_main"
         />
 
     <TextView
@@ -27,6 +32,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:visibility="gone"
-        android:text="No Podcasts Saved"/>
+        android:text="No Podcasts Saved"
+        />
 
 </RelativeLayout>

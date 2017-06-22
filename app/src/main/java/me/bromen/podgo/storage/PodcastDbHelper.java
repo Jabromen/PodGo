@@ -40,7 +40,12 @@ public class PodcastDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long saveFeed(Feed feed) {
+    public boolean saveFeed(Feed feed) {
+
+        if (getFeedCount(feed.getTitle()) > 0) {
+            return false;
+        }
+
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -56,7 +61,7 @@ public class PodcastDbHelper extends SQLiteOpenHelper {
             saveFeedItem(item, id);
         }
 
-        return id;
+        return true;
     }
 
     public int updateFeed(Feed feed) {
@@ -92,6 +97,26 @@ public class PodcastDbHelper extends SQLiteOpenHelper {
         values.put(PodcastDbContract.KEY_FEEDPLACE, item.getId());
 
         db.insert(PodcastDbContract.TABLE_NAME_FEED_ITEMS, null, values);
+    }
+
+    public int getFeedCount(String title) {
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = getReadableDatabase();
+            String query = "SELECT COUNT(*) FROM " + PodcastDbContract.TABLE_NAME_FEED +
+                    " WHERE " + PodcastDbContract.KEY_TITLE + " = ?";
+
+            c = db.rawQuery(query, new String[] {title});
+            if (c.moveToFirst()) {
+                return c.getInt(0);
+            } else {
+                return 0;
+            }
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
     }
 
     public int getFeedItemCount(long id, String title) {

@@ -1,7 +1,8 @@
 package me.bromen.podgo.activities.home.mvp.contracts;
 
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import me.bromen.podgo.structures.FeedList;
-import rx.Observable;
 
 /**
  * Created by jeff on 6/20/17.
@@ -9,5 +10,9 @@ import rx.Observable;
 
 public interface HomeModel {
 
-    Observable<FeedList> loadFeeds();
+    FeedList loadFeeds() throws Exception;
+
+    void startNewFeedActivity();
+
+    void startOptionsActivity();
 }

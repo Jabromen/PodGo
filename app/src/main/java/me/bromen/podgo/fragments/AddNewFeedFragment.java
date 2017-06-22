@@ -32,7 +32,7 @@
 //    @Nullable
 //    @Override
 //    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-//        View rootView = inflater.inflate(R.layout.fragment_add_new_feed, container, false);
+//        View rootView = inflater.inflate(R.layout.activity_newfeed, container, false);
 //
 //        mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_main);
 //        mToolbar.setTitle(R.string.add_new_feed);

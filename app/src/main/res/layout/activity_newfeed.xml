@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_newfeed"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="me.bromen.podgo.activities.newfeed.NewFeedActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_newfeed"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ToolbarTheme"
+        app:popupTheme="@style/AppTheme.NoActionBar"
+        />
 
     <TextView
+        android:id="@+id/textview_newfeed_itunes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Search for a Podcast through Itunes"
@@ -13,13 +28,14 @@
         android:paddingTop="10dp"/>
 
     <Button
-        android:id="@+id/search_itunes_button"
+        android:id="@+id/button_newfeed_itunes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/search_itunes"
         android:textSize="16sp"/>
 
     <TextView
+        android:id="@+id/textview_newfeed_manual"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Manually enter a feed URL"
@@ -28,14 +44,14 @@
         android:paddingTop="10dp"/>
 
     <EditText
-        android:id="@+id/feed_url_edittext"
+        android:id="@+id/edittext_newfeed_manual"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="www.podcast.com/feed"
         android:inputType="textUri"/>
 
     <Button
-        android:id="@+id/feed_url_button"
+        android:id="@+id/button_newfeed_manual"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Enter Feed URL"
