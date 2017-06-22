@@ -40,14 +40,12 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
     @BindView(R.id.toolbar_main)
     Toolbar toolbar;
 
-    private final MainActivity activity;
     private final Picasso picasso;
     private PodcastRecyclerAdapter adapter;
     private final ProgressDialog progressDialog = new ProgressDialog(getContext());
 
     public HomeViewImpl(MainActivity activity, Picasso picasso) {
         super(activity);
-        this.activity = activity;
         this.picasso = picasso;
 
         inflate(getContext(), R.layout.activity_main, this);
