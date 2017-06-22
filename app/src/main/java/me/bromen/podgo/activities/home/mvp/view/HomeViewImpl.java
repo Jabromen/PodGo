@@ -1,14 +1,10 @@
 package me.bromen.podgo.activities.home.mvp.view;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -16,14 +12,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jakewharton.rxbinding2.support.v7.widget.RxToolbar;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.bromen.podgo.R;
 import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
-import me.bromen.podgo.structures.FeedList;
-import me.bromen.podgo.utilities.DisplayUtils;
+import me.bromen.podgo.ext.structures.Feed;
+import me.bromen.podgo.ext.structures.FeedList;
+import me.bromen.podgo.ext.utilities.DisplayUtils;
 import io.reactivex.Observable;
 
 /**
@@ -43,12 +41,14 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
     Toolbar toolbar;
 
     private final MainActivity activity;
-    private final PodcastRecyclerAdapter adapter = new PodcastRecyclerAdapter();
+    private final Picasso picasso;
+    private PodcastRecyclerAdapter adapter;
     private final ProgressDialog progressDialog = new ProgressDialog(getContext());
 
-    public HomeViewImpl(MainActivity activity) {
+    public HomeViewImpl(MainActivity activity, Picasso picasso) {
         super(activity);
         this.activity = activity;
+        this.picasso = picasso;
 
         inflate(getContext(), R.layout.activity_main, this);
 
@@ -70,6 +70,8 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
                 new GridLayoutManager(getContext(), DisplayUtils.calculateNoOfColumns(getContext(), 125, 3));
         feedView.setLayoutManager(layoutManager);
         feedView.setHasFixedSize(true);
+
+        adapter = new PodcastRecyclerAdapter(picasso);
         feedView.setAdapter(adapter);
     }
 
@@ -102,7 +104,22 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
     }
 
     @Override
+    public void showFeedOptions(long id) {
+        Toast.makeText(getContext(), "Feed Options - " + id, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public Observable<Integer> observeMenuItemClick() {
         return RxToolbar.itemClicks(toolbar).map(MenuItem::getItemId);
+    }
+
+    @Override
+    public Observable<Feed> observeFeedTileClick() {
+        return adapter.getTileClickedObservable();
+    }
+
+    @Override
+    public Observable<Feed> observeFeedOptionsClick() {
+        return adapter.getOptionsClickedObservable();
     }
 }

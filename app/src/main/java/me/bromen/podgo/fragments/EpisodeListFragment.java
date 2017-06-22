@@ -19,8 +19,8 @@ import java.util.List;
 
 import me.bromen.podgo.adapters.EpisodeRecyclerAdapter;
 import me.bromen.podgo.activities.home.MainActivity;
-import me.bromen.podgo.structures.FeedItem;
-import me.bromen.podgo.utilities.PodcastFileUtils;
+import me.bromen.podgo.ext.structures.FeedItem;
+import me.bromen.podgo.ext.utilities.PodcastFileUtils;
 import me.bromen.podgo.R;
 
 /**

@@ -9,7 +9,7 @@ import io.reactivex.Observable;
 import me.bromen.podgo.activities.newfeed.mvp.NewFeedPresenter;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedModel;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedView;
-import me.bromen.podgo.structures.Feed;
+import me.bromen.podgo.ext.structures.Feed;
 
 /**
  * Created by jeff on 6/21/17.

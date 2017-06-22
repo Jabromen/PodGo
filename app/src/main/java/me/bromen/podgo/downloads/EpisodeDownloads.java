@@ -9,9 +9,8 @@ import android.os.Environment;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import me.bromen.podgo.structures.FeedItem;
-import me.bromen.podgo.utilities.PodcastFileUtils;
+import me.bromen.podgo.ext.structures.FeedItem;
+import me.bromen.podgo.ext.utilities.PodcastFileUtils;
 
 /**
  * Created by jeff on 5/19/17.

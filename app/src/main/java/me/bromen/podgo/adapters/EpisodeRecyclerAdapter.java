@@ -17,10 +17,9 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.bromen.podgo.structures.FeedItem;
-import me.bromen.podgo.utilities.PodcastFileUtils;
+import me.bromen.podgo.ext.structures.FeedItem;
+import me.bromen.podgo.ext.utilities.PodcastFileUtils;
 import me.bromen.podgo.R;
-import me.bromen.podgo.activities.home.MainActivity;
 
 /**
  * Created by jeff on 5/9/17.

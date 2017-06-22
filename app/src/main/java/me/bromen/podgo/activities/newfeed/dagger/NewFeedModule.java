@@ -2,15 +2,14 @@ package me.bromen.podgo.activities.newfeed.dagger;
 
 import dagger.Module;
 import dagger.Provides;
-import me.bromen.podgo.FeedParser;
+import me.bromen.podgo.app.parser.FeedParser;
 import me.bromen.podgo.activities.newfeed.NewFeedActivity;
 import me.bromen.podgo.activities.newfeed.mvp.NewFeedModelImpl;
 import me.bromen.podgo.activities.newfeed.mvp.NewFeedPresenter;
 import me.bromen.podgo.activities.newfeed.mvp.NewFeedViewImpl;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedModel;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedView;
-import me.bromen.podgo.storage.PodcastDbHelper;
-import okhttp3.OkHttpClient;
+import me.bromen.podgo.app.storage.PodcastDbHelper;
 
 /**
  * Created by jeff on 6/21/17.

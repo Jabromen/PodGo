@@ -25,7 +25,7 @@ import java.util.List;
 import me.bromen.podgo.R;
 import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.adapters.ItunesRecyclerAdapter;
-import me.bromen.podgo.structures.ItunesPodcast;
+import me.bromen.podgo.ext.structures.ItunesPodcast;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

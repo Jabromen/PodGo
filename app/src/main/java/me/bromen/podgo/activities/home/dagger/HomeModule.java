@@ -1,6 +1,6 @@
 package me.bromen.podgo.activities.home.dagger;
 
-import android.app.Activity;
+import com.squareup.picasso.Picasso;
 
 import dagger.Module;
 import dagger.Provides;
@@ -10,7 +10,7 @@ import me.bromen.podgo.activities.home.mvp.HomePresenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
 import me.bromen.podgo.activities.home.mvp.view.HomeViewImpl;
-import me.bromen.podgo.storage.PodcastDbHelper;
+import me.bromen.podgo.app.storage.PodcastDbHelper;
 
 /**
  * Created by jeff on 6/20/17.
@@ -27,8 +27,8 @@ public class HomeModule {
 
     @Provides
     @HomeScope
-    public HomeView view() {
-        return new HomeViewImpl(activity);
+    public HomeView view(Picasso picasso) {
+        return new HomeViewImpl(activity, picasso);
     }
 
     @Provides

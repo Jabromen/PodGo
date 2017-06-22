@@ -5,14 +5,14 @@ import android.content.Context;
 import com.squareup.picasso.Picasso;
 
 import dagger.Component;
-import me.bromen.podgo.FeedParser;
+import me.bromen.podgo.app.parser.FeedParser;
 import me.bromen.podgo.app.dagger.module.AppModule;
 import me.bromen.podgo.app.dagger.module.DatabaseModule;
 import me.bromen.podgo.app.dagger.module.EpiosdeDownloadsModule;
 import me.bromen.podgo.app.dagger.module.NetworkModule;
 import me.bromen.podgo.app.dagger.module.ParserModule;
 import me.bromen.podgo.downloads.EpisodeDownloads;
-import me.bromen.podgo.storage.PodcastDbHelper;
+import me.bromen.podgo.app.storage.PodcastDbHelper;
 import okhttp3.OkHttpClient;
 
 /**

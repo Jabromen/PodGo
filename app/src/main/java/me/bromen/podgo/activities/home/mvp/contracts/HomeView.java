@@ -1,6 +1,7 @@
 package me.bromen.podgo.activities.home.mvp.contracts;
 
-import me.bromen.podgo.structures.FeedList;
+import me.bromen.podgo.ext.structures.Feed;
+import me.bromen.podgo.ext.structures.FeedList;
 import io.reactivex.Observable;
 
 /**
@@ -17,5 +18,11 @@ public interface HomeView {
 
     void showError();
 
+    void showFeedOptions(long id);
+
     Observable<Integer> observeMenuItemClick();
+
+    Observable<Feed> observeFeedTileClick();
+
+    Observable<Feed> observeFeedOptionsClick();
 }

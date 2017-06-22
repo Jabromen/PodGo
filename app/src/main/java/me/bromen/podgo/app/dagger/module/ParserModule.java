@@ -2,7 +2,7 @@ package me.bromen.podgo.app.dagger.module;
 
 import dagger.Module;
 import dagger.Provides;
-import me.bromen.podgo.FeedParser;
+import me.bromen.podgo.app.parser.FeedParser;
 import me.bromen.podgo.app.dagger.AppScope;
 import okhttp3.OkHttpClient;
 

@@ -1,6 +1,4 @@
-package me.bromen.podgo.structures;
-
-import android.os.Parcelable;
+package me.bromen.podgo.ext.structures;
 
 import org.json.JSONException;
 import org.json.JSONObject;

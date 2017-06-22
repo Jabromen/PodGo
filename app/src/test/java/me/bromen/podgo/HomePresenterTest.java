@@ -11,8 +11,8 @@ import java.util.Arrays;
 import me.bromen.podgo.activities.home.mvp.HomePresenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
-import me.bromen.podgo.structures.Feed;
-import me.bromen.podgo.structures.FeedList;
+import me.bromen.podgo.ext.structures.Feed;
+import me.bromen.podgo.ext.structures.FeedList;
 import io.reactivex.Observable;
 
 /**
@@ -37,6 +37,9 @@ public class HomePresenterTest {
         homePresenter = new HomePresenter(homeView, homeModel);
 
         Mockito.when(homeView.observeMenuItemClick()).thenReturn(Observable.never());
+        Mockito.when(homeView.observeFeedTileClick()).thenReturn(Observable.never());
+        Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.never());
+
     }
 
     @Test
@@ -94,5 +97,25 @@ public class HomePresenterTest {
         homePresenter.onCreate();
 
         Mockito.verify(homeModel).startOptionsActivity();
+    }
+
+    @Test
+    public void onFeedTileClicked() throws Exception {
+        Feed feed = new Feed();
+        Mockito.when(homeView.observeFeedTileClick()).thenReturn(Observable.just(feed));
+
+        homePresenter.onCreate();
+
+        Mockito.verify(homeModel).startFeedDetailActivity(feed.getId());
+    }
+
+    @Test
+    public void onFeedOptionsClicked() throws Exception {
+        Feed feed = new Feed();
+        Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
+
+        homePresenter.onCreate();
+
+        Mockito.verify(homeView).showFeedOptions(feed.getId());
     }
 }

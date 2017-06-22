@@ -1,18 +1,17 @@
-package me.bromen.podgo.storage;
+package me.bromen.podgo.app.storage;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import me.bromen.podgo.structures.Feed;
-import me.bromen.podgo.structures.FeedItem;
-import me.bromen.podgo.structures.FeedList;
+import me.bromen.podgo.ext.structures.Feed;
+import me.bromen.podgo.ext.structures.FeedItem;
+import me.bromen.podgo.ext.structures.FeedList;
 
 /**
  * Created by jeff on 5/27/17.

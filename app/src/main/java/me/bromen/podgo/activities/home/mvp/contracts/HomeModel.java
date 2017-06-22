@@ -1,8 +1,6 @@
 package me.bromen.podgo.activities.home.mvp.contracts;
 
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import me.bromen.podgo.structures.FeedList;
+import me.bromen.podgo.ext.structures.FeedList;
 
 /**
  * Created by jeff on 6/20/17.
@@ -15,4 +13,6 @@ public interface HomeModel {
     void startNewFeedActivity();
 
     void startOptionsActivity();
+
+    void startFeedDetailActivity(long id);
 }

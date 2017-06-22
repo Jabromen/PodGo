@@ -1,4 +1,4 @@
-package me.bromen.podgo.structures;
+package me.bromen.podgo.ext.structures;
 
 import android.database.Cursor;
 

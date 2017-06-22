@@ -1,4 +1,4 @@
-package me.bromen.podgo.storage;
+package me.bromen.podgo.app.storage;
 
 import android.content.Context;
 import android.provider.BaseColumns;

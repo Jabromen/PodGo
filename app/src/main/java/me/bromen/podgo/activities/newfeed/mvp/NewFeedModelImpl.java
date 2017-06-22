@@ -2,11 +2,11 @@ package me.bromen.podgo.activities.newfeed.mvp;
 
 import android.util.Log;
 
-import me.bromen.podgo.FeedParser;
+import me.bromen.podgo.app.parser.FeedParser;
 import me.bromen.podgo.activities.newfeed.NewFeedActivity;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedModel;
-import me.bromen.podgo.storage.PodcastDbHelper;
-import me.bromen.podgo.structures.Feed;
+import me.bromen.podgo.app.storage.PodcastDbHelper;
+import me.bromen.podgo.ext.structures.Feed;
 
 /**
  * Created by jeff on 6/21/17.

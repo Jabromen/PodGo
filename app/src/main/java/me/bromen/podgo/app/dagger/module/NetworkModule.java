@@ -1,7 +1,10 @@
 package me.bromen.podgo.app.dagger.module;
 
 import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
 
+import com.bumptech.glide.Glide;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -37,7 +40,8 @@ public class NetworkModule {
     @AppScope
     @Provides
     public HttpLoggingInterceptor loggingInterceptor() {
-        return new HttpLoggingInterceptor(message -> Timber.d(message));
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> Timber.d(message));
+        return loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
     }
 
     @AppScope

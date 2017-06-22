@@ -8,7 +8,7 @@ import io.reactivex.schedulers.Schedulers;
 import me.bromen.podgo.activities.Presenter;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedModel;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedView;
-import me.bromen.podgo.structures.Feed;
+import me.bromen.podgo.ext.structures.Feed;
 
 /**
  * Created by jeff on 6/21/17.

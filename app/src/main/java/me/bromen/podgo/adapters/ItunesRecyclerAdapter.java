@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.bromen.podgo.R;
-import me.bromen.podgo.structures.ItunesPodcast;
+import me.bromen.podgo.ext.structures.ItunesPodcast;
 
 /**
  * Created by jeff on 6/1/17.

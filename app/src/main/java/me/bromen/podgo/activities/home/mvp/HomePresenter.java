@@ -9,6 +9,7 @@ import me.bromen.podgo.R;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
 import me.bromen.podgo.activities.Presenter;
+import me.bromen.podgo.activities.home.mvp.view.HomeViewImpl;
 
 /**
  * Created by jeff on 6/20/17.
@@ -29,6 +30,8 @@ public class HomePresenter implements Presenter {
     public void onCreate() {
         disposables.add(loadFeeds());
         disposables.add(observeMenuItems());
+        disposables.add(observeFeedTile());
+        disposables.add(observeFeedOptions());
     }
 
     @Override
@@ -64,5 +67,15 @@ public class HomePresenter implements Presenter {
                         model.startOptionsActivity();
                     }
                 });
+    }
+
+    private Disposable observeFeedTile() {
+        return view.observeFeedTileClick()
+                .subscribe(feed -> model.startFeedDetailActivity(feed.getId()));
+    }
+
+    private Disposable observeFeedOptions() {
+        return view.observeFeedOptionsClick()
+                .subscribe(feed -> view.showFeedOptions(feed.getId()));
     }
 }
