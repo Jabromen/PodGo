@@ -2,6 +2,7 @@ package me.bromen.podgo.activities.newfeed.mvp;
 
 import android.util.Log;
 
+import me.bromen.podgo.activities.itunessearch.ItunesSearchActivity;
 import me.bromen.podgo.app.parser.FeedParser;
 import me.bromen.podgo.activities.newfeed.NewFeedActivity;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedModel;
@@ -32,5 +33,6 @@ public class NewFeedModelImpl implements NewFeedModel {
     @Override
     public void startItunesSearchActivity() {
         Log.d(TAG, "startItunesSearchActivity()");
+        ItunesSearchActivity.start(activity);
     }
 }
