@@ -33,6 +33,10 @@ public class FeedParser {
     public String parseFeedFromUrl(String feedUrl) {
 
         try {
+            if (!feedUrl.startsWith("http://") && !feedUrl.startsWith("https://")) {
+                feedUrl = "http://" + feedUrl;
+            }
+
             Request request = new Request.Builder().url(feedUrl).build();
             Response response = okHttpClient.newCall(request).execute();
 
