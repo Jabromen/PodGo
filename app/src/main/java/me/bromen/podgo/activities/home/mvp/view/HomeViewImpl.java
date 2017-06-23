@@ -1,8 +1,11 @@
 package me.bromen.podgo.activities.home.mvp.view;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -11,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jakewharton.rxbinding2.support.v7.widget.RxPopupMenu;
 import com.jakewharton.rxbinding2.support.v7.widget.RxToolbar;
 import com.squareup.picasso.Picasso;
 
@@ -43,6 +47,7 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
     private final Picasso picasso;
     private PodcastRecyclerAdapter adapter;
     private final ProgressDialog progressDialog = new ProgressDialog(getContext());
+    private final PopupMenu optionsPopup;
 
     public HomeViewImpl(MainActivity activity, Picasso picasso) {
         super(activity);
@@ -54,6 +59,9 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
 
         initToolbar();
         initFeedView();
+
+        optionsPopup = new PopupMenu(getContext(), toolbar);
+        optionsPopup.inflate(R.menu.menu_feed_options);
     }
 
     private void initToolbar() {
@@ -102,8 +110,17 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
     }
 
     @Override
-    public void showFeedOptions(long id) {
-        Toast.makeText(getContext(), "Feed Options - " + id, Toast.LENGTH_SHORT).show();
+    public void showFeedOptions() {
+        optionsPopup.show();
+    }
+
+    @Override
+    public void showNewEpisodes(int newEps) {
+        if (newEps > 0) {
+            Toast.makeText(getContext(), Integer.toString(newEps) + " Episodes Added", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Feed up to date", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -119,5 +136,10 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
     @Override
     public Observable<Feed> observeFeedOptionsClick() {
         return adapter.getOptionsClickedObservable();
+    }
+
+    @Override
+    public Observable<Integer> observeFeedOptionMenuClick() {
+        return RxPopupMenu.itemClicks(optionsPopup).map(MenuItem::getItemId);
     }
 }

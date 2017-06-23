@@ -11,7 +11,7 @@ import me.bromen.podgo.activities.feeddetail.mvp.view.FeedDetailViewImpl;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailModel;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailView;
 import me.bromen.podgo.app.storage.PodcastDbHelper;
-import me.bromen.podgo.downloads.EpisodeDownloads;
+import me.bromen.podgo.app.downloads.EpisodeDownloads;
 
 /**
  * Created by jeff on 6/22/17.

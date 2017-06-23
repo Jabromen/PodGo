@@ -5,7 +5,7 @@ import android.util.Log;
 import me.bromen.podgo.activities.feeddetail.FeedDetailActivity;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailModel;
 import me.bromen.podgo.app.storage.PodcastDbHelper;
-import me.bromen.podgo.downloads.EpisodeDownloads;
+import me.bromen.podgo.app.downloads.EpisodeDownloads;
 import me.bromen.podgo.ext.structures.Feed;
 import me.bromen.podgo.ext.structures.FeedItem;
 

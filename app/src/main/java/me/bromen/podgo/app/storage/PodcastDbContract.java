@@ -44,7 +44,7 @@ public class PodcastDbContract {
     public static final String SQL_CREATE_TABLE_FEED_ITEMS =
             "CREATE TABLE " + TABLE_NAME_FEED_ITEMS + " (" + KEY_ID + " INTEGER," +
                     KEY_TITLE + " TEXT," + KEY_DESCRIPTION + " TEXT," +
-                    KEY_PUBDATE + " TEXT," + KEY_LINK + " TEXT," + KEY_FEEDPLACE + " INTEGER," +
+                    KEY_PUBDATE + " DATETIME," + KEY_LINK + " TEXT," + KEY_FEEDPLACE + " INTEGER," +
                     KEY_ENCLOSUREURL + " TEXT," + KEY_ENCLOSURETYPE + " TEXT," +
                     KEY_ENCLOSURELENGTH + " TEXT)";
 

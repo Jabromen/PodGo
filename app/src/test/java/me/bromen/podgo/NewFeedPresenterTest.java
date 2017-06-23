@@ -50,6 +50,7 @@ public class NewFeedPresenterTest {
     @Test
     public void onObserveManualButtonPressed() throws Exception {
         Mockito.when(view.observeManualButton()).thenReturn(Observable.just(sampleUrl));
+        Mockito.when(model.downloadFeed(sampleUrl)).thenReturn("");
 
         presenter.onCreate();
 
@@ -58,61 +59,23 @@ public class NewFeedPresenterTest {
 
     @Test
     public void onObserveManualDownloadSuccess() throws Exception {
+        final String successResponse = "";
         Mockito.when(view.observeManualButton()).thenReturn(Observable.just(sampleUrl));
-        Mockito.when(model.downloadFeed(sampleUrl)).thenReturn(sampleFeed);
+        Mockito.when(model.downloadFeed(sampleUrl)).thenReturn("");
 
         presenter.onCreate();
 
         Mockito.verify(view).showDownloadSuccess();
-        Mockito.verify(model).saveFeed(sampleFeed);
     }
 
     @Test
-    public void onObserveManualDownloadError() throws Exception {
-        final String downloadError = "downloadError";
+    public void onObserveManualError() throws Exception {
+        final String errorReason = "errorReason";
         Mockito.when(view.observeManualButton()).thenReturn(Observable.just(sampleUrl));
-        Mockito.when(model.downloadFeed(sampleUrl)).thenThrow(new Exception(downloadError));
+        Mockito.when(model.downloadFeed(sampleUrl)).thenReturn(errorReason);
 
         presenter.onCreate();
 
-        Mockito.verify(view).showDownloadError(downloadError);
-        Mockito.verify(model, Mockito.never()).saveFeed(Mockito.any());
-    }
-
-    @Test
-    public void onObserveManualSaveSuccess() throws Exception {
-        Mockito.when(view.observeManualButton()).thenReturn(Observable.just(sampleUrl));
-        Mockito.when(model.downloadFeed(sampleUrl)).thenReturn(sampleFeed);
-        Mockito.when(model.saveFeed(sampleFeed)).thenReturn(true);
-
-        presenter.onCreate();
-
-        Mockito.verify(view).showDownloadSuccess();
-        Mockito.verify(view).showSaveSuccess();
-    }
-
-    @Test
-    public void onObserveManualAlreadySaved() throws Exception {
-        Mockito.when(view.observeManualButton()).thenReturn(Observable.just(sampleUrl));
-        Mockito.when(model.downloadFeed(sampleUrl)).thenReturn(sampleFeed);
-        Mockito.when(model.saveFeed(sampleFeed)).thenReturn(false);
-
-        presenter.onCreate();
-
-        Mockito.verify(view).showDownloadSuccess();
-        Mockito.verify(view).showSaveError(Mockito.anyString());
-    }
-
-    @Test
-    public void onObserveManualSaveError() throws Exception {
-        final String saveError = "saveError";
-        Mockito.when(view.observeManualButton()).thenReturn(Observable.just(sampleUrl));
-        Mockito.when(model.downloadFeed(sampleUrl)).thenReturn(sampleFeed);
-        Mockito.when(model.saveFeed(sampleFeed)).thenThrow(new Exception(saveError));
-
-        presenter.onCreate();
-
-        Mockito.verify(view).showDownloadSuccess();
-        Mockito.verify(view).showSaveError(saveError);
+        Mockito.verify(view).showError(errorReason);
     }
 }

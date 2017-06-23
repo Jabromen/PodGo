@@ -32,8 +32,8 @@ public class NewFeedModule {
 
     @Provides
     @NewFeedScope
-    public NewFeedModel newFeedModel(PodcastDbHelper dbHelper, FeedParser feedParser) {
-        return new NewFeedModelImpl(activity, dbHelper, feedParser);
+    public NewFeedModel newFeedModel(FeedParser feedParser) {
+        return new NewFeedModelImpl(activity, feedParser);
     }
 
     @Provides

@@ -11,7 +11,7 @@ import me.bromen.podgo.app.dagger.module.DatabaseModule;
 import me.bromen.podgo.app.dagger.module.EpiosdeDownloadsModule;
 import me.bromen.podgo.app.dagger.module.NetworkModule;
 import me.bromen.podgo.app.dagger.module.ParserModule;
-import me.bromen.podgo.downloads.EpisodeDownloads;
+import me.bromen.podgo.app.downloads.EpisodeDownloads;
 import me.bromen.podgo.app.storage.PodcastDbHelper;
 import okhttp3.OkHttpClient;
 

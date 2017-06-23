@@ -9,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import me.bromen.podgo.app.storage.PodcastDbHelper;
 import me.bromen.podgo.ext.structures.Feed;
 
 import okhttp3.OkHttpClient;
@@ -22,15 +23,17 @@ import okhttp3.Response;
 public class FeedParser {
 
     private final OkHttpClient okHttpClient;
+    private final PodcastDbHelper dbHelper;
 
-    public FeedParser(OkHttpClient okHttpClient) {
+    public FeedParser(OkHttpClient okHttpClient, PodcastDbHelper dbHelper) {
         this.okHttpClient = okHttpClient;
+        this.dbHelper = dbHelper;
     }
 
-    public Feed parseFeedFromUrl(String feedUrl) throws Exception {
-        Request request = new Request.Builder().url(feedUrl).build();
+    public String parseFeedFromUrl(String feedUrl) {
 
         try {
+            Request request = new Request.Builder().url(feedUrl).build();
             Response response = okHttpClient.newCall(request).execute();
 
             if (response.isSuccessful()) {
@@ -39,17 +42,14 @@ public class FeedParser {
                 Feed feed = parseFeedFromStream(in);
                 in.close();
 
-                return feed;
+                return dbHelper.saveFeed(feed) ? "" : "Already Saved";
             } else {
-                throw new Exception("HTTP Response Failed");
+                return "Http Response Failed";
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("IOException");
-        } catch (SAXException e) {
-            e.printStackTrace();
-            throw new Exception("SAXException");
+            return e.getMessage();
         }
     }
 

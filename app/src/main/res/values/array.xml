@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array name="filter_episodes_options" >
+    <string-array name="filter_episodes_options" >
         <item>All</item>
         <item>Most Recent 7</item>
         <item>Downloaded</item>
         <item>Not Downloaded</item>
-    </array>
+    </string-array>
+    <string-array name="feed_options" >
+        <item>Refresh Feed</item>
+        <item>Delete Feed</item>
+    </string-array>
 </resources>

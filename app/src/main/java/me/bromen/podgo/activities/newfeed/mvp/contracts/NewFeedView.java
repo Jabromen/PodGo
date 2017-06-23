@@ -10,11 +10,9 @@ public interface NewFeedView {
 
     void showDownloadSuccess();
 
-    void showDownloadError(String reason);
+    void showError(String reason);
 
-    void showSaveSuccess();
-
-    void showSaveError(String reason);
+    void showLoading(boolean loading);
 
     Observable<Object> observeItunesButton();
 

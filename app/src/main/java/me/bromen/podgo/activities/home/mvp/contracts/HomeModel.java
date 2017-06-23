@@ -1,5 +1,6 @@
 package me.bromen.podgo.activities.home.mvp.contracts;
 
+import me.bromen.podgo.ext.structures.Feed;
 import me.bromen.podgo.ext.structures.FeedList;
 
 /**
@@ -9,6 +10,10 @@ import me.bromen.podgo.ext.structures.FeedList;
 public interface HomeModel {
 
     FeedList loadFeeds() throws Exception;
+
+    Integer refreshFeed(Feed feed) throws Exception;
+
+    Boolean deleteFeed(Feed feed) throws Exception;
 
     void startNewFeedActivity();
 

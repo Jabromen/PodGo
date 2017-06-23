@@ -18,11 +18,15 @@ public interface HomeView {
 
     void showError();
 
-    void showFeedOptions(long id);
+    void showFeedOptions();
+
+    void showNewEpisodes(int newEps);
 
     Observable<Integer> observeMenuItemClick();
 
     Observable<Feed> observeFeedTileClick();
 
     Observable<Feed> observeFeedOptionsClick();
+
+    Observable<Integer> observeFeedOptionMenuClick();
 }

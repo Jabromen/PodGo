@@ -8,9 +8,7 @@ import me.bromen.podgo.ext.structures.Feed;
 
 public interface NewFeedModel {
 
-    Feed downloadFeed(String url) throws Exception;
-
-    Boolean saveFeed(Feed feed) throws Exception;
+    String downloadFeed(String url);
 
     void startItunesSearchActivity();
 }

@@ -256,7 +256,7 @@ public class PodcastDbHelper extends SQLiteOpenHelper {
         String selection = PodcastDbContract.KEY_ID + " = ?";
         String[] selectId = {Long.toString(id)};
 
-        String sortOrder = PodcastDbContract.KEY_FEEDPLACE + " DESC";
+        String sortOrder = "date(" + PodcastDbContract.KEY_PUBDATE + ") DESC";
 
         Cursor cursor = null;
         List<FeedItem> feedItems = new ArrayList<>();
@@ -277,10 +277,12 @@ public class PodcastDbHelper extends SQLiteOpenHelper {
         return feedItems;
     }
 
-    public void deleteFeed(long id) {
+    public boolean deleteFeed(long id) {
         SQLiteDatabase db = getWritableDatabase();
 
         db.delete(PodcastDbContract.TABLE_NAME_FEED_ITEMS, PodcastDbContract.KEY_ID + " = " + Long.toString(id), null);
         db.delete(PodcastDbContract.TABLE_NAME_FEED, PodcastDbContract.KEY_ID + " = " + Long.toString(id), null);
+
+        return true;
     }
 }

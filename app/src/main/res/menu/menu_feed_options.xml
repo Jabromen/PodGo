@@ -4,16 +4,15 @@
     tools:context="me.bromen.podgo.activities.home.MainActivity">
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_refresh_feed"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="@string/refresh_feed"
+        />
 
     <item
-        android:id="@+id/action_new_podcast"
+        android:id="@+id/action_delete_feed"
         android:orderInCategory="200"
-        android:title="@string/action_new_podcast"
-        app:showAsAction="ifRoom|withText"
-        android:icon="@drawable/ic_action_new_podcast" />
+        android:title="@string/delete_feed"
+        />
 
 </menu>

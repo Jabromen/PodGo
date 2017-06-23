@@ -8,6 +8,7 @@ import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.newfeed.NewFeedActivity;
 import me.bromen.podgo.app.storage.PodcastDbContract;
 import me.bromen.podgo.app.storage.PodcastDbHelper;
+import me.bromen.podgo.ext.structures.Feed;
 import me.bromen.podgo.ext.structures.FeedList;
 
 /**
@@ -29,6 +30,16 @@ public class HomeModelImpl implements HomeModel {
     @Override
     public FeedList loadFeeds() throws Exception {
         return dbHelper.loadAllFeeds(PodcastDbContract.ORDER_ALPHA_ASC);
+    }
+
+    @Override
+    public Integer refreshFeed(Feed feed) throws Exception {
+        return dbHelper.updateFeed(feed);
+    }
+
+    @Override
+    public Boolean deleteFeed(Feed feed) throws Exception {
+        return dbHelper.deleteFeed(feed.getId());
     }
 
     @Override

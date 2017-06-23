@@ -17,23 +17,16 @@ public class NewFeedModelImpl implements NewFeedModel {
     public static String TAG = "NewFeedModelImpl";
 
     private final NewFeedActivity activity;
-    private final PodcastDbHelper dbHelper;
     private final FeedParser feedParser;
 
-    public NewFeedModelImpl(NewFeedActivity activity, PodcastDbHelper dbHelper, FeedParser feedParser) {
+    public NewFeedModelImpl(NewFeedActivity activity, FeedParser feedParser) {
         this.activity = activity;
-        this.dbHelper = dbHelper;
         this.feedParser = feedParser;
     }
 
     @Override
-    public Feed downloadFeed(String url) throws Exception {
+    public String downloadFeed(String url) {
         return feedParser.parseFeedFromUrl(url);
-    }
-
-    @Override
-    public Boolean saveFeed(Feed feed) throws Exception {
-        return dbHelper.saveFeed(feed);
     }
 
     @Override

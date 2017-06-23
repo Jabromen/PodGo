@@ -1,6 +1,7 @@
 package me.bromen.podgo.activities.newfeed.mvp;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Button;
@@ -38,6 +39,8 @@ public class NewFeedViewImpl extends FrameLayout implements NewFeedView {
     @BindView(R.id.toolbar_newfeed)
     Toolbar toolbar;
 
+    private final ProgressDialog loadingDialog = new ProgressDialog(getContext());
+
     public NewFeedViewImpl(NewFeedActivity activity) {
         super(activity);
 
@@ -62,19 +65,18 @@ public class NewFeedViewImpl extends FrameLayout implements NewFeedView {
     }
 
     @Override
-    public void showDownloadError(String reason) {
-        Log.d(TAG, "showDownloadError()");
-        Toast.makeText(getContext(), "Download Error: " + reason, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showSaveSuccess() {
-        Toast.makeText(getContext(), "Save Success", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showSaveError(String reason) {
+    public void showError(String reason) {
         Toast.makeText(getContext(), "Save Error: " + reason, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showLoading(boolean loading) {
+        if (loading) {
+            loadingDialog.setMessage("Downloading Feed");
+            loadingDialog.show();
+        } else {
+            loadingDialog.dismiss();
+        }
     }
 
     @Override

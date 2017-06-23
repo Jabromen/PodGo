@@ -1,5 +1,6 @@
 package me.bromen.podgo.activities.home.mvp;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -10,6 +11,7 @@ import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
 import me.bromen.podgo.activities.Presenter;
 import me.bromen.podgo.activities.home.mvp.view.HomeViewImpl;
+import me.bromen.podgo.ext.structures.Feed;
 
 /**
  * Created by jeff on 6/20/17.
@@ -28,10 +30,10 @@ public class HomePresenter implements Presenter {
 
     @Override
     public void onCreate() {
-        disposables.add(loadFeeds());
-        disposables.add(observeMenuItems());
-        disposables.add(observeFeedTile());
-        disposables.add(observeFeedOptions());
+        loadFeeds();
+        observeMenuItems();
+        observeFeedTile();
+        observeFeedOptions();
     }
 
     @Override
@@ -39,10 +41,10 @@ public class HomePresenter implements Presenter {
         disposables.dispose();
     }
 
-    private Disposable loadFeeds() {
+    private void loadFeeds() {
 
         view.showLoading(true);
-        return Single.fromCallable(model::loadFeeds)
+        disposables.add(Single.fromCallable(model::loadFeeds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(feeds -> {
@@ -55,27 +57,53 @@ public class HomePresenter implements Presenter {
                 }, throwable -> {
                     view.showLoading(false);
                     view.showError();
-                });
+                }));
     }
 
-    private Disposable observeMenuItems() {
-        return view.observeMenuItemClick()
+    private void observeMenuItems() {
+        disposables.add(view.observeMenuItemClick()
                 .subscribe(itemId -> {
                     if (itemId == R.id.action_new_podcast) {
                         model.startNewFeedActivity();
                     } else if (itemId == R.id.action_settings) {
                         model.startOptionsActivity();
                     }
-                });
+                }));
     }
 
-    private Disposable observeFeedTile() {
-        return view.observeFeedTileClick()
-                .subscribe(feed -> model.startFeedDetailActivity(feed.getId()));
+    private void observeFeedTile() {
+        disposables.add(view.observeFeedTileClick()
+                .subscribe(feed -> model.startFeedDetailActivity(feed.getId())));
     }
 
-    private Disposable observeFeedOptions() {
-        return view.observeFeedOptionsClick()
-                .subscribe(feed -> view.showFeedOptions(feed.getId()));
+    private void observeFeedOptions() {
+        disposables.add(view.observeFeedOptionsClick()
+                .subscribe(this::onFeedOptionsClicked));
+    }
+
+    private void onFeedOptionsClicked(Feed feed) {
+        view.showFeedOptions();
+        disposables.add(view.observeFeedOptionMenuClick()
+                .subscribe(i -> {
+                    if (i == R.id.action_refresh_feed) {
+                        onRefreshFeed(feed);
+                    } else if (i == R.id.action_delete_feed) {
+                        onDeleteFeed(feed);
+                    }
+                }));
+    }
+
+    private void onRefreshFeed(Feed feed) {
+        disposables.add(Single.fromCallable(() -> model.refreshFeed(feed))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(view::showNewEpisodes, throwable -> view.showError()));
+    }
+
+    private void onDeleteFeed(Feed feed) {
+        disposables.add(Single.fromCallable(() -> model.deleteFeed(feed))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(__ -> loadFeeds(), throwable -> view.showError()));
     }
 }

@@ -5,7 +5,7 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import me.bromen.podgo.app.dagger.AppScope;
-import me.bromen.podgo.downloads.EpisodeDownloads;
+import me.bromen.podgo.app.downloads.EpisodeDownloads;
 
 /**
  * Created by jeff on 6/20/17.

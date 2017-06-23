@@ -48,24 +48,17 @@ public class NewFeedPresenter implements Presenter {
     }
 
     private void onManualButtonClicked(String url) {
+        view.showLoading(true);
         disposables.add(Observable.fromCallable(() -> model.downloadFeed(url))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(__ -> view.showDownloadSuccess())
-                .doOnError(throwable -> view.showDownloadError(throwable.getMessage()))
-                .subscribe(this::onFeedDownloaded, throwable -> {}));
-    }
-
-    private void onFeedDownloaded(Feed feed) {
-        disposables.add(Observable.fromCallable(() -> model.saveFeed(feed))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(saved -> {
-                    if (saved) {
-                        view.showSaveSuccess();
+                .subscribe(response -> {
+                    view.showLoading(false);
+                    if ("".equals(response)) {
+                        view.showDownloadSuccess();
                     } else {
-                        view.showSaveError("Already Saved");
+                        view.showError(response);
                     }
-                }, throwable -> view.showSaveError(throwable.getMessage())));
+                }));
     }
 }

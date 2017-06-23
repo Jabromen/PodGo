@@ -1,4 +1,4 @@
-package me.bromen.podgo.downloads;
+package me.bromen.podgo.app.downloads;
 
 import android.app.DownloadManager;
 import android.content.Context;

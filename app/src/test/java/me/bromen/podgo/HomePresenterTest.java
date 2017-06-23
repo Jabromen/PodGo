@@ -25,6 +25,9 @@ public class HomePresenterTest {
     private HomeView homeView;
     private HomeModel homeModel;
 
+    private final Feed[] feeds = {new Feed(), new Feed(), new Feed()};
+    private final FeedList mockFeedList = new FeedList(Arrays.asList(feeds));
+
     @Rule
     public TrampolineSchedulerRule trampolineSchedulerRule = new TrampolineSchedulerRule();
 
@@ -39,13 +42,14 @@ public class HomePresenterTest {
         Mockito.when(homeView.observeMenuItemClick()).thenReturn(Observable.never());
         Mockito.when(homeView.observeFeedTileClick()).thenReturn(Observable.never());
         Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.never());
+        Mockito.when(homeView.observeFeedOptionMenuClick()).thenReturn(Observable.never());
 
+        Mockito.when(homeModel.loadFeeds()).thenReturn(mockFeedList);
     }
 
     @Test
     public void onObserveLoadFeedsNoFeeds() throws Exception {
-        FeedList mockFeedList = new FeedList();
-        Mockito.when(homeModel.loadFeeds()).thenReturn(mockFeedList);
+        Mockito.when(homeModel.loadFeeds()).thenReturn(new FeedList());
 
         homePresenter.onCreate();
 
@@ -53,13 +57,11 @@ public class HomePresenterTest {
         inOrder.verify(homeView).showLoading(true);
         inOrder.verify(homeView).showLoading(false);
         inOrder.verify(homeView).showNoFeeds();
+        Mockito.verify(homeView, Mockito.never()).showError();
     }
 
     @Test
     public void onObserveLoadFeedsWithFeeds() throws Exception {
-        Feed[] feeds = {new Feed(), new Feed(), new Feed()};
-        FeedList mockFeedList = new FeedList(Arrays.asList(feeds));
-        Mockito.when(homeModel.loadFeeds()).thenReturn(mockFeedList);
 
         homePresenter.onCreate();
 
@@ -67,6 +69,7 @@ public class HomePresenterTest {
         inOrder.verify(homeView).showLoading(true);
         inOrder.verify(homeView).showLoading(false);
         inOrder.verify(homeView).showFeeds(mockFeedList);
+        Mockito.verify(homeView, Mockito.never()).showError();
     }
 
     @Test
@@ -88,6 +91,7 @@ public class HomePresenterTest {
         homePresenter.onCreate();
 
         Mockito.verify(homeModel).startNewFeedActivity();
+        Mockito.verify(homeView, Mockito.never()).showError();
     }
 
     @Test
@@ -97,6 +101,7 @@ public class HomePresenterTest {
         homePresenter.onCreate();
 
         Mockito.verify(homeModel).startOptionsActivity();
+        Mockito.verify(homeView, Mockito.never()).showError();
     }
 
     @Test
@@ -107,6 +112,7 @@ public class HomePresenterTest {
         homePresenter.onCreate();
 
         Mockito.verify(homeModel).startFeedDetailActivity(feed.getId());
+        Mockito.verify(homeView, Mockito.never()).showError();
     }
 
     @Test
@@ -116,6 +122,67 @@ public class HomePresenterTest {
 
         homePresenter.onCreate();
 
-        Mockito.verify(homeView).showFeedOptions(feed.getId());
+        Mockito.verify(homeView).showFeedOptions();
+        Mockito.verify(homeView, Mockito.never()).showError();
+    }
+
+    @Test
+    public void onFeedOptionsRefreshClickedSuccess() throws Exception {
+        Feed feed = new Feed();
+        final int newEps = 3;
+        Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
+        Mockito.when(homeView.observeFeedOptionMenuClick()).thenReturn(Observable.just(R.id.action_refresh_feed));
+        Mockito.when(homeModel.refreshFeed(feed)).thenReturn(newEps);
+
+        homePresenter.onCreate();
+
+        Mockito.verify(homeView).showFeedOptions();
+        Mockito.verify(homeModel).refreshFeed(feed);
+        Mockito.verify(homeView).showNewEpisodes(newEps);
+        Mockito.verify(homeView, Mockito.never()).showError();
+    }
+
+    @Test
+    public void onFeedOptionsRefreshClickedError() throws Exception {
+        Feed feed = new Feed();
+        Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
+        Mockito.when(homeView.observeFeedOptionMenuClick()).thenReturn(Observable.just(R.id.action_refresh_feed));
+        Mockito.when(homeModel.refreshFeed(feed)).thenThrow(new Exception());
+
+        homePresenter.onCreate();
+
+        Mockito.verify(homeView).showFeedOptions();
+        Mockito.verify(homeModel).refreshFeed(feed);
+        Mockito.verify(homeView).showError();
+    }
+
+    @Test
+    public void onFeedDeleteClickedSuccess() throws Exception {
+        Feed feed = new Feed();
+        Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
+        Mockito.when(homeView.observeFeedOptionMenuClick()).thenReturn(Observable.just(R.id.action_delete_feed));
+        Mockito.when(homeModel.deleteFeed(feed)).thenReturn(true);
+
+        homePresenter.onCreate();
+
+        Mockito.verify(homeView).showFeedOptions();
+        Mockito.verify(homeModel).deleteFeed(feed);
+        Mockito.verify(homeView, Mockito.times(2)).showFeeds(mockFeedList);
+        Mockito.verify(homeView, Mockito.never()).showError();
+    }
+
+    @Test
+    public void onFeedDeleteClickedError() throws Exception {
+        Feed feed = new Feed();
+        Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
+        Mockito.when(homeView.observeFeedOptionMenuClick()).thenReturn(Observable.just(R.id.action_delete_feed));
+        Mockito.when(homeModel.deleteFeed(feed)).thenThrow(new Exception());
+
+        homePresenter.onCreate();
+
+        Mockito.verify(homeView).showFeedOptions();
+        Mockito.verify(homeModel).deleteFeed(feed);
+        Mockito.verify(homeView).showError();
+        Mockito.verify(homeView, Mockito.times(1)).showFeeds(mockFeedList);
     }
 }
