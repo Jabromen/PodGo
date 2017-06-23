@@ -7,9 +7,9 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
-import me.bromen.podgo.ext.structures.Feed;
-import me.bromen.podgo.ext.structures.FeedItem;
-import me.bromen.podgo.ext.structures.FeedItemEnclosure;
+import me.bromen.podgo.extras.structures.Feed;
+import me.bromen.podgo.extras.structures.FeedItem;
+import me.bromen.podgo.extras.structures.FeedItemEnclosure;
 
 /**
  * Created by jeff on 5/31/17.

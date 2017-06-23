@@ -7,7 +7,6 @@ import io.reactivex.schedulers.Schedulers;
 import me.bromen.podgo.activities.Presenter;
 import me.bromen.podgo.activities.itunessearch.mvp.contracts.ItunesSearchModel;
 import me.bromen.podgo.activities.itunessearch.mvp.contracts.ItunesSearchView;
-import me.bromen.podgo.ext.structures.ItunesPodcast;
 
 /**
  * Created by jeff on 6/22/17.
@@ -25,6 +24,8 @@ public class ItunesSearchPresenter implements Presenter {
         this.model = model;
     }
 
+    // Android activity lifecycle ties
+
     @Override
     public void onCreate() {
         view.showNoSearchResults();
@@ -37,6 +38,8 @@ public class ItunesSearchPresenter implements Presenter {
         disposables.dispose();
     }
 
+    // Observe UI events
+
     private void observeSearchQuery() {
         disposables.add(view.observeSearchQuery()
                 .subscribe(this::search));
@@ -45,6 +48,8 @@ public class ItunesSearchPresenter implements Presenter {
     private void observeDownloadFeedClick() {
         disposables.add(view.observeDownloadFeedClick().subscribe(this::downloadFeed));
     }
+
+    // Event handling
 
     private void search(String query) {
         view.showLoadingResults(true);

@@ -10,7 +10,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import me.bromen.podgo.app.storage.PodcastDbHelper;
-import me.bromen.podgo.ext.structures.Feed;
+import me.bromen.podgo.extras.structures.Feed;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

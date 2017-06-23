@@ -1,9 +1,7 @@
 package me.bromen.podgo.activities.home.mvp.view;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -23,9 +21,9 @@ import butterknife.ButterKnife;
 import me.bromen.podgo.R;
 import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
-import me.bromen.podgo.ext.structures.Feed;
-import me.bromen.podgo.ext.structures.FeedList;
-import me.bromen.podgo.ext.utilities.DisplayUtils;
+import me.bromen.podgo.extras.structures.Feed;
+import me.bromen.podgo.extras.structures.FeedList;
+import me.bromen.podgo.extras.utilities.DisplayUtils;
 import io.reactivex.Observable;
 
 /**

@@ -8,8 +8,8 @@ import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.newfeed.NewFeedActivity;
 import me.bromen.podgo.app.storage.PodcastDbContract;
 import me.bromen.podgo.app.storage.PodcastDbHelper;
-import me.bromen.podgo.ext.structures.Feed;
-import me.bromen.podgo.ext.structures.FeedList;
+import me.bromen.podgo.extras.structures.Feed;
+import me.bromen.podgo.extras.structures.FeedList;
 
 /**
  * Created by jeff on 6/20/17.
@@ -27,32 +27,38 @@ public class HomeModelImpl implements HomeModel {
         this.dbHelper = dbHelper;
     }
 
+    // Load all feeds from database, should be called asynchronously
     @Override
     public FeedList loadFeeds() throws Exception {
         return dbHelper.loadAllFeeds(PodcastDbContract.ORDER_ALPHA_ASC);
     }
 
+    // Check for feed updates, should be called asynchonously
     @Override
     public Integer refreshFeed(Feed feed) throws Exception {
         return dbHelper.updateFeed(feed);
     }
 
+    // Deletes a feed from database, should be called asynchronously
     @Override
     public Boolean deleteFeed(Feed feed) throws Exception {
         return dbHelper.deleteFeed(feed.getId());
     }
 
+    // Starts NewFeedActivity
     @Override
     public void startNewFeedActivity() {
         Log.d(TAG, "startNewFeedActivity()");
         NewFeedActivity.start(activity);
     }
 
+    // Starts OptionsActivity TODO: Implement OptionsActivity
     @Override
     public void startOptionsActivity() {
         Log.d(TAG, "startOptionsActivity()");
     }
 
+    // Starts FeedDetailActivity
     @Override
     public void startFeedDetailActivity(long id) {
         Log.d(TAG, "startFeedDetailActivity() - " + id);

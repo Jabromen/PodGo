@@ -6,8 +6,6 @@ import me.bromen.podgo.activities.itunessearch.ItunesSearchActivity;
 import me.bromen.podgo.app.parser.FeedParser;
 import me.bromen.podgo.activities.newfeed.NewFeedActivity;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedModel;
-import me.bromen.podgo.app.storage.PodcastDbHelper;
-import me.bromen.podgo.ext.structures.Feed;
 
 /**
  * Created by jeff on 6/21/17.
@@ -25,11 +23,15 @@ public class NewFeedModelImpl implements NewFeedModel {
         this.feedParser = feedParser;
     }
 
+    // Downloads a feed from a url, should be called asynchronously
+    // Returns an empty string on success ("")
+    // Returns a string containing the failure reason on error ("reason")
     @Override
     public String downloadFeed(String url) {
         return feedParser.parseFeedFromUrl(url);
     }
 
+    // Starts ItunesSearchActivity
     @Override
     public void startItunesSearchActivity() {
         Log.d(TAG, "startItunesSearchActivity()");

@@ -1,17 +1,14 @@
 package me.bromen.podgo.activities.home.mvp;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import me.bromen.podgo.R;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
 import me.bromen.podgo.activities.Presenter;
-import me.bromen.podgo.activities.home.mvp.view.HomeViewImpl;
-import me.bromen.podgo.ext.structures.Feed;
+import me.bromen.podgo.extras.structures.Feed;
 
 /**
  * Created by jeff on 6/20/17.
@@ -28,9 +25,14 @@ public class HomePresenter implements Presenter {
         this.model = model;
     }
 
+    // Android activity lifecycle ties
+
+    public void onResume() {
+        loadFeeds();
+    }
+
     @Override
     public void onCreate() {
-        loadFeeds();
         observeMenuItems();
         observeFeedTile();
         observeFeedOptions();
@@ -40,6 +42,8 @@ public class HomePresenter implements Presenter {
     public void onDestroy() {
         disposables.dispose();
     }
+
+    // Load all feeds and populate view
 
     private void loadFeeds() {
 
@@ -59,6 +63,8 @@ public class HomePresenter implements Presenter {
                     view.showError();
                 }));
     }
+
+    // Observe UI events
 
     private void observeMenuItems() {
         disposables.add(view.observeMenuItemClick()
@@ -80,6 +86,8 @@ public class HomePresenter implements Presenter {
         disposables.add(view.observeFeedOptionsClick()
                 .subscribe(this::onFeedOptionsClicked));
     }
+
+    // Event handling
 
     private void onFeedOptionsClicked(Feed feed) {
         view.showFeedOptions();

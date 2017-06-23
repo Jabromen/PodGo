@@ -11,8 +11,8 @@ import java.util.Arrays;
 import me.bromen.podgo.activities.home.mvp.HomePresenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
-import me.bromen.podgo.ext.structures.Feed;
-import me.bromen.podgo.ext.structures.FeedList;
+import me.bromen.podgo.extras.structures.Feed;
+import me.bromen.podgo.extras.structures.FeedList;
 import io.reactivex.Observable;
 
 /**
@@ -52,6 +52,7 @@ public class HomePresenterTest {
         Mockito.when(homeModel.loadFeeds()).thenReturn(new FeedList());
 
         homePresenter.onCreate();
+        homePresenter.onResume();
 
         InOrder inOrder = Mockito.inOrder(homeView);
         inOrder.verify(homeView).showLoading(true);
@@ -64,6 +65,7 @@ public class HomePresenterTest {
     public void onObserveLoadFeedsWithFeeds() throws Exception {
 
         homePresenter.onCreate();
+        homePresenter.onResume();
 
         InOrder inOrder = Mockito.inOrder(homeView);
         inOrder.verify(homeView).showLoading(true);
@@ -77,6 +79,7 @@ public class HomePresenterTest {
         Mockito.when(homeModel.loadFeeds()).thenThrow(new Exception());
 
         homePresenter.onCreate();
+        homePresenter.onResume();
 
         InOrder inOrder = Mockito.inOrder(homeView);
         inOrder.verify(homeView).showLoading(true);
@@ -89,6 +92,7 @@ public class HomePresenterTest {
         Mockito.when(homeView.observeMenuItemClick()).thenReturn(Observable.just(R.id.action_new_podcast));
 
         homePresenter.onCreate();
+        homePresenter.onResume();
 
         Mockito.verify(homeModel).startNewFeedActivity();
         Mockito.verify(homeView, Mockito.never()).showError();
@@ -99,6 +103,7 @@ public class HomePresenterTest {
         Mockito.when(homeView.observeMenuItemClick()).thenReturn(Observable.just(R.id.action_settings));
 
         homePresenter.onCreate();
+        homePresenter.onResume();
 
         Mockito.verify(homeModel).startOptionsActivity();
         Mockito.verify(homeView, Mockito.never()).showError();
@@ -110,6 +115,7 @@ public class HomePresenterTest {
         Mockito.when(homeView.observeFeedTileClick()).thenReturn(Observable.just(feed));
 
         homePresenter.onCreate();
+        homePresenter.onResume();
 
         Mockito.verify(homeModel).startFeedDetailActivity(feed.getId());
         Mockito.verify(homeView, Mockito.never()).showError();
@@ -121,6 +127,7 @@ public class HomePresenterTest {
         Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
 
         homePresenter.onCreate();
+        homePresenter.onResume();
 
         Mockito.verify(homeView).showFeedOptions();
         Mockito.verify(homeView, Mockito.never()).showError();
@@ -135,6 +142,7 @@ public class HomePresenterTest {
         Mockito.when(homeModel.refreshFeed(feed)).thenReturn(newEps);
 
         homePresenter.onCreate();
+        homePresenter.onResume();
 
         Mockito.verify(homeView).showFeedOptions();
         Mockito.verify(homeModel).refreshFeed(feed);
@@ -150,6 +158,7 @@ public class HomePresenterTest {
         Mockito.when(homeModel.refreshFeed(feed)).thenThrow(new Exception());
 
         homePresenter.onCreate();
+        homePresenter.onResume();
 
         Mockito.verify(homeView).showFeedOptions();
         Mockito.verify(homeModel).refreshFeed(feed);
@@ -164,6 +173,7 @@ public class HomePresenterTest {
         Mockito.when(homeModel.deleteFeed(feed)).thenReturn(true);
 
         homePresenter.onCreate();
+        homePresenter.onResume();
 
         Mockito.verify(homeView).showFeedOptions();
         Mockito.verify(homeModel).deleteFeed(feed);
@@ -179,6 +189,7 @@ public class HomePresenterTest {
         Mockito.when(homeModel.deleteFeed(feed)).thenThrow(new Exception());
 
         homePresenter.onCreate();
+        homePresenter.onResume();
 
         Mockito.verify(homeView).showFeedOptions();
         Mockito.verify(homeModel).deleteFeed(feed);

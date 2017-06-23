@@ -1,7 +1,7 @@
 package me.bromen.podgo.activities.home.mvp.contracts;
 
-import me.bromen.podgo.ext.structures.Feed;
-import me.bromen.podgo.ext.structures.FeedList;
+import me.bromen.podgo.extras.structures.Feed;
+import me.bromen.podgo.extras.structures.FeedList;
 
 /**
  * Created by jeff on 6/20/17.

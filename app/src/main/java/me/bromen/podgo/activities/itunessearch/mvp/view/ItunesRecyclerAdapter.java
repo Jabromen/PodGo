@@ -17,7 +17,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import me.bromen.podgo.R;
-import me.bromen.podgo.ext.structures.ItunesPodcast;
+import me.bromen.podgo.extras.structures.ItunesPodcast;
 
 /**
  * Created by jeff on 6/1/17.

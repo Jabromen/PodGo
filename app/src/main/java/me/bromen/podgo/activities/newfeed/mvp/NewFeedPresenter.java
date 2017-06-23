@@ -3,12 +3,10 @@ package me.bromen.podgo.activities.newfeed.mvp;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import me.bromen.podgo.activities.Presenter;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedModel;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedView;
-import me.bromen.podgo.ext.structures.Feed;
 
 /**
  * Created by jeff on 6/21/17.
@@ -26,10 +24,12 @@ public class NewFeedPresenter implements Presenter {
         this.model = model;
     }
 
+    // Android activity lifecycle ties
+
     @Override
     public void onCreate() {
-        disposables.add(onObserveItunesButton());
-        disposables.add(onObserveManualButton());
+        observeItunesButton();
+        observeManualButton();
     }
 
     @Override
@@ -37,15 +37,19 @@ public class NewFeedPresenter implements Presenter {
         disposables.dispose();
     }
 
-    private Disposable onObserveItunesButton() {
-        return view.observeItunesButton()
-                .subscribe(__ -> model.startItunesSearchActivity());
+    // Observe UI events
+
+    private void observeItunesButton() {
+        disposables.add(view.observeItunesButton()
+                .subscribe(__ -> model.startItunesSearchActivity()));
     }
 
-    private Disposable onObserveManualButton() {
-        return view.observeManualButton()
-                .subscribe(this::onManualButtonClicked);
+    private void observeManualButton() {
+        disposables.add(view.observeManualButton()
+                .subscribe(this::onManualButtonClicked));
     }
+
+    // Event handling
 
     private void onManualButtonClicked(String url) {
         view.showLoading(true);

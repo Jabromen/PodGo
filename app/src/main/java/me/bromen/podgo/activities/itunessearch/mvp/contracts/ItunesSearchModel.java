@@ -2,7 +2,7 @@ package me.bromen.podgo.activities.itunessearch.mvp.contracts;
 
 import java.util.List;
 
-import me.bromen.podgo.ext.structures.ItunesPodcast;
+import me.bromen.podgo.extras.structures.ItunesPodcast;
 
 /**
  * Created by jeff on 6/22/17.

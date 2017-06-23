@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.bromen.podgo.ext.structures.ItunesPodcast;
+import me.bromen.podgo.extras.structures.ItunesPodcast;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

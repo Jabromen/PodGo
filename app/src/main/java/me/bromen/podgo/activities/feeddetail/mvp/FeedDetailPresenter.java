@@ -3,7 +3,6 @@ package me.bromen.podgo.activities.feeddetail.mvp;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import me.bromen.podgo.activities.Presenter;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailModel;
@@ -27,11 +26,13 @@ public class FeedDetailPresenter implements Presenter {
         this.feedId = feedId;
     }
 
+    // Android activity lifecycle ties
+
     @Override
     public void onCreate() {
-        disposables.add(loadFeed());
-        disposables.add(onObserveItemTileClick());
-        disposables.add(onObserveItemDownloadClick());
+        loadFeed();
+        observeItemTileClick();
+        observeItemDownloadClick();
     }
 
     @Override
@@ -39,9 +40,10 @@ public class FeedDetailPresenter implements Presenter {
         disposables.dispose();;
     }
 
-    private Disposable loadFeed() {
+    // Load feed info from database
+    private void loadFeed() {
         view.showLoading(true);
-        return Observable.fromCallable(() -> model.loadFeed(feedId))
+        disposables.add(Observable.fromCallable(() -> model.loadFeed(feedId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(feed -> {
@@ -50,18 +52,20 @@ public class FeedDetailPresenter implements Presenter {
                 }, throwable -> {
                     view.showLoading(false);
                     view.showError();
-                });
+                }));
     }
 
-    private Disposable onObserveItemTileClick() {
-        return view.observeItemTileClick()
-                .subscribe(model::startFeedItemDetailActivity);
+    // Observe UI Events
+
+    private void observeItemTileClick() {
+        disposables.add(view.observeItemTileClick()
+                .subscribe(model::startFeedItemDetailActivity));
     }
 
-    private Disposable onObserveItemDownloadClick() {
-        return view.observeItemDownloadClick()
+    private void observeItemDownloadClick() {
+        disposables.add(view.observeItemDownloadClick()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(model::downloadEpisode);
+                .subscribe(model::downloadEpisode));
     }
 }

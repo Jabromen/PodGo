@@ -9,8 +9,8 @@ import android.os.Environment;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import me.bromen.podgo.ext.structures.FeedItem;
-import me.bromen.podgo.ext.utilities.PodcastFileUtils;
+import me.bromen.podgo.extras.structures.FeedItem;
+import me.bromen.podgo.extras.utilities.PodcastFileUtils;
 
 /**
  * Created by jeff on 5/19/17.

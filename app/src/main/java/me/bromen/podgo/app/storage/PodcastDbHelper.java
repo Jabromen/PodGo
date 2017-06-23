@@ -9,9 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.bromen.podgo.ext.structures.Feed;
-import me.bromen.podgo.ext.structures.FeedItem;
-import me.bromen.podgo.ext.structures.FeedList;
+import me.bromen.podgo.extras.structures.Feed;
+import me.bromen.podgo.extras.structures.FeedItem;
+import me.bromen.podgo.extras.structures.FeedList;
 
 /**
  * Created by jeff on 5/27/17.

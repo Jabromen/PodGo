@@ -23,7 +23,7 @@ import io.reactivex.Observable;
 import me.bromen.podgo.R;
 import me.bromen.podgo.activities.itunessearch.ItunesSearchActivity;
 import me.bromen.podgo.activities.itunessearch.mvp.contracts.ItunesSearchView;
-import me.bromen.podgo.ext.structures.ItunesPodcast;
+import me.bromen.podgo.extras.structures.ItunesPodcast;
 
 /**
  * Created by jeff on 6/22/17.

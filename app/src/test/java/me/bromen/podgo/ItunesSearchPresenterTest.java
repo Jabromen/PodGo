@@ -7,14 +7,13 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
 import me.bromen.podgo.activities.itunessearch.mvp.ItunesSearchPresenter;
 import me.bromen.podgo.activities.itunessearch.mvp.contracts.ItunesSearchModel;
 import me.bromen.podgo.activities.itunessearch.mvp.contracts.ItunesSearchView;
-import me.bromen.podgo.ext.structures.ItunesPodcast;
+import me.bromen.podgo.extras.structures.ItunesPodcast;
 
 /**
  * Created by jeff on 6/22/17.
