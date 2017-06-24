@@ -108,7 +108,8 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
         private void setViews() {
             picasso.with(context)
                     .load(feed.getImageUrl())
-                    .error(R.drawable.checkerboard)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .error(R.drawable.ic_placeholder)
                     .resize(150, 150)
                     .centerCrop()
                     .into(imageView);

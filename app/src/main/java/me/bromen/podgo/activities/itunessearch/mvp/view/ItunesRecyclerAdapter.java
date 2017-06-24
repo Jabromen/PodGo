@@ -97,7 +97,8 @@ public class ItunesRecyclerAdapter extends RecyclerView.Adapter<ItunesRecyclerAd
 
             picasso.with(context)
                     .load(podcast.getImageUrl())
-                    .error(R.drawable.checkerboard)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .error(R.drawable.ic_placeholder)
                     .resize(100, 100)
                     .centerCrop()
                     .into(podcastImageView);

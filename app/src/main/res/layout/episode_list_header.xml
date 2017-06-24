@@ -18,7 +18,7 @@
                 android:id="@+id/headerPodcastImage"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@drawable/checkerboard"
+                android:src="@drawable/ic_placeholder"
                 android:contentDescription="@string/podcast_image"
                 android:layout_margin="10dp"
                 android:layout_centerVertical="true"

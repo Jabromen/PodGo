@@ -157,8 +157,9 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
             picasso.with(context)
                     .load(feed.getImageUrl())
-                    .error(R.drawable.checkerboard)
-                    .resize(50, 50)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .error(R.drawable.ic_placeholder)
+                    .resize(100, 100)
                     .centerCrop()
                     .into(episodeImageView);
         }
@@ -183,7 +184,8 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
             picasso.with(context)
                     .load(feed.getImageUrl())
-                    .error(R.drawable.checkerboard)
+                    .placeholder(R.drawable.ic_placeholder)
+                    .error(R.drawable.ic_placeholder)
                     .resize(200, 200)
                     .centerCrop()
                     .into(podcastImageView);
