@@ -118,7 +118,7 @@ public class PodcastRecyclerAdapter extends RecyclerView.Adapter<PodcastRecycler
         }
     }
 
-    public void updateList(FeedList newList) {
+    public void updateList(List<Feed> newList) {
         feedList.clear();
         feedList.addAll(newList);
         refreshList();

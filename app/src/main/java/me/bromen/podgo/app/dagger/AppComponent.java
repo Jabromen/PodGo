@@ -12,7 +12,7 @@ import me.bromen.podgo.app.dagger.module.EpiosdeDownloadsModule;
 import me.bromen.podgo.app.dagger.module.NetworkModule;
 import me.bromen.podgo.app.dagger.module.ParserModule;
 import me.bromen.podgo.app.downloads.EpisodeDownloads;
-import me.bromen.podgo.app.storage.PodcastDbHelper;
+import me.bromen.podgo.app.storage.DbHelper;
 import okhttp3.OkHttpClient;
 
 /**
@@ -32,7 +32,7 @@ public interface AppComponent {
 
     FeedParser feedParser();
 
-    PodcastDbHelper dbHelper();
+    DbHelper dbHelper();
 
     EpisodeDownloads episodeDownloads();
 }

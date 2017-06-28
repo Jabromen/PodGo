@@ -101,7 +101,7 @@ public class FeedDetailViewImpl extends FrameLayout implements FeedDetailView {
     }
 
     @Override
-    public Observable<FeedItem> observeItemDownloadClick() {
-        return adapter.getDownloadClickedObservable();
+    public Observable<FeedItem> observeItemActionClick() {
+        return adapter.getActionClickedObservable();
     }
 }

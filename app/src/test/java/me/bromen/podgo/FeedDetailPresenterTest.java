@@ -39,7 +39,8 @@ public class FeedDetailPresenterTest {
         presenter = new FeedDetailPresenter(view, model, id);
 
         Mockito.when(view.observeItemTileClick()).thenReturn(Observable.never());
-        Mockito.when(view.observeItemDownloadClick()).thenReturn(Observable.never());
+        Mockito.when(view.observeItemActionClick()).thenReturn(Observable.never());
+        Mockito.when(model.observeDownloads()).thenReturn(Observable.never());
     }
 
     @Test
@@ -77,12 +78,60 @@ public class FeedDetailPresenterTest {
     }
 
     @Test
-    public void onObserveItemDownloadClicked() throws Exception {
+    public void onObserveItemActionClickedDownload() throws Exception {
+        item.setDownloading(false);
+        item.setDownloaded(false);
         Mockito.when(model.loadFeed(id)).thenReturn(feed);
-        Mockito.when(view.observeItemDownloadClick()).thenReturn(Observable.just(item));
+        Mockito.when(view.observeItemActionClick()).thenReturn(Observable.just(item));
 
         presenter.onCreate();
 
-        Mockito.verify(model).downloadEpisode(item);
+        Mockito.verify(model).startDownload(item);
+    }
+
+    @Test
+    public void onObserveItemActionClickedCancel() throws Exception {
+        item.setDownloading(true);
+        item.setDownloaded(true);
+        Mockito.when(model.loadFeed(id)).thenReturn(feed);
+        Mockito.when(view.observeItemActionClick()).thenReturn(Observable.just(item));
+
+        presenter.onCreate();
+
+        Mockito.verify(model).cancelDownload(item);
+    }
+
+    @Test
+    public void onObserveItemActionClickedPlay() throws Exception {
+        item.setDownloading(false);
+        item.setDownloaded(true);
+        Mockito.when(model.loadFeed(id)).thenReturn(feed);
+        Mockito.when(view.observeItemActionClick()).thenReturn(Observable.just(item));
+
+        presenter.onCreate();
+
+        Mockito.verify(model).playEpisode(item);
+    }
+
+    @Test
+    public void onSingleDownloadReceived() throws Exception {
+        Mockito.when(model.loadFeed(id)).thenReturn(feed);
+        Mockito.when(model.observeDownloads()).thenReturn(Observable.just(true));
+
+        presenter.onCreate();
+
+        // Called once for initial load, then again when download is received
+        Mockito.verify(view, Mockito.times(2)).showFeed(feed);
+    }
+
+    @Test
+    public void onMultipleDownloadReceived() throws Exception {
+        Mockito.when(model.loadFeed(id)).thenReturn(feed);
+        Mockito.when(model.observeDownloads()).thenReturn(Observable.just(true, true, true));
+
+        presenter.onCreate();
+
+        // Called once for initial load, then again for each of 3 downloads
+        Mockito.verify(view, Mockito.times(4)).showFeed(feed);
     }
 }

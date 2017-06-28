@@ -18,5 +18,5 @@ public interface FeedDetailView {
 
     Observable<FeedItem> observeItemTileClick();
 
-    Observable<FeedItem> observeItemDownloadClick();
+    Observable<FeedItem> observeItemActionClick();
 }

@@ -7,33 +7,30 @@ import android.provider.BaseColumns;
  * Created by jeff on 5/27/17.
  */
 
-public class PodcastDbContract {
+public class DbContract {
 
-    private PodcastDbContract() {}
-
-    // Filter Options
-    public static final int FILTER_ALL = 0;
-
-    // Order Options
-    public static final int ORDER_ALPHA_ASC = 0;
-    public static final int ORDER_ALPHA_DESC = 1;
+    private DbContract() {}
 
     // Table Names
     public static final String TABLE_NAME_FEED = "feeds";
     public static final String TABLE_NAME_FEED_ITEMS = "feed_items";
+    public static final String TABLE_NAME_ITEM_DOWNLOADS = "item_downloads";
+    public static final String TABLE_NAME_ITEM_STORAGE = "item_storage";
 
     // Column keys
     public static final String KEY_ID = "id";
+    public static final String KEY_ITEMID = "itemId";
+    public static final String KEY_DOWNLOADID = "downloadId";
     public static final String KEY_TITLE = "title";
     public static final String KEY_FEEDURL = "feedUrl";
     public static final String KEY_IMAGEURL = "imageUrl";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_LINK = "link";
     public static final String KEY_PUBDATE = "pubDate";
-    public static final String KEY_FEEDPLACE = "feedPlace";
     public static final String KEY_ENCLOSUREURL = "enclosureUrl";
     public static final String KEY_ENCLOSURETYPE = "enclosureType";
     public static final String KEY_ENCLOSURELENGTH = "enclosureLength";
+    public static final String KEY_FILENAME = "filename";
 
     // Create tables
     public static final String SQL_CREATE_TABLE_FEEDS =
@@ -42,11 +39,19 @@ public class PodcastDbContract {
                     KEY_FEEDURL + " TEXT," + KEY_IMAGEURL + " TEXT)";
 
     public static final String SQL_CREATE_TABLE_FEED_ITEMS =
-            "CREATE TABLE " + TABLE_NAME_FEED_ITEMS + " (" + KEY_ID + " INTEGER," +
-                    KEY_TITLE + " TEXT," + KEY_DESCRIPTION + " TEXT," +
-                    KEY_PUBDATE + " DATETIME," + KEY_LINK + " TEXT," + KEY_FEEDPLACE + " INTEGER," +
-                    KEY_ENCLOSUREURL + " TEXT," + KEY_ENCLOSURETYPE + " TEXT," +
-                    KEY_ENCLOSURELENGTH + " TEXT)";
+            "CREATE TABLE " + TABLE_NAME_FEED_ITEMS + " (" + KEY_ITEMID + " INTEGER PRIMARY KEY," +
+                    KEY_ID + " INTEGER," + KEY_TITLE + " TEXT," +
+                    KEY_DESCRIPTION + " TEXT," + KEY_PUBDATE + " DATETIME," +
+                    KEY_LINK + " TEXT," + KEY_ENCLOSUREURL + " TEXT," +
+                    KEY_ENCLOSURETYPE + " TEXT," + KEY_ENCLOSURELENGTH + " TEXT)";
+
+    public static final String SQL_CREATE_TABLE_ITEM_DOWNLOADS =
+            "CREATE TABLE " + TABLE_NAME_ITEM_DOWNLOADS + " (" + KEY_ITEMID + " INTEGER," +
+                    KEY_DOWNLOADID + " INTEGER)";
+
+    public static final String SQL_CREATE_TABLE_ITEM_STORAGE =
+            "CREATE TABLE " + TABLE_NAME_ITEM_STORAGE + " (" + KEY_ITEMID + " INTEGER," +
+                    KEY_FILENAME + " TEXT)";
 
     // Delete tables
     public static final String SQL_DELETE_TABLE_FEEDS =
@@ -54,4 +59,10 @@ public class PodcastDbContract {
 
     public static final String SQL_DELETE_TABLE_FEED_ITEMS =
             "DROP TABLE IF EXISTS " + TABLE_NAME_FEED_ITEMS;
+
+    public static final String SQL_DELETE_TABLE_ITEM_DOWNLOADS =
+            "DROP TABLE IF EXISTS " + TABLE_NAME_ITEM_DOWNLOADS;
+
+    public static final String SQL_DELETE_TABLE_ITEM_STORAGE =
+            "DROP TABLE IF EXISTS " + TABLE_NAME_ITEM_STORAGE;
 }

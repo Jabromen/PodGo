@@ -7,6 +7,7 @@ import io.reactivex.schedulers.Schedulers;
 import me.bromen.podgo.activities.Presenter;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailModel;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailView;
+import me.bromen.podgo.extras.structures.FeedItem;
 
 /**
  * Created by jeff on 6/22/17.
@@ -30,27 +31,39 @@ public class FeedDetailPresenter implements Presenter {
 
     @Override
     public void onCreate() {
-        loadFeed();
+        observeDownloads();
+        loadFeed(true);
         observeItemTileClick();
-        observeItemDownloadClick();
+        observeItemActionClick();
     }
 
     @Override
     public void onDestroy() {
-        disposables.dispose();;
+        disposables.dispose();
+    }
+
+    private void observeDownloads() {
+        disposables.add(model.observeDownloads()
+                .subscribe(__ -> loadFeed(false)));
     }
 
     // Load feed info from database
-    private void loadFeed() {
-        view.showLoading(true);
+    private void loadFeed(boolean showLoading) {
+        if (showLoading) {
+            view.showLoading(true);
+        }
         disposables.add(Observable.fromCallable(() -> model.loadFeed(feedId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(feed -> {
-                    view.showLoading(false);
+                    if (showLoading) {
+                        view.showLoading(false);
+                    }
                     view.showFeed(feed);
                 }, throwable -> {
-                    view.showLoading(false);
+                    if (showLoading) {
+                        view.showLoading(false);
+                    }
                     view.showError();
                 }));
     }
@@ -62,10 +75,32 @@ public class FeedDetailPresenter implements Presenter {
                 .subscribe(model::startFeedItemDetailActivity));
     }
 
-    private void observeItemDownloadClick() {
-        disposables.add(view.observeItemDownloadClick()
+    private void observeItemActionClick() {
+        disposables.add(view.observeItemActionClick()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(model::downloadEpisode));
+                .subscribe(item -> {
+                    if (item.isDownloading()) {
+                        cancelDownload(item);
+                    } else if (item.isDownloaded()) {
+                        model.playEpisode(item);
+                    } else {
+                        startDownload(item);
+                    }
+                }));
+    }
+
+    private void startDownload(FeedItem item) {
+        disposables.add(Observable.fromCallable(() -> model.startDownload(item))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(__ -> loadFeed(false)));
+    }
+
+    private void cancelDownload(FeedItem item) {
+        disposables.add(Observable.fromCallable(() -> model.cancelDownload(item))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(__ -> loadFeed(false)));
     }
 }

@@ -26,6 +26,7 @@ public class FeedDetailActivity extends AppCompatActivity {
         Intent intent = new Intent(context, FeedDetailActivity.class);
         intent.putExtra(ID, id);
         context.startActivity(intent);
+
     }
 
     @Inject

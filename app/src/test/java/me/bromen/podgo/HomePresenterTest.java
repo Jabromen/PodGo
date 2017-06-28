@@ -6,7 +6,9 @@ import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import me.bromen.podgo.activities.home.mvp.HomePresenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
@@ -26,7 +28,7 @@ public class HomePresenterTest {
     private HomeModel homeModel;
 
     private final Feed[] feeds = {new Feed(), new Feed(), new Feed()};
-    private final FeedList mockFeedList = new FeedList(Arrays.asList(feeds));
+    private final List<Feed> mockFeedList = new ArrayList<>(Arrays.asList(feeds));
 
     @Rule
     public TrampolineSchedulerRule trampolineSchedulerRule = new TrampolineSchedulerRule();
@@ -49,7 +51,7 @@ public class HomePresenterTest {
 
     @Test
     public void onObserveLoadFeedsNoFeeds() throws Exception {
-        Mockito.when(homeModel.loadFeeds()).thenReturn(new FeedList());
+        Mockito.when(homeModel.loadFeeds()).thenReturn(new ArrayList<>());
 
         homePresenter.onCreate();
         homePresenter.onResume();

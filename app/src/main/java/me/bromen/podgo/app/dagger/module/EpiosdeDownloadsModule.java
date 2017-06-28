@@ -6,6 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 import me.bromen.podgo.app.dagger.AppScope;
 import me.bromen.podgo.app.downloads.EpisodeDownloads;
+import me.bromen.podgo.app.storage.DbHelper;
 
 /**
  * Created by jeff on 6/20/17.
@@ -16,7 +17,7 @@ public class EpiosdeDownloadsModule {
 
     @AppScope
     @Provides
-    public EpisodeDownloads episodeDownloads(Context context) {
-        return new EpisodeDownloads(context);
+    public EpisodeDownloads episodeDownloads(Context context, DbHelper dbHelper) {
+        return new EpisodeDownloads(context, dbHelper);
     }
 }

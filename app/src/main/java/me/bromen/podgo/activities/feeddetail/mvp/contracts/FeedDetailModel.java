@@ -1,5 +1,6 @@
 package me.bromen.podgo.activities.feeddetail.mvp.contracts;
 
+import io.reactivex.Observable;
 import me.bromen.podgo.extras.structures.Feed;
 import me.bromen.podgo.extras.structures.FeedItem;
 
@@ -11,7 +12,13 @@ public interface FeedDetailModel {
 
     Feed loadFeed(long feedId) throws Exception;
 
-    void downloadEpisode(FeedItem item) throws Exception;
+    Observable<Boolean> observeDownloads();
+
+    Boolean startDownload(FeedItem item);
+
+    Boolean cancelDownload(FeedItem item);
+
+    void playEpisode(FeedItem item);
 
     void startFeedItemDetailActivity(FeedItem item);
 }

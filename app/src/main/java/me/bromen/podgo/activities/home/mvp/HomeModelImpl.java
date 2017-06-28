@@ -2,12 +2,14 @@ package me.bromen.podgo.activities.home.mvp;
 
 import android.util.Log;
 
+import java.util.List;
+
 import me.bromen.podgo.activities.feeddetail.FeedDetailActivity;
 import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.newfeed.NewFeedActivity;
-import me.bromen.podgo.app.storage.PodcastDbContract;
-import me.bromen.podgo.app.storage.PodcastDbHelper;
+import me.bromen.podgo.app.storage.DbContract;
+import me.bromen.podgo.app.storage.DbHelper;
 import me.bromen.podgo.extras.structures.Feed;
 import me.bromen.podgo.extras.structures.FeedList;
 
@@ -20,17 +22,17 @@ public class HomeModelImpl implements HomeModel {
     public static final String TAG = "HomeModel";
 
     private final MainActivity activity;
-    private final PodcastDbHelper dbHelper;
+    private final DbHelper dbHelper;
 
-    public HomeModelImpl(MainActivity activity, PodcastDbHelper dbHelper) {
+    public HomeModelImpl(MainActivity activity, DbHelper dbHelper) {
         this.activity = activity;
         this.dbHelper = dbHelper;
     }
 
     // Load all feeds from database, should be called asynchronously
     @Override
-    public FeedList loadFeeds() throws Exception {
-        return dbHelper.loadAllFeeds(PodcastDbContract.ORDER_ALPHA_ASC);
+    public List<Feed> loadFeeds() throws Exception {
+        return dbHelper.loadAllFeeds(DbHelper.ORDER_ALPHA_ASC);
     }
 
     // Check for feed updates, should be called asynchonously

@@ -16,6 +16,8 @@ import com.jakewharton.rxbinding2.support.v7.widget.RxPopupMenu;
 import com.jakewharton.rxbinding2.support.v7.widget.RxToolbar;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.bromen.podgo.R;
@@ -86,7 +88,7 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
     }
 
     @Override
-    public void showFeeds(FeedList feedList) {
+    public void showFeeds(List<Feed> feedList) {
         feedView.setVisibility(View.VISIBLE);
         noFeedsView.setVisibility(View.GONE);
         adapter.updateList(feedList);

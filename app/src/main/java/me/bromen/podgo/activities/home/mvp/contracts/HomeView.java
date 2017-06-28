@@ -1,5 +1,7 @@
 package me.bromen.podgo.activities.home.mvp.contracts;
 
+import java.util.List;
+
 import me.bromen.podgo.extras.structures.Feed;
 import me.bromen.podgo.extras.structures.FeedList;
 import io.reactivex.Observable;
@@ -12,7 +14,7 @@ public interface HomeView {
 
     void showNoFeeds();
 
-    void showFeeds(FeedList feeds);
+    void showFeeds(List<Feed> feeds);
 
     void showLoading(boolean loading);
 

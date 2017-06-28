@@ -9,7 +9,6 @@ import me.bromen.podgo.activities.newfeed.mvp.NewFeedPresenter;
 import me.bromen.podgo.activities.newfeed.mvp.NewFeedViewImpl;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedModel;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedView;
-import me.bromen.podgo.app.storage.PodcastDbHelper;
 
 /**
  * Created by jeff on 6/21/17.

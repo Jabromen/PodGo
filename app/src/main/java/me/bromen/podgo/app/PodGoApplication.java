@@ -2,6 +2,7 @@ package me.bromen.podgo.app;
 
 import android.app.Activity;
 import android.app.Application;
+import android.util.Log;
 
 import me.bromen.podgo.BuildConfig;
 import me.bromen.podgo.app.dagger.AppComponent;
@@ -32,6 +33,17 @@ public class PodGoApplication extends Application {
         component = DaggerAppComponent.builder()
                 .appModule(new AppModule(this))
                 .build();
+
+        component.episodeDownloads().registerReceiver();
+        Log.d("APP", "register");
+        component.episodeDownloads().validateDownloads();
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        component.episodeDownloads().unregisterReceiver();
+        Log.d("APP", "unregister");
     }
 
     public AppComponent component() {

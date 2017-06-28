@@ -34,14 +34,14 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private Feed feed = new Feed();
 
     private PublishSubject<FeedItem> tileClickSubject = PublishSubject.create();
-    private PublishSubject<FeedItem> downloadClickSubject = PublishSubject.create();
+    private PublishSubject<FeedItem> actionClickSubject = PublishSubject.create();
 
     public Observable<FeedItem> getTileClickedObservable() {
         return tileClickSubject;
     }
 
-    public Observable<FeedItem> getDownloadClickedObservable() {
-        return downloadClickSubject;
+    public Observable<FeedItem> getActionClickedObservable() {
+        return actionClickSubject;
     }
 
     public EpisodeRecyclerAdapter(Picasso picasso) {
@@ -74,7 +74,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             RxView.clicks(viewHolder.downloadPlayButton)
                     .takeUntil(RxView.detaches(parent))
                     .map(__ -> viewHolder.getCurrentItem())
-                    .subscribe(downloadClickSubject);
+                    .subscribe(actionClickSubject);
 
             return viewHolder;
         }

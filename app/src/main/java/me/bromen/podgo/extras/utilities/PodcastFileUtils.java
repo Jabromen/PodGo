@@ -53,6 +53,10 @@ public class PodcastFileUtils {
         }
     }
 
+    public static boolean isAudioDownloaded(Context context, String filename) {
+        return new File(context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS), filename).exists();
+    }
+
     public static String sanitizeName(String name) {
         return name.replaceAll("[|#%&\\?*<\":>+/']", "_");
     }

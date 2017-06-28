@@ -9,7 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import me.bromen.podgo.app.storage.PodcastDbHelper;
+import me.bromen.podgo.app.storage.DbHelper;
 import me.bromen.podgo.extras.structures.Feed;
 
 import okhttp3.OkHttpClient;
@@ -23,9 +23,9 @@ import okhttp3.Response;
 public class FeedParser {
 
     private final OkHttpClient okHttpClient;
-    private final PodcastDbHelper dbHelper;
+    private final DbHelper dbHelper;
 
-    public FeedParser(OkHttpClient okHttpClient, PodcastDbHelper dbHelper) {
+    public FeedParser(OkHttpClient okHttpClient, DbHelper dbHelper) {
         this.okHttpClient = okHttpClient;
         this.dbHelper = dbHelper;
     }
