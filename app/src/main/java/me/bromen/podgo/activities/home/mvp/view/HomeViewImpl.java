@@ -24,7 +24,6 @@ import me.bromen.podgo.R;
 import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
 import me.bromen.podgo.extras.structures.Feed;
-import me.bromen.podgo.extras.structures.FeedList;
 import me.bromen.podgo.extras.utilities.DisplayUtils;
 import io.reactivex.Observable;
 

@@ -14,8 +14,6 @@ public class DbContract {
     // Table Names
     public static final String TABLE_NAME_FEED = "feeds";
     public static final String TABLE_NAME_FEED_ITEMS = "feed_items";
-    public static final String TABLE_NAME_ITEM_DOWNLOADS = "item_downloads";
-    public static final String TABLE_NAME_ITEM_STORAGE = "item_storage";
 
     // Column keys
     public static final String KEY_ID = "id";
@@ -43,15 +41,8 @@ public class DbContract {
                     KEY_ID + " INTEGER," + KEY_TITLE + " TEXT," +
                     KEY_DESCRIPTION + " TEXT," + KEY_PUBDATE + " DATETIME," +
                     KEY_LINK + " TEXT," + KEY_ENCLOSUREURL + " TEXT," +
-                    KEY_ENCLOSURETYPE + " TEXT," + KEY_ENCLOSURELENGTH + " TEXT)";
-
-    public static final String SQL_CREATE_TABLE_ITEM_DOWNLOADS =
-            "CREATE TABLE " + TABLE_NAME_ITEM_DOWNLOADS + " (" + KEY_ITEMID + " INTEGER," +
-                    KEY_DOWNLOADID + " INTEGER)";
-
-    public static final String SQL_CREATE_TABLE_ITEM_STORAGE =
-            "CREATE TABLE " + TABLE_NAME_ITEM_STORAGE + " (" + KEY_ITEMID + " INTEGER," +
-                    KEY_FILENAME + " TEXT)";
+                    KEY_ENCLOSURETYPE + " TEXT," + KEY_ENCLOSURELENGTH + " TEXT," +
+                    KEY_FILENAME + " TEXT," + KEY_DOWNLOADID + " INTEGER)";
 
     // Delete tables
     public static final String SQL_DELETE_TABLE_FEEDS =
@@ -59,10 +50,4 @@ public class DbContract {
 
     public static final String SQL_DELETE_TABLE_FEED_ITEMS =
             "DROP TABLE IF EXISTS " + TABLE_NAME_FEED_ITEMS;
-
-    public static final String SQL_DELETE_TABLE_ITEM_DOWNLOADS =
-            "DROP TABLE IF EXISTS " + TABLE_NAME_ITEM_DOWNLOADS;
-
-    public static final String SQL_DELETE_TABLE_ITEM_STORAGE =
-            "DROP TABLE IF EXISTS " + TABLE_NAME_ITEM_STORAGE;
 }

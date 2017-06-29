@@ -8,10 +8,8 @@ import me.bromen.podgo.activities.feeddetail.FeedDetailActivity;
 import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.newfeed.NewFeedActivity;
-import me.bromen.podgo.app.storage.DbContract;
 import me.bromen.podgo.app.storage.DbHelper;
 import me.bromen.podgo.extras.structures.Feed;
-import me.bromen.podgo.extras.structures.FeedList;
 
 /**
  * Created by jeff on 6/20/17.

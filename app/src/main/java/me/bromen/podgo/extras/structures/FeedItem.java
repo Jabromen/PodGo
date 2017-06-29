@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 public class FeedItem implements Serializable {
 
-    private int id;
+    private long id;
     private String title;
     private String description;
     private String pubDate;
@@ -20,6 +20,9 @@ public class FeedItem implements Serializable {
 
     private boolean isDownloading;
     private boolean isDownloaded;
+
+    private String filename;
+    private long downloadId;
 
     public FeedItem() {}
 
@@ -37,19 +40,24 @@ public class FeedItem implements Serializable {
     }
 
     public FeedItem(Cursor cursor) {
-        id = cursor.getInt(0);
+        id = cursor.getLong(0);
         title = cursor.getString(1);
         description = cursor.getString(2);
         pubDate = cursor.getString(3);
         link = cursor.getString(4);
         enclosure = new FeedItemEnclosure(cursor.getString(5), cursor.getString(6), cursor.getString(7));
+        filename = cursor.getString(8);
+        downloadId = cursor.getLong(9);
+
+        isDownloading = downloadId != -1;
+        isDownloaded = !"NULL".equals(filename);
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -107,5 +115,21 @@ public class FeedItem implements Serializable {
 
     public void setDownloaded(boolean isDownloaded) {
         this.isDownloaded = isDownloaded;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public long getDownloadId() {
+        return downloadId;
+    }
+
+    public void setDownloadId(long downloadId) {
+        this.downloadId = downloadId;
     }
 }

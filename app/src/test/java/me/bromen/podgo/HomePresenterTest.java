@@ -14,7 +14,6 @@ import me.bromen.podgo.activities.home.mvp.HomePresenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
 import me.bromen.podgo.extras.structures.Feed;
-import me.bromen.podgo.extras.structures.FeedList;
 import io.reactivex.Observable;
 
 /**

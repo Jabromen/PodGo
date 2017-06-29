@@ -35,16 +35,12 @@ public class DbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DbContract.SQL_CREATE_TABLE_FEEDS);
         db.execSQL(DbContract.SQL_CREATE_TABLE_FEED_ITEMS);
-        db.execSQL(DbContract.SQL_CREATE_TABLE_ITEM_DOWNLOADS);
-        db.execSQL(DbContract.SQL_CREATE_TABLE_ITEM_STORAGE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(DbContract.SQL_DELETE_TABLE_FEEDS);
         db.execSQL(DbContract.SQL_DELETE_TABLE_FEED_ITEMS);
-        db.execSQL(DbContract.SQL_CREATE_TABLE_ITEM_DOWNLOADS);
-        db.execSQL(DbContract.SQL_DELETE_TABLE_ITEM_STORAGE);
         onCreate(db);
     }
 
@@ -117,6 +113,8 @@ public class DbHelper extends SQLiteOpenHelper {
             values.put(DbContract.KEY_ENCLOSURETYPE, item.getEnclosure().getType());
             values.put(DbContract.KEY_ENCLOSURELENGTH, item.getEnclosure().getLength());
         }
+        values.put(DbContract.KEY_FILENAME, "NULL");
+        values.put(DbContract.KEY_DOWNLOADID, -1);
 
         db.insert(DbContract.TABLE_NAME_FEED_ITEMS, null, values);
     }
@@ -293,7 +291,9 @@ public class DbHelper extends SQLiteOpenHelper {
                 DbContract.KEY_LINK,
                 DbContract.KEY_ENCLOSUREURL,
                 DbContract.KEY_ENCLOSURETYPE,
-                DbContract.KEY_ENCLOSURELENGTH
+                DbContract.KEY_ENCLOSURELENGTH,
+                DbContract.KEY_FILENAME,
+                DbContract.KEY_DOWNLOADID
         };
 
         String selection = DbContract.KEY_ID + " = ?";
@@ -308,12 +308,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     projection, selection, selectId, null, null, sortOrder);
 
             while (cursor.moveToNext()) {
-                FeedItem item = new FeedItem(cursor);
-
-                item.setDownloaded(isDownloaded(item.getId()));
-                item.setDownloading(isDownloading(item.getId()));
-
-                feedItems.add(item);
+                feedItems.add(new FeedItem(cursor));
             }
         }
         finally {
@@ -325,44 +320,18 @@ public class DbHelper extends SQLiteOpenHelper {
         return feedItems;
     }
 
-    private boolean isDownloaded(long id) {
-        return getFilename(id) != null;
-    }
-
-    public String getFilename(long id) {
-        SQLiteDatabase db = getReadableDatabase();
-
-        String[] projection = { DbContract.KEY_FILENAME };
-
-        String selection = DbContract.KEY_ITEMID + " = ?";
-        String[] selectionArgs = { Long.toString(id) };
-
-        Cursor cursor = null;
-        try {
-            cursor = db.query(DbContract.TABLE_NAME_ITEM_STORAGE,
-                    projection, selection, selectionArgs, null, null, null);
-
-            if (cursor.moveToFirst()) {
-                return cursor.getString(0);
-            } else {
-                return null;
-            }
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-
     public List<String> getFilenames() {
         SQLiteDatabase db = getReadableDatabase();
 
         String[] projection = { DbContract.KEY_FILENAME };
 
+        String where = DbContract.KEY_FILENAME + " != ?";
+        String[] whereArgs = { "NULL" };
+
         Cursor c = null;
         List<String> filenames = new ArrayList<>();
         try {
-            c = db.query(DbContract.TABLE_NAME_ITEM_STORAGE, projection, null, null, null, null, null);
+            c = db.query(DbContract.TABLE_NAME_FEED_ITEMS, projection, where, whereArgs, null, null, null);
 
             while (c.moveToNext()) {
                 filenames.add(c.getString(0));
@@ -376,30 +345,11 @@ public class DbHelper extends SQLiteOpenHelper {
         }
     }
 
-    private boolean isDownloading(long id) {
-        SQLiteDatabase db = getReadableDatabase();
-
-        String query = "SELECT COUNT(*) FROM " + DbContract.TABLE_NAME_ITEM_DOWNLOADS +
-                " WHERE " + DbContract.KEY_ITEMID + " = ?";
-        String[] args = { Long.toString(id) };
-
-        Cursor c = null;
-        try {
-            c = db.rawQuery(query, args);
-
-            return c.moveToFirst() && c.getInt(0) > 0;
-        } finally {
-            if (c != null) {
-                c.close();
-            }
-        }
-    }
-
     public Long getDownloadId(long itemId) {
         SQLiteDatabase db = getReadableDatabase();
 
         String query = "SELECT " + DbContract.KEY_DOWNLOADID +
-                " FROM " + DbContract.TABLE_NAME_ITEM_DOWNLOADS +
+                " FROM " + DbContract.TABLE_NAME_FEED_ITEMS +
                 " WHERE " + DbContract.KEY_ITEMID + " = ?";
 
         String[] args = { Long.toString(itemId) };
@@ -424,12 +374,15 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
 
         String query = "SELECT " + DbContract.KEY_DOWNLOADID +
-                " FROM " + DbContract.TABLE_NAME_ITEM_DOWNLOADS;
+                " FROM " + DbContract.TABLE_NAME_FEED_ITEMS +
+                " WHERE " + DbContract.KEY_DOWNLOADID + " != ?";
+
+        String[] args = { "-1" };
 
         Cursor c = null;
         List<Long> downloadIds = new ArrayList<>();
         try {
-            c = db.rawQuery(query, null);
+            c = db.rawQuery(query, args);
 
             while (c.moveToNext()) {
                 downloadIds.add(c.getLong(0));
@@ -446,38 +399,56 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(DbContract.KEY_ITEMID, itemId);
         values.put(DbContract.KEY_DOWNLOADID, downloadId);
 
-        db.insert(DbContract.TABLE_NAME_ITEM_DOWNLOADS, null, values);
+        String where = DbContract.KEY_ITEMID + " = ?";
+        String[] whereArgs = { Long.toString(itemId) };
+
+        db.update(DbContract.TABLE_NAME_FEED_ITEMS, values, where, whereArgs);
     }
 
-    public void saveStorage(long itemId, String filename) {
+    private void updateStorage(long itemId, String filename) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(DbContract.KEY_ITEMID, itemId);
         values.put(DbContract.KEY_FILENAME, filename);
 
-        db.insert(DbContract.TABLE_NAME_ITEM_STORAGE, null, values);
+        String where = DbContract.KEY_ITEMID + " = ?";
+        String[] whereArgs = { Long.toString(itemId) };
+
+        db.update(DbContract.TABLE_NAME_FEED_ITEMS, values, where, whereArgs);
+    }
+
+    public void saveStorage(long itemId, String filename) {
+        updateStorage(itemId, filename);
+    }
+
+    public void deleteStorage(long itemId) {
+        updateStorage(itemId, "NULL");
     }
 
     public void deleteDownloadId(long downloadId) {
         SQLiteDatabase db = getWritableDatabase();
 
-        db.delete(DbContract.TABLE_NAME_ITEM_DOWNLOADS, DbContract.KEY_DOWNLOADID + " = " + Long.toString(downloadId), null);
-    }
+        ContentValues values = new ContentValues();
+        values.put(DbContract.KEY_DOWNLOADID, -1);
 
-    public void deleteStorage(long itemId) {
-        SQLiteDatabase db = getWritableDatabase();
+        String where = DbContract.KEY_DOWNLOADID + " = ?";
+        String[] whereArgs = { Long.toString(downloadId) };
 
-        db.delete(DbContract.TABLE_NAME_ITEM_STORAGE, DbContract.KEY_ITEMID + " = " + Long.toString(itemId), null);
+        db.update(DbContract.TABLE_NAME_FEED_ITEMS, values, where, whereArgs);
     }
 
     public void deleteStorageFromFilename(String filename) {
         SQLiteDatabase db = getWritableDatabase();
 
-        db.delete(DbContract.TABLE_NAME_ITEM_STORAGE, DbContract.KEY_FILENAME + " = '" + filename + "'", null);
+        ContentValues values = new ContentValues();
+        values.put(DbContract.KEY_FILENAME, "NULL");
+
+        String where = DbContract.KEY_FILENAME + " = ?";
+        String[] whereArgs = { filename };
+
+        db.update(DbContract.TABLE_NAME_FEED_ITEMS, values, where, whereArgs);
     }
 
     public boolean deleteFeed(long id) {

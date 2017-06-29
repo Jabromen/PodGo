@@ -3,7 +3,6 @@ package me.bromen.podgo.activities.home.mvp.contracts;
 import java.util.List;
 
 import me.bromen.podgo.extras.structures.Feed;
-import me.bromen.podgo.extras.structures.FeedList;
 import io.reactivex.Observable;
 
 /**
