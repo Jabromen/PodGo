@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import java.util.List;
 
@@ -76,7 +77,35 @@ public class EpisodeDownloads {
 
         Cursor cursor = downloadManager.query(query);
 
-        return cursor.moveToFirst();
+        if (cursor.moveToFirst()) {
+            if (cursor.getCount() > 0) {
+                int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+
+                if (status == DownloadManager.STATUS_RUNNING || status == DownloadManager.STATUS_PENDING ||
+                        status == DownloadManager.STATUS_PAUSED) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isDownloadSuccess(long reference) {
+        DownloadManager.Query query = new DownloadManager.Query();
+        query.setFilterById(reference);
+
+        Cursor cursor = downloadManager.query(query);
+
+        if (cursor.moveToFirst()) {
+            if (cursor.getCount() > 0) {
+                int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+
+                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void validateDownloads() {
@@ -118,6 +147,13 @@ public class EpisodeDownloads {
     }
 
     public void completeDownload(long reference) {
+
+        // If download failed/cancelled,
+        // the audio file won't exist and the filename in the database should be removed
+        if (!isDownloadSuccess(reference)) {
+            dbHelper.deleteStorageFromDownloadId(reference);
+        }
+
         dbHelper.deleteDownloadId(reference);
     }
 }

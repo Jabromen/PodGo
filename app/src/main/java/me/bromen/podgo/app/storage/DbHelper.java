@@ -377,7 +377,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 " FROM " + DbContract.TABLE_NAME_FEED_ITEMS +
                 " WHERE " + DbContract.KEY_DOWNLOADID + " != ?";
 
-        String[] args = { "-1" };
+        String[] args = { Long.toString(-1) };
 
         Cursor c = null;
         List<Long> downloadIds = new ArrayList<>();
@@ -447,6 +447,18 @@ public class DbHelper extends SQLiteOpenHelper {
 
         String where = DbContract.KEY_FILENAME + " = ?";
         String[] whereArgs = { filename };
+
+        db.update(DbContract.TABLE_NAME_FEED_ITEMS, values, where, whereArgs);
+    }
+
+    public void deleteStorageFromDownloadId(long downloadId) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(DbContract.KEY_FILENAME, "NULL");
+
+        String where = DbContract.KEY_DOWNLOADID + " = ?";
+        String[] whereArgs = { Long.toString(downloadId) };
 
         db.update(DbContract.TABLE_NAME_FEED_ITEMS, values, where, whereArgs);
     }

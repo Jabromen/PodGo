@@ -35,7 +35,6 @@ public class PodGoApplication extends Application {
                 .build();
 
         component.episodeDownloads().registerReceiver();
-        Log.d("APP", "register");
         component.episodeDownloads().validateDownloads();
     }
 
@@ -43,7 +42,6 @@ public class PodGoApplication extends Application {
     public void onTerminate() {
         super.onTerminate();
         component.episodeDownloads().unregisterReceiver();
-        Log.d("APP", "unregister");
     }
 
     public AppComponent component() {
