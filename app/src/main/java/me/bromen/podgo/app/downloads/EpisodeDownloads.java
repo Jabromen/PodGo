@@ -67,7 +67,7 @@ public class EpisodeDownloads {
         reference = downloadManager.enqueue(request);
 
         dbHelper.saveDownloading(item.getId(), reference);
-        dbHelper.saveStorage(item.getId(), filename);
+        dbHelper.saveStorage(item.getId(), PodcastFileUtils.getFullAudioFilePath(context, filename));
     }
 
     private boolean isDownloading(long reference) {
@@ -120,7 +120,7 @@ public class EpisodeDownloads {
         List<String> filenames = dbHelper.getFilenames();
 
         for (String filename: filenames) {
-            if (!PodcastFileUtils.isAudioDownloaded(context, filename)) {
+            if (!PodcastFileUtils.isAudioDownloaded(filename)) {
                 dbHelper.deleteStorageFromFilename(filename);
             }
         }

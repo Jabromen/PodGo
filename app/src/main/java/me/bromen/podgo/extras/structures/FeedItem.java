@@ -1,6 +1,7 @@
 package me.bromen.podgo.extras.structures;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
 
 import java.io.Serializable;
 
@@ -15,6 +16,7 @@ public class FeedItem implements Serializable {
     private String description;
     private String pubDate;
     private String link;
+    private String imageUrl;
 
     private FeedItemEnclosure enclosure;
 
@@ -23,6 +25,9 @@ public class FeedItem implements Serializable {
 
     private String filename;
     private long downloadId;
+
+    // Fields used for media player
+    private String feedTitle;
 
     public FeedItem() {}
 
@@ -48,6 +53,7 @@ public class FeedItem implements Serializable {
         enclosure = new FeedItemEnclosure(cursor.getString(5), cursor.getString(6), cursor.getString(7));
         filename = cursor.getString(8);
         downloadId = cursor.getLong(9);
+        imageUrl = cursor.getString(10);
 
         isDownloading = downloadId != -1;
         isDownloaded = !"NULL".equals(filename);
@@ -131,5 +137,21 @@ public class FeedItem implements Serializable {
 
     public void setDownloadId(long downloadId) {
         this.downloadId = downloadId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getFeedTitle() {
+        return feedTitle;
+    }
+
+    public void setFeedTitle(String feedTitle) {
+        this.feedTitle = feedTitle;
     }
 }

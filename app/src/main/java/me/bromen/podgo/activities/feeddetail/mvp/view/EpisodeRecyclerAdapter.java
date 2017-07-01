@@ -1,6 +1,8 @@
 package me.bromen.podgo.activities.feeddetail.mvp.view;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -131,6 +133,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
         public FeedItem getCurrentItem() {
+            item.setFeedTitle(feed.getTitle());
             return item;
         }
 
@@ -156,7 +159,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     .into(downloadPlayButton);
 
             picasso.with(context)
-                    .load(feed.getImageUrl())
+                    .load(item.getImageUrl())
                     .placeholder(R.drawable.ic_placeholder)
                     .error(R.drawable.ic_placeholder)
                     .resize(100, 100)

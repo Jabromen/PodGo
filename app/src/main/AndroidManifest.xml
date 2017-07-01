@@ -39,6 +39,26 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             />
+        
+        <service
+            android:name=".app.mediaplayer.MediaPlayerService"
+            android:label="@string/media_service_name">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+                <action android:name="me.bromen.podgo.action.PLAY_NEW_AUDIO" />
+                <action android:name="me.bromen.podgo.action.QUEUE_NEW_AUDIO" />
+                <action android:name="me.bromen.podgo.action.PLAY" />
+                <action android:name="me.bromen.podgo.action.PAUSE" />
+                <action android:name="me.bromen.podgo.action.PREVIOUS" />
+                <action android:name="me.bromen.podgo.action.NEXT" />
+                <action android:name="me.bromen.podgo.action.SEEK_REL" />
+                <action android:name="me.bromen.podgo.action.SEEK_DIR" />
+                <action android:name="me.bromen.podgo.action.STOP" />
+            </intent-filter>
+        </service>
+
+
+        
     </application>
 
 </manifest>

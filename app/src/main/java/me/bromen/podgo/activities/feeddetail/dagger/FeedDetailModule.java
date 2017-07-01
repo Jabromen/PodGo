@@ -10,6 +10,7 @@ import me.bromen.podgo.activities.feeddetail.mvp.FeedDetailPresenter;
 import me.bromen.podgo.activities.feeddetail.mvp.view.FeedDetailViewImpl;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailModel;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailView;
+import me.bromen.podgo.app.mediaplayer.MediaPlayerServiceController;
 import me.bromen.podgo.app.storage.DbHelper;
 import me.bromen.podgo.app.downloads.EpisodeDownloads;
 
@@ -36,8 +37,8 @@ public class FeedDetailModule {
 
     @FeedDetailScope
     @Provides
-    public FeedDetailModel feedDetailModel(DbHelper dbHelper, EpisodeDownloads episodeDownloads) {
-        return new FeedDetailModelImpl(activity, dbHelper, episodeDownloads);
+    public FeedDetailModel feedDetailModel(DbHelper dbHelper, EpisodeDownloads episodeDownloads, MediaPlayerServiceController controller) {
+        return new FeedDetailModelImpl(activity, dbHelper, episodeDownloads, controller);
     }
 
     @FeedDetailScope

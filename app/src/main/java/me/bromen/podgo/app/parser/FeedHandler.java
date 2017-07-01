@@ -77,6 +77,7 @@ public class FeedHandler extends DefaultHandler {
             }
             else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
                 // TODO: Add functionality for individual episode images
+                item.setImageUrl(attributes.getValue(HREF));
             }
         }
         else if (TITLE.equalsIgnoreCase(qName)) {
@@ -194,6 +195,10 @@ public class FeedHandler extends DefaultHandler {
         valid = valid && (item.getDescription() != null);
         valid = valid && (item.getPubDate() != null);
         valid = valid && (item.getLink() != null);
+
+        if (item.getImageUrl() == null) {
+            item.setImageUrl(feed.getImageUrl());
+        }
 
         return valid;
     }

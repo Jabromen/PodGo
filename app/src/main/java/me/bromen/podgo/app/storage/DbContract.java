@@ -42,7 +42,8 @@ public class DbContract {
                     KEY_DESCRIPTION + " TEXT," + KEY_PUBDATE + " DATETIME," +
                     KEY_LINK + " TEXT," + KEY_ENCLOSUREURL + " TEXT," +
                     KEY_ENCLOSURETYPE + " TEXT," + KEY_ENCLOSURELENGTH + " TEXT," +
-                    KEY_FILENAME + " TEXT," + KEY_DOWNLOADID + " INTEGER)";
+                    KEY_FILENAME + " TEXT," + KEY_DOWNLOADID + " INTEGER," +
+                    KEY_IMAGEURL + " TEXT)";
 
     // Delete tables
     public static final String SQL_DELETE_TABLE_FEEDS =

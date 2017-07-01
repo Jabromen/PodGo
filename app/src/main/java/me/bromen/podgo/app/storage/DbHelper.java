@@ -115,6 +115,7 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         values.put(DbContract.KEY_FILENAME, "NULL");
         values.put(DbContract.KEY_DOWNLOADID, -1);
+        values.put(DbContract.KEY_IMAGEURL, item.getImageUrl());
 
         db.insert(DbContract.TABLE_NAME_FEED_ITEMS, null, values);
     }
@@ -293,7 +294,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 DbContract.KEY_ENCLOSURETYPE,
                 DbContract.KEY_ENCLOSURELENGTH,
                 DbContract.KEY_FILENAME,
-                DbContract.KEY_DOWNLOADID
+                DbContract.KEY_DOWNLOADID,
+                DbContract.KEY_IMAGEURL
         };
 
         String selection = DbContract.KEY_ID + " = ?";

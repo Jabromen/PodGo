@@ -5,6 +5,8 @@ import android.content.Context;
 import com.squareup.picasso.Picasso;
 
 import dagger.Component;
+import me.bromen.podgo.app.dagger.module.MediaPlayerModule;
+import me.bromen.podgo.app.mediaplayer.MediaPlayerServiceController;
 import me.bromen.podgo.app.parser.FeedParser;
 import me.bromen.podgo.app.dagger.module.AppModule;
 import me.bromen.podgo.app.dagger.module.DatabaseModule;
@@ -20,7 +22,7 @@ import okhttp3.OkHttpClient;
  */
 
 @AppScope
-@Component(modules = {NetworkModule.class, ParserModule.class,
+@Component(modules = {NetworkModule.class, ParserModule.class, MediaPlayerModule.class,
         DatabaseModule.class, AppModule.class, EpiosdeDownloadsModule.class})
 public interface AppComponent {
 
@@ -35,4 +37,6 @@ public interface AppComponent {
     DbHelper dbHelper();
 
     EpisodeDownloads episodeDownloads();
+
+    MediaPlayerServiceController mediaPlayerServiceController();
 }
