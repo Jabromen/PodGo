@@ -37,7 +37,14 @@ import com.squareup.picasso.Target;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Handler;
 
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 import me.bromen.podgo.BuildConfig;
 import me.bromen.podgo.R;
 import me.bromen.podgo.activities.home.MainActivity;
@@ -105,6 +112,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public void onPrepared(MediaPlayer mp) {
         playMedia();
+        durationObservable.onNext(getDuration());
     }
 
     @Override
@@ -297,6 +305,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         return super.onStartCommand(intent, flags, startId);
     }
 
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -305,6 +315,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         registerBecomingNoisyReceiver();
         registerPlayNewAudio();
         registerQueueNewAudio();
+
+        disposables.add(Observable.interval(1, TimeUnit.SECONDS)
+                .filter(__ -> getState() == PLAYBACK_PLAYING)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(__ -> currentPositionObservable.onNext(getCurrentPosition())));
     }
 
     @Override
@@ -327,6 +343,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         unregisterReceiver(becomingNoisyReceiver);
         unregisterReceiver(playNewAudio);
         unregisterReceiver(queueNewAudio);
+
+        disposables.dispose();
     }
 
     private MediaPlayer mediaPlayer;
@@ -434,6 +452,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 super.onPlay();
                 resumeMedia();
                 buildNotification(PLAYBACK_PLAYING);
+                stateObservable.onNext(getState());
+                currentAudioObservable.onNext(currentAudio);
             }
 
             @Override
@@ -441,12 +461,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 super.onPause();
                 pauseMedia();
                 buildNotification(PLAYBACK_PAUSED);
+                stateObservable.onNext(getState());
             }
 
             @Override
             public void onStop() {
                 super.onStop();
+                stopMedia();
                 removeNotification();
+                stateObservable.onNext(getState());
+                currentPositionObservable.onNext(getCurrentPosition());
+                durationObservable.onNext(getDuration());
             }
 
             @Override
@@ -482,9 +507,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 .into(target);
     }
 
-    private static final int PLAYBACK_PLAYING = 0;
-    private static final int PLAYBACK_PAUSED = 1;
-    private static final int PLAYBACK_STOPPED = 2;
+    public static final int PLAYBACK_PLAYING = 0;
+    public static final int PLAYBACK_PAUSED = 1;
+    public static final int PLAYBACK_STOPPED = 2;
     private static final int PLAYBACK_SEEK_BACK = 3;
     private static final int PLAYBACK_SEEK_FORWARD = 4;
 
@@ -596,7 +621,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             transportControls.pause();
         } else if (actionString.equalsIgnoreCase(ACTION_STOP)) {
             transportControls.stop();
-            stopMedia();
             stopSelf();
         } else if (actionString.equalsIgnoreCase(ACTION_SEEK_REL)) {
             // Seek to a position relative to current position
@@ -611,12 +635,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     // Compute the new position relative to the current position
     private int seekRelativePosition(int seek) {
-        return limitPosition(mediaPlayer.getCurrentPosition() + seek, 0, mediaPlayer.getDuration());
+        return limitPosition(getCurrentPosition() + seek, 0, getDuration());
     }
 
     // Compute the new position directly
     private int seekDirectPosition(int seekTo) {
-        return limitPosition(seekTo, 0, mediaPlayer.getDuration());
+        return limitPosition(seekTo, 0, getDuration());
     }
 
     // Force the position to be within the specified limits
@@ -627,6 +651,55 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             return upper;
         } else {
             return position;
+        }
+    }
+
+    // Getters for current media information
+
+    private final PublishSubject<Integer> stateObservable = PublishSubject.create();
+    private final PublishSubject<Integer> currentPositionObservable = PublishSubject.create();
+    private final PublishSubject<Integer> durationObservable = PublishSubject.create();
+    private final PublishSubject<AudioFile> currentAudioObservable = PublishSubject.create();
+
+    public Observable<Integer> observeState() {
+        return stateObservable;
+    }
+
+    public Observable<Integer> observeCurrentPosition() {
+        return currentPositionObservable;
+    }
+
+    public Observable<Integer> observeDuration() {
+        return durationObservable;
+    }
+
+    public Observable<AudioFile> observeAudioFile() {
+        return currentAudioObservable;
+    }
+
+    private int getState() {
+        if (mediaPlayer == null) {
+            return PLAYBACK_STOPPED;
+        } else if (!mediaPlayer.isPlaying()) {
+            return PLAYBACK_PAUSED;
+        } else {
+            return PLAYBACK_PLAYING;
+        }
+    }
+
+    private int getCurrentPosition() {
+        if (mediaPlayer != null) {
+            return mediaPlayer.getCurrentPosition();
+        } else {
+            return 0;
+        }
+    }
+
+    private int getDuration() {
+        if (mediaPlayer != null) {
+            return mediaPlayer.getDuration();
+        } else {
+            return 0;
         }
     }
 }

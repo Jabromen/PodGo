@@ -154,9 +154,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 img_id = R.mipmap.ic_download;
             }
 
-            picasso.with(context)
-                    .load(img_id)
-                    .into(downloadPlayButton);
+            downloadPlayButton.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), img_id));
 
             picasso.with(context)
                     .load(item.getImageUrl())
