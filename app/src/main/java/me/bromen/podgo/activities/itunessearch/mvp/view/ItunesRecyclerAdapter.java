@@ -1,6 +1,7 @@
 package me.bromen.podgo.activities.itunessearch.mvp.view;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,17 +96,14 @@ public class ItunesRecyclerAdapter extends RecyclerView.Adapter<ItunesRecyclerAd
         private void setViews() {
             titleView.setText(podcast.getTitle());
 
-            picasso.with(context)
-                    .load(podcast.getImageUrl())
+            picasso.load(podcast.getImageUrl())
                     .placeholder(R.drawable.ic_placeholder)
                     .error(R.drawable.ic_placeholder)
                     .resize(100, 100)
                     .centerCrop()
                     .into(podcastImageView);
 
-            picasso.with(context)
-                    .load(R.mipmap.ic_download)
-                    .into(downloadImageView);
+            downloadImageView.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_download));
         }
     }
 

@@ -156,8 +156,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
             downloadPlayButton.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), img_id));
 
-            picasso.with(context)
-                    .load(item.getImageUrl())
+            picasso.load(item.getImageUrl())
                     .placeholder(R.drawable.ic_placeholder)
                     .error(R.drawable.ic_placeholder)
                     .resize(100, 100)
@@ -183,8 +182,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public void setViews() {
             titleView.setText(feed.getTitle());
 
-            picasso.with(context)
-                    .load(feed.getImageUrl())
+            picasso.load(feed.getImageUrl())
                     .placeholder(R.drawable.ic_placeholder)
                     .error(R.drawable.ic_placeholder)
                     .resize(200, 200)
