@@ -1,10 +1,12 @@
 package me.bromen.podgo.app.parser;
 
+import org.joda.time.format.DateTimeFormatter;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.EmptyStackException;
+import java.util.Locale;
 import java.util.Stack;
 
 import me.bromen.podgo.extras.structures.Feed;
@@ -32,15 +34,29 @@ public class FeedHandler extends DefaultHandler {
     private final String LENGTH = "length";
     private final String HREF = "href";
 
-    private boolean bTitle = false;
-    private boolean bDescription = false;
-    private boolean bLink = false;
-    private boolean bPubDate = false;
+    private boolean bCharacters;
+
+    private boolean bRefresh;
+    private String recentEnclosureUrl;
 
     private Stack<String> tagStack = new Stack<>();
 
     private Feed feed;
     private FeedItem item;
+
+    private final DateTimeFormatter dateTimeFormatter;
+    private final Locale locale = new Locale("en_US");
+    private final StringBuilder stringBuilder = new StringBuilder();
+
+    public FeedHandler(DateTimeFormatter dateTimeFormatter) {
+        this.dateTimeFormatter = dateTimeFormatter;
+    }
+
+    public FeedHandler(DateTimeFormatter dateTimeFormatter, String recentEnclosureUrl) {
+        this.dateTimeFormatter = dateTimeFormatter;
+        this.recentEnclosureUrl = recentEnclosureUrl;
+        bRefresh = true;
+    }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException, EmptyStackException {
@@ -48,51 +64,30 @@ public class FeedHandler extends DefaultHandler {
         if (RSS.equalsIgnoreCase(qName)) {
             if (tagStack.isEmpty()) {
                 tagStack.add(RSS);
-            }
-            else {
+            } else {
                 throw new SAXException("Invalid rss placement");
             }
-        }
-        else if (CHANNEL.equalsIgnoreCase(qName)) {
+        } else if (CHANNEL.equalsIgnoreCase(qName)) {
             if (RSS.equalsIgnoreCase(tagStack.peek())) {
                 feed = new Feed();
                 tagStack.add(CHANNEL);
-            }
-            else {
+            } else {
                 throw new SAXException("Invalid channel placement");
             }
-        }
-        else if (ITEM.equalsIgnoreCase(qName)) {
+        } else if (ITEM.equalsIgnoreCase(qName)) {
             if (CHANNEL.equalsIgnoreCase(tagStack.peek())) {
                 item = new FeedItem();
                 tagStack.add(ITEM);
-            }
-            else {
+            } else {
                 throw new SAXException("Invalid item placement");
             }
-        }
-        else if (ITUNESIMAGE.equalsIgnoreCase(qName)) {
+        } else if (ITUNESIMAGE.equalsIgnoreCase(qName)) {
             if (CHANNEL.equalsIgnoreCase(tagStack.peek())) {
                 feed.setImageUrl(attributes.getValue(HREF));
-            }
-            else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
-                // TODO: Add functionality for individual episode images
+            } else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
                 item.setImageUrl(attributes.getValue(HREF));
             }
-        }
-        else if (TITLE.equalsIgnoreCase(qName)) {
-            bTitle = true;
-        }
-        else if (DESCRIPTION.equalsIgnoreCase(qName)) {
-            bDescription = true;
-        }
-        else if (LINK.equalsIgnoreCase(qName)) {
-            bLink = true;
-        }
-        else if (PUBDATE.equalsIgnoreCase(qName)) {
-            bPubDate = true;
-        }
-        else if (ENCLOSURE.equalsIgnoreCase(qName)) {
+        } else if (ENCLOSURE.equalsIgnoreCase(qName)) {
             if (ITEM.equalsIgnoreCase(tagStack.peek())) {
                 String url = attributes.getValue(URL);
                 String type = attributes.getType(TYPE);
@@ -103,15 +98,22 @@ public class FeedHandler extends DefaultHandler {
                 }
 
                 item.setEnclosure(new FeedItemEnclosure(url, type, length));
-            }
-            else {
+            } else {
                 throw new SAXException("Invalid enclosure placement");
             }
+        } else if (TITLE.equalsIgnoreCase(qName)) {
+            bCharacters = true;
+        } else if (DESCRIPTION.equalsIgnoreCase(qName)) {
+            bCharacters = true;
+        } else if (LINK.equalsIgnoreCase(qName)) {
+            bCharacters = true;
+        } else if (PUBDATE.equalsIgnoreCase(qName)) {
+            bCharacters = true;
         }
     }
 
     @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException, EmptyStackException {
+    public void endElement(String uri, String localName, String qName) throws SAXException, EmptyStackException, SaxEndParserEarlyException {
         if (RSS.equalsIgnoreCase(qName)) {
             tagStack.pop();
         }
@@ -120,61 +122,59 @@ public class FeedHandler extends DefaultHandler {
         }
         else if (ITEM.equalsIgnoreCase(qName)) {
             if (verifyFeedItem(item)) {
+                if (bRefresh && item.getEnclosure().getUrl().equalsIgnoreCase(recentEnclosureUrl)) {
+                    throw new SaxEndParserEarlyException();
+                }
                 feed.getFeedItems().add(item);
             }
             tagStack.pop();
-        }
-    }
-
-    @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
-        if (bTitle) {
+        } else if (TITLE.equalsIgnoreCase(qName)) {
             if (CHANNEL.equalsIgnoreCase(tagStack.peek())) {
-                feed.setTitle(new String(ch, start, length));
-            }
-            else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
-                item.setTitle(new String(ch, start, length));
-            }
-            else {
+                feed.setTitle(stringBuilder.toString());
+            } else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
+                item.setTitle(stringBuilder.toString());
+            } else {
                 throw new SAXException("Invalid title placement");
             }
-            bTitle = false;
-        }
-        else if (bDescription) {
+        } else if (DESCRIPTION.equalsIgnoreCase(qName)) {
             if (CHANNEL.equalsIgnoreCase(tagStack.peek())) {
-                feed.setDescription(new String(ch, start, length));
+                feed.setDescription(stringBuilder.toString());
             }
             else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
-                item.setDescription(new String(ch, start, length));
+                item.setDescription(stringBuilder.toString());
             }
             else {
                 throw new SAXException("Invalid description placement");
             }
-            bDescription = false;
-        }
-        else if (bLink) {
+        } else if (LINK.equalsIgnoreCase(qName)) {
             if (CHANNEL.equalsIgnoreCase(tagStack.peek())) {
-                feed.setLink(new String(ch, start, length));
+                feed.setLink(stringBuilder.toString());
             }
             else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
-                item.setLink(new String(ch, start, length));
+                item.setLink(stringBuilder.toString());
             }
             else {
                 throw new SAXException("Invalid link placement");
             }
-            bLink = false;
-        }
-        else if (bPubDate) {
+        } else if (PUBDATE.equalsIgnoreCase(qName)) {
             if (CHANNEL.equalsIgnoreCase(tagStack.peek())) {
 
             }
             else if (ITEM.equalsIgnoreCase(tagStack.peek())) {
-                item.setPubDate(new String(ch, start, length));
+                item.setPubDate(dateTimeFormatter.withLocale(locale).parseDateTime(stringBuilder.toString()).toString());
             }
             else {
                 throw new SAXException("Invalid pubDate placement");
             }
-            bPubDate = false;
+        }
+        stringBuilder.setLength(0);
+        bCharacters = false;
+    }
+
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        if (bCharacters) {
+            stringBuilder.append(ch, start, length);
         }
     }
 
@@ -182,10 +182,11 @@ public class FeedHandler extends DefaultHandler {
         return feed;
     }
 
+    // TODO: Update so that only necessary fields are checked
     private boolean verifyFeedItem(FeedItem item) {
         boolean valid = true;
         try {
-            valid = (item.getEnclosure().getLength() != null);
+            //valid = (item.getEnclosure().getLength() != null);
             valid = valid && (item.getEnclosure().getUrl() != null);
             valid = valid && (item.getEnclosure().getType() != null);
         } catch (NullPointerException e) {

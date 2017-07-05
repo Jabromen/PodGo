@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.bromen.podgo.app.storage.DbContract;
+
 /**
  * Created by jeff on 5/31/17.
  */
@@ -18,6 +20,9 @@ public class Feed implements Serializable {
     private String link;
     private String feedUrl;
     private String imageUrl;
+
+    // Field used for determining on which item to stop parsing while refreshing feed
+    private String recentEnclosureUrl;
 
     private List<FeedItem> feedItems = new ArrayList<>();
 
@@ -33,19 +38,13 @@ public class Feed implements Serializable {
     }
 
     public Feed(Cursor cursor) {
-        id = cursor.getLong(0);
-        title = cursor.getString(1);
-        description = cursor.getString(2);
-        link = cursor.getString(3);
-        feedUrl = cursor.getString(4);
-        imageUrl = cursor.getString(5);
-    }
-
-    public void setItemPlaces() {
-
-        for (int i = 1; i <= feedItems.size(); i++) {
-            feedItems.get(feedItems.size() - i).setId(i);
-        }
+        id = cursor.getLong(cursor.getColumnIndex(DbContract.KEY_ID));
+        title = cursor.getString(cursor.getColumnIndex(DbContract.KEY_TITLE));
+        description = cursor.getString(cursor.getColumnIndex(DbContract.KEY_DESCRIPTION));
+        link = cursor.getString(cursor.getColumnIndex(DbContract.KEY_LINK));
+        feedUrl = cursor.getString(cursor.getColumnIndex(DbContract.KEY_FEEDURL));
+        imageUrl = cursor.getString(cursor.getColumnIndex(DbContract.KEY_IMAGEURL));
+        recentEnclosureUrl = cursor.getString(cursor.getColumnIndex(DbContract.KEY_ENCLOSUREURL));
     }
 
     public long getId() {
@@ -102,5 +101,13 @@ public class Feed implements Serializable {
 
     public void setFeedItems(List<FeedItem> feedItems) {
         this.feedItems = feedItems;
+    }
+
+    public String getRecentEnclosureUrl() {
+        return recentEnclosureUrl;
+    }
+
+    public void setRecentEnclosureUrl(String recentEnclosureUrl) {
+        this.recentEnclosureUrl = recentEnclosureUrl;
     }
 }

@@ -63,6 +63,7 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put(DbContract.KEY_IMAGEURL, feed.getImageUrl());
         values.put(DbContract.KEY_DESCRIPTION, feed.getDescription());
         values.put(DbContract.KEY_LINK, feed.getLink());
+        values.put(DbContract.KEY_ENCLOSUREURL, feed.getRecentEnclosureUrl());
 
         long id = db.insert(DbContract.TABLE_NAME_FEED, null, values);
 
@@ -81,7 +82,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public int updateFeed(Feed feed) {
 
         int newItems = 0;
-        long id = getFeedId(feed.getTitle());
+        long id = getFeedId(feed.getFeedUrl());
 
         for (FeedItem item: feed.getFeedItems()) {
             if (getFeedItemCount(id, item.getEnclosure().getUrl()) != 0) {
@@ -91,7 +92,23 @@ public class DbHelper extends SQLiteOpenHelper {
             newItems++;
         }
 
+        if (newItems > 0) {
+            updateRecentEnclosureUrl(id, feed.getRecentEnclosureUrl());
+        }
+
         return newItems;
+    }
+
+    private void updateRecentEnclosureUrl(long id, String recentEnclosureUrl) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(DbContract.KEY_ENCLOSUREURL, recentEnclosureUrl);
+
+        String where = DbContract.KEY_ID + " = ?";
+        String[] whereArgs = { Long.toString(id) };
+
+        db.update(DbContract.TABLE_NAME_FEED, values, where, whereArgs);
     }
 
     /**
@@ -122,17 +139,17 @@ public class DbHelper extends SQLiteOpenHelper {
 
     /**
      * Used to check if a feed is already saved
-     * @param title feed title, used to identify a feed without knowing a database ID
+     * @param feedUrl feed url, used to identify a feed without knowing a database ID
      * @return the number of saved feeds found
      */
-    public int getFeedCount(String title) {
+    public int getFeedCount(String feedUrl) {
         Cursor c = null;
         try {
             SQLiteDatabase db = getReadableDatabase();
             String query = "SELECT COUNT(*) FROM " + DbContract.TABLE_NAME_FEED +
-                    " WHERE " + DbContract.KEY_TITLE + " = ?";
+                    " WHERE " + DbContract.KEY_FEEDURL + " = ?";
 
-            c = db.rawQuery(query, new String[] {title});
+            c = db.rawQuery(query, new String[] {feedUrl});
             if (c.moveToFirst()) {
                 return c.getInt(0);
             } else {
@@ -176,11 +193,11 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Gets the database ID of a newly parsed feed from its title
-     * @param title title of feed
+     * Gets the database ID of a newly parsed feed from its feedUrl
+     * @param feedUrl url of feed
      * @return database ID if found, -1 if not found
      */
-    public long getFeedId(String title) {
+    public long getFeedId(String feedUrl) {
 
         Cursor c = null;
         try {
@@ -188,9 +205,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
             String query = "SELECT " + DbContract.KEY_ID + " FROM " +
                     DbContract.TABLE_NAME_FEED + " WHERE " +
-                    DbContract.KEY_TITLE + " = ?";
+                    DbContract.KEY_FEEDURL + " = ?";
 
-            c = db.rawQuery(query, new String[] {title});
+            c = db.rawQuery(query, new String[] {feedUrl});
             if (c.moveToFirst()) {
                 return c.getInt(0);
             }
@@ -213,7 +230,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 DbContract.KEY_DESCRIPTION,
                 DbContract.KEY_LINK,
                 DbContract.KEY_FEEDURL,
-                DbContract.KEY_IMAGEURL
+                DbContract.KEY_IMAGEURL,
+                DbContract.KEY_ENCLOSUREURL,
         };
 
         String sortOrder;
@@ -258,7 +276,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 DbContract.KEY_DESCRIPTION,
                 DbContract.KEY_LINK,
                 DbContract.KEY_FEEDURL,
-                DbContract.KEY_IMAGEURL
+                DbContract.KEY_IMAGEURL,
+                DbContract.KEY_ENCLOSUREURL,
         };
 
         String selection = DbContract.KEY_ID + " = ?";
@@ -301,7 +320,7 @@ public class DbHelper extends SQLiteOpenHelper {
         String selection = DbContract.KEY_ID + " = ?";
         String[] selectId = {Long.toString(id)};
 
-        String sortOrder = "date(" + DbContract.KEY_PUBDATE + ") DESC";
+        String sortOrder = DbContract.KEY_PUBDATE + " DESC";
 
         Cursor cursor = null;
         List<FeedItem> feedItems = new ArrayList<>();

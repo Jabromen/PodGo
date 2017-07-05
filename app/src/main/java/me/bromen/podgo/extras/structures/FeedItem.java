@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 
 import java.io.Serializable;
 
+import me.bromen.podgo.app.storage.DbContract;
+
 /**
  * Created by jeff on 5/31/17.
  */
@@ -45,15 +47,18 @@ public class FeedItem implements Serializable {
     }
 
     public FeedItem(Cursor cursor) {
-        id = cursor.getLong(0);
-        title = cursor.getString(1);
-        description = cursor.getString(2);
-        pubDate = cursor.getString(3);
-        link = cursor.getString(4);
-        enclosure = new FeedItemEnclosure(cursor.getString(5), cursor.getString(6), cursor.getString(7));
-        filename = cursor.getString(8);
-        downloadId = cursor.getLong(9);
-        imageUrl = cursor.getString(10);
+        id = cursor.getLong(cursor.getColumnIndex(DbContract.KEY_ITEMID));
+        title = cursor.getString(cursor.getColumnIndex(DbContract.KEY_TITLE));
+        description = cursor.getString(cursor.getColumnIndex(DbContract.KEY_DESCRIPTION));
+        pubDate = cursor.getString(cursor.getColumnIndex(DbContract.KEY_PUBDATE));
+        link = cursor.getString(cursor.getColumnIndex(DbContract.KEY_LINK));
+        enclosure = new FeedItemEnclosure(cursor.getString(
+                cursor.getColumnIndex(DbContract.KEY_ENCLOSUREURL)),
+                cursor.getString(cursor.getColumnIndex(DbContract.KEY_ENCLOSURETYPE)),
+                cursor.getString(cursor.getColumnIndex(DbContract.KEY_ENCLOSURELENGTH)));
+        filename = cursor.getString(cursor.getColumnIndex(DbContract.KEY_FILENAME));
+        downloadId = cursor.getLong(cursor.getColumnIndex(DbContract.KEY_DOWNLOADID));
+        imageUrl = cursor.getString(cursor.getColumnIndex(DbContract.KEY_IMAGEURL));
 
         isDownloading = downloadId != -1;
         isDownloaded = !"NULL".equals(filename);

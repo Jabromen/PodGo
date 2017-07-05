@@ -1,12 +1,10 @@
 package me.bromen.podgo.activities.feeddetail.mvp;
 
-import android.content.Intent;
 import android.util.Log;
 
 import io.reactivex.Observable;
 import me.bromen.podgo.activities.feeddetail.FeedDetailActivity;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailModel;
-import me.bromen.podgo.app.mediaplayer.MediaPlayerService;
 import me.bromen.podgo.app.mediaplayer.MediaPlayerServiceController;
 import me.bromen.podgo.app.storage.DbHelper;
 import me.bromen.podgo.app.downloads.EpisodeDownloads;
@@ -72,6 +70,6 @@ public class FeedDetailModelImpl implements FeedDetailModel {
     // TODO: Implement FeedItemDetailActivity
     @Override
     public void startFeedItemDetailActivity(FeedItem item) {
-        Log.d(TAG, "startFeedItemDetailActivity(): " + item.getTitle());
+        Log.d(TAG, "startFeedItemDetailActivity(): " + item.getTitle() + " " + item.getPubDate());
     }
 }

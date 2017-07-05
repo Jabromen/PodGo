@@ -10,6 +10,7 @@ import me.bromen.podgo.activities.home.mvp.HomePresenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
 import me.bromen.podgo.activities.home.mvp.view.HomeViewImpl;
+import me.bromen.podgo.app.parser.FeedParser;
 import me.bromen.podgo.app.storage.DbHelper;
 
 /**
@@ -33,8 +34,8 @@ public class HomeModule {
 
     @Provides
     @HomeScope
-    public HomeModel model(DbHelper dbHelper) {
-        return new HomeModelImpl(activity, dbHelper);
+    public HomeModel model(DbHelper dbHelper, FeedParser feedParser) {
+        return new HomeModelImpl(activity, dbHelper, feedParser);
     }
 
     @Provides

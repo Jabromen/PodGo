@@ -34,12 +34,12 @@ public class DbContract {
     public static final String SQL_CREATE_TABLE_FEEDS =
             "CREATE TABLE " + TABLE_NAME_FEED + " (" + KEY_ID + " INTEGER PRIMARY KEY," +
                     KEY_TITLE + " TEXT," + KEY_DESCRIPTION + " TEXT," + KEY_LINK + " TEXT," +
-                    KEY_FEEDURL + " TEXT," + KEY_IMAGEURL + " TEXT)";
+                    KEY_FEEDURL + " TEXT," + KEY_IMAGEURL + " TEXT," + KEY_ENCLOSUREURL + " TEXT)";
 
     public static final String SQL_CREATE_TABLE_FEED_ITEMS =
             "CREATE TABLE " + TABLE_NAME_FEED_ITEMS + " (" + KEY_ITEMID + " INTEGER PRIMARY KEY," +
                     KEY_ID + " INTEGER," + KEY_TITLE + " TEXT," +
-                    KEY_DESCRIPTION + " TEXT," + KEY_PUBDATE + " DATETIME," +
+                    KEY_DESCRIPTION + " TEXT," + "" + KEY_PUBDATE + " TEXT," +
                     KEY_LINK + " TEXT," + KEY_ENCLOSUREURL + " TEXT," +
                     KEY_ENCLOSURETYPE + " TEXT," + KEY_ENCLOSURELENGTH + " TEXT," +
                     KEY_FILENAME + " TEXT," + KEY_DOWNLOADID + " INTEGER," +

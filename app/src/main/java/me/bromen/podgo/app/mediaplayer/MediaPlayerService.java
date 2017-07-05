@@ -21,11 +21,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.support.v7.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v7.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -497,7 +497,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
         Picasso.with(this)
                 .load(currentAudio.getImageUrl())
-                .resize(75, 75)
+                .resize(150, 150)
                 .centerCrop()
                 .into(target);
     }
