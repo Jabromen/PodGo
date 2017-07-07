@@ -1,10 +1,7 @@
 package me.bromen.podgo.app.dagger.module;
 
 import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
 
-import com.bumptech.glide.Glide;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 

@@ -3,7 +3,6 @@ package me.bromen.podgo.activities.newfeed.mvp;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;

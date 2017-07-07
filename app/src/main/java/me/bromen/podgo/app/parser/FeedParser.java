@@ -15,7 +15,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import me.bromen.podgo.app.storage.DbHelper;
 import me.bromen.podgo.extras.structures.Feed;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

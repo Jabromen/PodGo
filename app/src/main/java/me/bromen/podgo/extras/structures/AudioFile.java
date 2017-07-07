@@ -1,11 +1,6 @@
 package me.bromen.podgo.extras.structures;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-
 import java.io.Serializable;
-
-import me.bromen.podgo.extras.utilities.PodcastFileUtils;
 
 /**
  * Created by jeff on 6/30/17.

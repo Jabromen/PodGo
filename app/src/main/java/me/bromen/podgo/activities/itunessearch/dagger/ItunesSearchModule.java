@@ -5,12 +5,12 @@ import com.squareup.picasso.Picasso;
 import dagger.Module;
 import dagger.Provides;
 import me.bromen.podgo.activities.itunessearch.ItunesSearchActivity;
-import me.bromen.podgo.activities.itunessearch.mvp.model.ItunesSearchModelImpl;
 import me.bromen.podgo.activities.itunessearch.mvp.ItunesSearchPresenter;
-import me.bromen.podgo.activities.itunessearch.mvp.view.ItunesSearchViewImpl;
 import me.bromen.podgo.activities.itunessearch.mvp.contracts.ItunesSearchModel;
 import me.bromen.podgo.activities.itunessearch.mvp.contracts.ItunesSearchView;
 import me.bromen.podgo.activities.itunessearch.mvp.model.ItunesApiService;
+import me.bromen.podgo.activities.itunessearch.mvp.model.ItunesSearchModelImpl;
+import me.bromen.podgo.activities.itunessearch.mvp.view.ItunesSearchViewImpl;
 import me.bromen.podgo.app.parser.FeedParser;
 import okhttp3.OkHttpClient;
 

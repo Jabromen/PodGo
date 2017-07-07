@@ -2,8 +2,8 @@ package me.bromen.podgo.activities.home.mvp.contracts;
 
 import java.util.List;
 
-import me.bromen.podgo.extras.structures.Feed;
 import io.reactivex.Observable;
+import me.bromen.podgo.extras.structures.Feed;
 
 /**
  * Created by jeff on 6/20/17.

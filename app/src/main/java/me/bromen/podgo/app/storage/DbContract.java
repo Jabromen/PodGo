@@ -1,8 +1,5 @@
 package me.bromen.podgo.app.storage;
 
-import android.content.Context;
-import android.provider.BaseColumns;
-
 /**
  * Created by jeff on 5/27/17.
  */

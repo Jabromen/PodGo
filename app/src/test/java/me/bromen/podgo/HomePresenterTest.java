@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.reactivex.Observable;
 import me.bromen.podgo.activities.home.mvp.HomePresenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
 import me.bromen.podgo.extras.structures.Feed;
-import io.reactivex.Observable;
 
 /**
  * Created by jeff on 6/20/17.

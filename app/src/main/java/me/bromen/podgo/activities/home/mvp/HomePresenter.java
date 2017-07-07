@@ -5,9 +5,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import me.bromen.podgo.R;
+import me.bromen.podgo.activities.Presenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
-import me.bromen.podgo.activities.Presenter;
 import me.bromen.podgo.extras.structures.Feed;
 
 /**

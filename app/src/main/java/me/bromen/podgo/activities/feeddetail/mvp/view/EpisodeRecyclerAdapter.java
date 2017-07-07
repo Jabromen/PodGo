@@ -2,7 +2,6 @@ package me.bromen.podgo.activities.feeddetail.mvp.view;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +16,9 @@ import com.squareup.picasso.Picasso;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
+import me.bromen.podgo.R;
 import me.bromen.podgo.extras.structures.Feed;
 import me.bromen.podgo.extras.structures.FeedItem;
-import me.bromen.podgo.R;
 
 /**
  * Created by jeff on 5/9/17.

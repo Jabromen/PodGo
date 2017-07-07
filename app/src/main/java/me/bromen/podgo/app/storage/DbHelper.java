@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 import me.bromen.podgo.extras.structures.Feed;
 import me.bromen.podgo.extras.structures.FeedItem;

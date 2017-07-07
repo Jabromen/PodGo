@@ -1,7 +1,6 @@
 package me.bromen.podgo.extras.structures;
 
 import android.database.Cursor;
-import android.graphics.Bitmap;
 
 import java.io.Serializable;
 

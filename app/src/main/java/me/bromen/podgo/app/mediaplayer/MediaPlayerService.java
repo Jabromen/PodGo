@@ -1,6 +1,5 @@
 package me.bromen.podgo.app.mediaplayer;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -12,12 +11,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
-import android.media.MediaMetadata;
 import android.media.MediaPlayer;
 import android.media.session.MediaSession;
 import android.media.session.MediaSessionManager;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
@@ -29,7 +26,6 @@ import android.support.v7.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -38,7 +34,6 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Handler;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -47,7 +42,6 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import me.bromen.podgo.BuildConfig;
 import me.bromen.podgo.R;
-import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.extras.structures.AudioFile;
 
 /**

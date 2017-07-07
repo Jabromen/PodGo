@@ -20,12 +20,12 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
 import me.bromen.podgo.R;
 import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
 import me.bromen.podgo.extras.structures.Feed;
 import me.bromen.podgo.extras.utilities.DisplayUtils;
-import io.reactivex.Observable;
 
 /**
  * Created by jeff on 6/20/17.

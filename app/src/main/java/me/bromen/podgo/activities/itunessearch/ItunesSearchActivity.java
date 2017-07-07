@@ -10,8 +10,8 @@ import javax.inject.Inject;
 import me.bromen.podgo.activities.itunessearch.dagger.DaggerItunesSearchComponent;
 import me.bromen.podgo.activities.itunessearch.dagger.ItunesSearchModule;
 import me.bromen.podgo.activities.itunessearch.mvp.ItunesSearchPresenter;
-import me.bromen.podgo.activities.itunessearch.mvp.view.ItunesSearchViewImpl;
 import me.bromen.podgo.activities.itunessearch.mvp.contracts.ItunesSearchView;
+import me.bromen.podgo.activities.itunessearch.mvp.view.ItunesSearchViewImpl;
 import me.bromen.podgo.app.PodGoApplication;
 
 /**

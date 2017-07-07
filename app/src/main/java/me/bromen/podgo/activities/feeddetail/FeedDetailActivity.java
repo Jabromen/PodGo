@@ -10,8 +10,8 @@ import javax.inject.Inject;
 import me.bromen.podgo.activities.feeddetail.dagger.DaggerFeedDetailComponent;
 import me.bromen.podgo.activities.feeddetail.dagger.FeedDetailModule;
 import me.bromen.podgo.activities.feeddetail.mvp.FeedDetailPresenter;
-import me.bromen.podgo.activities.feeddetail.mvp.view.FeedDetailViewImpl;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailView;
+import me.bromen.podgo.activities.feeddetail.mvp.view.FeedDetailViewImpl;
 import me.bromen.podgo.app.PodGoApplication;
 
 /**

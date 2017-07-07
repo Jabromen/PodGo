@@ -3,9 +3,9 @@ package me.bromen.podgo.activities.newfeed.mvp;
 import android.util.Log;
 
 import me.bromen.podgo.activities.itunessearch.ItunesSearchActivity;
-import me.bromen.podgo.app.parser.FeedParser;
 import me.bromen.podgo.activities.newfeed.NewFeedActivity;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedModel;
+import me.bromen.podgo.app.parser.FeedParser;
 
 /**
  * Created by jeff on 6/21/17.

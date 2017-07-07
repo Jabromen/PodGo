@@ -16,8 +16,8 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
-import me.bromen.podgo.extras.structures.Feed;
 import me.bromen.podgo.R;
+import me.bromen.podgo.extras.structures.Feed;
 
 /**
  * Created by jeff on 5/11/17.
