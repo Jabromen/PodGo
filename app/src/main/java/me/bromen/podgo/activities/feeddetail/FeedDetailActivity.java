@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import javax.inject.Inject;
 
@@ -48,6 +49,8 @@ public class FeedDetailActivity extends AppCompatActivity {
                 .inject(this);
 
         setContentView((FeedDetailViewImpl) view);
+        ((FeedDetailViewImpl) view).createMediaplayerBar();
+
         presenter.onCreate();
     }
 
@@ -55,5 +58,7 @@ public class FeedDetailActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         presenter.onDestroy();
+
+        ((FeedDetailViewImpl) view).destroyMediaplayerBar();
     }
 }

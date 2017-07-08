@@ -16,6 +16,8 @@ public interface FeedDetailView {
 
     void showLoading(boolean loading);
 
+    void showMediaplayerBar(boolean show);
+
     Observable<FeedItem> observeItemTileClick();
 
     Observable<FeedItem> observeItemActionClick();

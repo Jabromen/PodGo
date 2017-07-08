@@ -4,10 +4,12 @@ import android.util.Log;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import me.bromen.podgo.activities.feeddetail.FeedDetailActivity;
 import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.newfeed.NewFeedActivity;
+import me.bromen.podgo.app.mediaplayer.MediaPlayerServiceController;
 import me.bromen.podgo.app.parser.FeedParser;
 import me.bromen.podgo.app.storage.DbHelper;
 import me.bromen.podgo.extras.structures.Feed;
@@ -23,11 +25,13 @@ public class HomeModelImpl implements HomeModel {
     private final MainActivity activity;
     private final DbHelper dbHelper;
     private final FeedParser feedParser;
+    private final MediaPlayerServiceController controller;
 
-    public HomeModelImpl(MainActivity activity, DbHelper dbHelper, FeedParser feedParser) {
+    public HomeModelImpl(MainActivity activity, DbHelper dbHelper, FeedParser feedParser, MediaPlayerServiceController controller) {
         this.activity = activity;
         this.dbHelper = dbHelper;
         this.feedParser = feedParser;
+        this.controller = controller;
     }
 
     // Load all feeds from database, should be called asynchronously
@@ -46,6 +50,16 @@ public class HomeModelImpl implements HomeModel {
     @Override
     public Boolean deleteFeed(Feed feed) throws Exception {
         return dbHelper.deleteFeed(feed.getId());
+    }
+
+    @Override
+    public int getInitialMediaState() {
+        return controller.getState();
+    }
+
+    @Override
+    public Observable<Integer> observeMediaState() {
+        return controller.observeState();
     }
 
     // Starts NewFeedActivity

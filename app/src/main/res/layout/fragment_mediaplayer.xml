@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/mediaplayer_bar_height">
+
+    <ImageView
+        android:id="@+id/imageview_mediaplayer_bar_episode"
+        android:layout_width="@dimen/mediaplayer_bar_height"
+        android:layout_height="@dimen/mediaplayer_bar_height"
+        />
+
+    <ImageView
+        android:id="@+id/imageview_mediaplayer_bar_playPause"
+        android:layout_width="@dimen/mediaplayer_bar_height"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        />
+
+    <TextView
+        android:id="@+id/textview_mediaplayer_bar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/imageview_mediaplayer_bar_episode"
+        android:layout_toStartOf="@id/imageview_mediaplayer_bar_playPause"
+        android:layout_centerVertical="true"
+        android:padding="@dimen/text_margin"
+        android:textSize="18sp"
+        android:lines="1"
+        android:ellipsize="end"
+        android:text="AudioTitle"
+        />
+
+</RelativeLayout>

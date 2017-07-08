@@ -1,7 +1,10 @@
 package me.bromen.podgo.activities.home.mvp.view;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +29,8 @@ import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
 import me.bromen.podgo.extras.structures.Feed;
 import me.bromen.podgo.extras.utilities.DisplayUtils;
+import me.bromen.podgo.fragments.mediaplayerbar.MediaplayerBarFragment;
+import me.bromen.podgo.fragments.mediaplayerbar.mvp.contracts.MediaplayerBarView;
 
 /**
  * Created by jeff on 6/20/17.
@@ -33,6 +38,8 @@ import me.bromen.podgo.extras.utilities.DisplayUtils;
 
 @SuppressLint("ViewConstructor")
 public class HomeViewImpl extends FrameLayout implements HomeView {
+
+    private static final String FRAGMENT_TAG = "homeFragment";
 
     @BindView(R.id.recycler_main)
     RecyclerView feedView;
@@ -43,6 +50,10 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
     @BindView(R.id.toolbar_main)
     Toolbar toolbar;
 
+    @BindView(R.id.mediaplayer_bar_main)
+    FrameLayout mediaplayerBar;
+
+    private final Activity activity;
     private final Picasso picasso;
     private PodcastRecyclerAdapter adapter;
     private final ProgressDialog progressDialog = new ProgressDialog(getContext());
@@ -50,6 +61,7 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
 
     public HomeViewImpl(MainActivity activity, Picasso picasso) {
         super(activity);
+        this.activity = activity;
         this.picasso = picasso;
 
         inflate(getContext(), R.layout.activity_main, this);
@@ -61,6 +73,8 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
 
         optionsPopup = new PopupMenu(getContext(), toolbar);
         optionsPopup.inflate(R.menu.menu_feed_options);
+
+        mediaplayerBar.setVisibility(View.VISIBLE);
     }
 
     private void initToolbar() {
@@ -78,6 +92,20 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
 
         adapter = new PodcastRecyclerAdapter(picasso);
         feedView.setAdapter(adapter);
+    }
+
+    public void setUpMediaplayerBar() {
+        MediaplayerBarFragment fragment = new MediaplayerBarFragment();
+        FragmentManager fm = activity.getFragmentManager();
+        fm.beginTransaction().add(R.id.mediaplayer_bar_main, fragment).commit();
+    }
+
+    public void destroyMediaplayerBar() {
+        FragmentManager fm = activity.getFragmentManager();
+        android.app.Fragment fragment = fm.findFragmentByTag(FRAGMENT_TAG);
+        if (fragment != null) {
+            fm.beginTransaction().remove(fragment).commit();
+        }
     }
 
     @Override
@@ -119,6 +147,15 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
             Toast.makeText(getContext(), Integer.toString(newEps) + " Episodes Added", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getContext(), "Feed up to date", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void showMediaplayerBar(boolean show) {
+        if (show) {
+            mediaplayerBar.setVisibility(View.VISIBLE);
+        } else {
+            mediaplayerBar.setVisibility(View.GONE);
         }
     }
 

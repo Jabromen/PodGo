@@ -10,6 +10,7 @@ import me.bromen.podgo.activities.home.mvp.HomePresenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
 import me.bromen.podgo.activities.home.mvp.view.HomeViewImpl;
+import me.bromen.podgo.app.mediaplayer.MediaPlayerServiceController;
 import me.bromen.podgo.app.parser.FeedParser;
 import me.bromen.podgo.app.storage.DbHelper;
 
@@ -34,8 +35,8 @@ public class HomeModule {
 
     @Provides
     @HomeScope
-    public HomeModel model(DbHelper dbHelper, FeedParser feedParser) {
-        return new HomeModelImpl(activity, dbHelper, feedParser);
+    public HomeModel model(DbHelper dbHelper, FeedParser feedParser, MediaPlayerServiceController controller) {
+        return new HomeModelImpl(activity, dbHelper, feedParser, controller);
     }
 
     @Provides
@@ -43,4 +44,6 @@ public class HomeModule {
     public HomePresenter presenter(HomeView view, HomeModel model) {
         return new HomePresenter(view, model);
     }
+
+
 }

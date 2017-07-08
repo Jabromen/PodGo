@@ -7,7 +7,9 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 
+import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.subjects.PublishSubject;
 import me.bromen.podgo.BuildConfig;
 import me.bromen.podgo.extras.structures.AudioFile;
 
@@ -21,18 +23,39 @@ public class MediaPlayerServiceController {
 
     private MediaPlayerService player;
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private CompositeDisposable disposables;
 
-    private int state;
+    private int state = MediaPlayerService.PLAYBACK_STOPPED;
     private int currentPosition;
     private int duration;
     private AudioFile audioFile;
 
+    private final PublishSubject<Integer> stateObservable = PublishSubject.create();
+    private final PublishSubject<Integer> currentPositionObservable = PublishSubject.create();
+    private final PublishSubject<Integer> durationObservable = PublishSubject.create();
+    private final PublishSubject<AudioFile> audioFileObservable = PublishSubject.create();
+
     private void initObservables() {
-        disposables.add(player.observeState().subscribe(state -> this.state = state));
-        disposables.add(player.observeCurrentPosition().subscribe(currentPosition -> this.currentPosition = currentPosition));
-        disposables.add(player.observeDuration().subscribe(duration -> this.duration = duration));
-        disposables.add(player.observeAudioFile().subscribe(audioFile -> this.audioFile = audioFile));
+        disposables = new CompositeDisposable();
+        disposables.add(player.observeState().subscribe(state -> {
+            this.state = state;
+            stateObservable.onNext(state);
+        }));
+        disposables.add(player.observeCurrentPosition().subscribe(currentPosition -> {
+            this.currentPosition = currentPosition;
+            currentPositionObservable.onNext(currentPosition);
+        }));
+        disposables.add(player.observeDuration().subscribe(duration -> {
+            this.duration = duration;
+            durationObservable.onNext(duration);
+        }));
+        disposables.add(player.observeAudioFile().subscribe(audioFile -> {
+            this.audioFile = audioFile;
+            audioFileObservable.onNext(audioFile);
+        }));
+
+        state = player.getState();
+        stateObservable.onNext(player.getState());
     }
 
     private final ServiceConnection serviceConn = new ServiceConnection() {
@@ -50,7 +73,9 @@ public class MediaPlayerServiceController {
             if (BuildConfig.DEBUG) {
                 Log.d("PodGo", "MediaPlayerService Disconnected");
             }
+            player = null;
             disposables.dispose();
+            disposables = null;
         }
     };
 
@@ -62,20 +87,39 @@ public class MediaPlayerServiceController {
 
     public void bindService() {
         Intent intent = new Intent(context, MediaPlayerService.class);
-        context.bindService(intent, serviceConn, Context.BIND_AUTO_CREATE);
+        startService();
+        context.bindService(intent, serviceConn, 0);
+    }
+
+    public void unbindService() {
+        context.unbindService(serviceConn);
+    }
+
+    public void startService() {
+        if (!MediaPlayerService.isRunning) {
+            Intent intent = new Intent(context, MediaPlayerService.class);
+            context.startService(intent);
+        }
     }
 
     public void stopService() {
-        context.stopService(new Intent(context, MediaPlayerService.class));
-        context.unbindService(serviceConn);
+        Intent intent = new Intent(context, MediaPlayerService.class);
+        context.stopService(intent);
     }
 
     // Broadcast Intent Methods
 
     public void play(AudioFile audioFile) {
-        Intent intent = new Intent(MediaPlayerService.PLAY_NEW_AUDIO);
-        intent.putExtra("AUDIOFILE", audioFile);
-        context.sendBroadcast(intent);
+        if (!MediaPlayerService.isRunning) {
+            Intent intent = new Intent(context, MediaPlayerService.class);
+            intent.putExtra("AUDIOFILE", audioFile);
+            context.startService(intent);
+            bindService();
+        } else {
+            Intent intent = new Intent(MediaPlayerService.PLAY_NEW_AUDIO);
+            intent.putExtra("AUDIOFILE", audioFile);
+            context.sendBroadcast(intent);
+        }
     }
 
     public void queue(AudioFile audioFile) {
@@ -127,5 +171,23 @@ public class MediaPlayerServiceController {
 
     public AudioFile getCurrentAudio() {
         return audioFile;
+    }
+
+    // Getters for media observables
+
+    public Observable<Integer> observeState() {
+        return stateObservable;
+    }
+
+    public Observable<Integer> observeCurrentPosition() {
+        return currentPositionObservable;
+    }
+
+    public Observable<Integer> observeDuration() {
+        return durationObservable;
+    }
+
+    public Observable<AudioFile> observeAudioFile() {
+        return audioFileObservable;
     }
 }

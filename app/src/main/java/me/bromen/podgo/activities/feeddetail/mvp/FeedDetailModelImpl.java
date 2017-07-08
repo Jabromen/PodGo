@@ -66,6 +66,16 @@ public class FeedDetailModelImpl implements FeedDetailModel {
         controller.play(new AudioFile(item));
     }
 
+    @Override
+    public int getInitialMediaState() {
+        return controller.getState();
+    }
+
+    @Override
+    public Observable<Integer> observeMediaState() {
+        return controller.observeState();
+    }
+
     // Starts FeedItemDetailActivity
     // TODO: Implement FeedItemDetailActivity
     @Override

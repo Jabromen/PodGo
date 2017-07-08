@@ -2,6 +2,7 @@ package me.bromen.podgo.activities.home.mvp.contracts;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import me.bromen.podgo.extras.structures.Feed;
 
 /**
@@ -15,6 +16,10 @@ public interface HomeModel {
     Integer refreshFeed(Feed feed) throws Exception;
 
     Boolean deleteFeed(Feed feed) throws Exception;
+
+    int getInitialMediaState();
+
+    Observable<Integer> observeMediaState();
 
     void startNewFeedActivity();
 

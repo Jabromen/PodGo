@@ -19,17 +19,27 @@
         app:popupTheme="@style/AppTheme.NoActionBar"
         />
 
+    <FrameLayout
+        android:id="@+id/mediaplayer_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mediaplayer_bar_height"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar_main"
+        android:layout_above="@id/mediaplayer_bar_main"
         />
 
     <TextView
         android:id="@+id/textview_main_nopodcasts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/mediaplayer_bar_main"
         android:gravity="center"
         android:visibility="gone"
         android:text="No Podcasts Saved"

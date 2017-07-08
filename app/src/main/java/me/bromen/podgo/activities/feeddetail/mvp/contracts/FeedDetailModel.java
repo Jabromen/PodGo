@@ -18,6 +18,10 @@ public interface FeedDetailModel {
 
     Boolean cancelDownload(FeedItem item);
 
+    int getInitialMediaState();
+
+    Observable<Integer> observeMediaState();
+
     void playEpisode(FeedItem item);
 
     void startFeedItemDetailActivity(FeedItem item);

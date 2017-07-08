@@ -1,5 +1,7 @@
 package me.bromen.podgo.activities.home.dagger;
 
+import javax.inject.Inject;
+
 import dagger.Component;
 import me.bromen.podgo.activities.home.MainActivity;
 import me.bromen.podgo.app.dagger.AppComponent;
@@ -9,7 +11,7 @@ import me.bromen.podgo.app.dagger.AppComponent;
  */
 
 @HomeScope
-@Component(modules = { HomeModule.class }, dependencies = { AppComponent.class })
+@Component(modules = { HomeModule.class }, dependencies = { AppComponent.class})
 public interface HomeComponent {
 
     void inject(MainActivity mainActivity);

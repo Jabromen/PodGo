@@ -7,6 +7,7 @@ import io.reactivex.schedulers.Schedulers;
 import me.bromen.podgo.activities.Presenter;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailModel;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailView;
+import me.bromen.podgo.app.mediaplayer.MediaPlayerService;
 import me.bromen.podgo.extras.structures.FeedItem;
 
 /**
@@ -31,10 +32,13 @@ public class FeedDetailPresenter implements Presenter {
 
     @Override
     public void onCreate() {
+        view.showMediaplayerBar(model.getInitialMediaState() != MediaPlayerService.PLAYBACK_STOPPED);
+
         observeDownloads();
         loadFeed(true);
         observeItemTileClick();
         observeItemActionClick();
+        observeMediaState();
     }
 
     @Override
@@ -88,6 +92,11 @@ public class FeedDetailPresenter implements Presenter {
                         startDownload(item);
                     }
                 }));
+    }
+
+    private void observeMediaState() {
+        disposables.add(model.observeMediaState()
+                .subscribe(state -> view.showMediaplayerBar(state != MediaPlayerService.PLAYBACK_STOPPED)));
     }
 
     private void startDownload(FeedItem item) {

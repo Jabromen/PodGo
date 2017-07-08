@@ -31,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
                 .inject(this);
 
         setContentView((HomeViewImpl) view);
+        ((HomeViewImpl) view).setUpMediaplayerBar();
+        PodGoApplication.get(this).component().mediaPlayerServiceController().bindService();
+
         presenter.onCreate();
     }
 
@@ -38,11 +41,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         presenter.onResume();
+        PodGoApplication.get(this).component().episodeDownloads().validateDownloads();
+        PodGoApplication.get(this).component().episodeDownloads().registerReceiver();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        PodGoApplication.get(this).component().episodeDownloads().unregisterReceiver();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         presenter.onDestroy();
+        ((HomeViewImpl) view).destroyMediaplayerBar();
+        if (isFinishing()) {
+            PodGoApplication.get(this).component().mediaPlayerServiceController().unbindService();
+        }
     }
 }

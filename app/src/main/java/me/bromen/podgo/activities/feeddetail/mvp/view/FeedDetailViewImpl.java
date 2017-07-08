@@ -1,6 +1,9 @@
 package me.bromen.podgo.activities.feeddetail.mvp.view;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +23,8 @@ import me.bromen.podgo.activities.feeddetail.FeedDetailActivity;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailView;
 import me.bromen.podgo.extras.structures.Feed;
 import me.bromen.podgo.extras.structures.FeedItem;
+import me.bromen.podgo.fragments.mediaplayerbar.MediaplayerBarFragment;
+import me.bromen.podgo.fragments.mediaplayerbar.mvp.contracts.MediaplayerBarView;
 
 /**
  * Created by jeff on 6/22/17.
@@ -27,6 +32,8 @@ import me.bromen.podgo.extras.structures.FeedItem;
 
 @SuppressLint("ViewConstructor")
 public class FeedDetailViewImpl extends FrameLayout implements FeedDetailView {
+
+    private static final String FRAGMENT_TAG = "feeddetailFragment";
 
     @BindView(R.id.recycler_feeddetail)
     RecyclerView feedView;
@@ -37,12 +44,17 @@ public class FeedDetailViewImpl extends FrameLayout implements FeedDetailView {
     @BindView(R.id.toolbar_feeddetail)
     Toolbar toolbar;
 
+    @BindView(R.id.mediaplayer_bar_feeddetail)
+    FrameLayout mediaplayerBar;
+
+    private final Activity activity;
     private final Picasso picasso;
     private EpisodeRecyclerAdapter adapter;
     private final ProgressDialog progressDialog = new ProgressDialog(getContext());
 
     public FeedDetailViewImpl(FeedDetailActivity activity, Picasso picasso) {
         super(activity);
+        this.activity = activity;
         this.picasso = picasso;
 
         inflate(getContext(), R.layout.activity_feeddetail, this);
@@ -65,6 +77,20 @@ public class FeedDetailViewImpl extends FrameLayout implements FeedDetailView {
 
         adapter = new EpisodeRecyclerAdapter(picasso);
         feedView.setAdapter(adapter);
+    }
+
+    public void createMediaplayerBar() {
+        MediaplayerBarFragment fragment = new MediaplayerBarFragment();
+        FragmentManager fm = activity.getFragmentManager();
+        fm.beginTransaction().add(R.id.mediaplayer_bar_feeddetail, fragment, FRAGMENT_TAG).commit();
+    }
+
+    public void destroyMediaplayerBar() {
+        FragmentManager fm = activity.getFragmentManager();
+        Fragment fragment = fm.findFragmentByTag(FRAGMENT_TAG);
+        if (fragment != null) {
+            fm.beginTransaction().remove(fragment).commit();
+        }
     }
 
     @Override
@@ -92,6 +118,15 @@ public class FeedDetailViewImpl extends FrameLayout implements FeedDetailView {
             progressDialog.setMessage("Loading Feed");
         } else {
             progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void showMediaplayerBar(boolean show) {
+        if (show) {
+            mediaplayerBar.setVisibility(View.VISIBLE);
+        } else {
+            mediaplayerBar.setVisibility(View.GONE);
         }
     }
 

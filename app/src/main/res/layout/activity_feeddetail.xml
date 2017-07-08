@@ -19,20 +19,31 @@
         app:popupTheme="@style/AppTheme.NoActionBar"
         />
 
+    <FrameLayout
+        android:id="@+id/mediaplayer_bar_feeddetail"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mediaplayer_bar_height"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_feeddetail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar_feeddetail"
+        android:layout_below="@id/toolbar_feeddetail"
+        android:layout_above="@id/mediaplayer_bar_feeddetail"
         />
 
     <TextView
         android:id="@+id/textview_feeddetail_error"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/mediaplayer_bar_feeddetail"
         android:gravity="center"
         android:visibility="gone"
         android:text="Error Loading Feed"
         />
+
 
 </RelativeLayout>

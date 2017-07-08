@@ -8,6 +8,7 @@ import me.bromen.podgo.R;
 import me.bromen.podgo.activities.Presenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
+import me.bromen.podgo.app.mediaplayer.MediaPlayerService;
 import me.bromen.podgo.extras.structures.Feed;
 
 /**
@@ -33,9 +34,12 @@ public class HomePresenter implements Presenter {
 
     @Override
     public void onCreate() {
+        view.showMediaplayerBar(model.getInitialMediaState() != MediaPlayerService.PLAYBACK_STOPPED);
+
         observeMenuItems();
         observeFeedTile();
         observeFeedOptions();
+        observeMediaState();
     }
 
     @Override
@@ -85,6 +89,11 @@ public class HomePresenter implements Presenter {
     private void observeFeedOptions() {
         disposables.add(view.observeFeedOptionsClick()
                 .subscribe(this::onFeedOptionsClicked));
+    }
+
+    private void observeMediaState() {
+        disposables.add(model.observeMediaState()
+                .subscribe(state -> view.showMediaplayerBar(state != MediaPlayerService.PLAYBACK_STOPPED)));
     }
 
     // Event handling

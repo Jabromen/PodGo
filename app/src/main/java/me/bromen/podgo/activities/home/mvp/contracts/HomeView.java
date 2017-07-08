@@ -23,6 +23,8 @@ public interface HomeView {
 
     void showNewEpisodes(int newEps);
 
+    void showMediaplayerBar(boolean show);
+
     Observable<Integer> observeMenuItemClick();
 
     Observable<Feed> observeFeedTileClick();
