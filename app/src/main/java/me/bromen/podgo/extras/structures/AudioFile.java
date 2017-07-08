@@ -13,6 +13,8 @@ public class AudioFile implements Serializable {
     private String audioSource;
     private String imageUrl;
 
+    public AudioFile() {}
+
     public AudioFile(FeedItem item) {
         this.podcastTitle = item.getFeedTitle();
         this.episodeTitle = item.getTitle();

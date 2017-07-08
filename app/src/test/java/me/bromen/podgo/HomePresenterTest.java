@@ -14,6 +14,7 @@ import io.reactivex.Observable;
 import me.bromen.podgo.activities.home.mvp.HomePresenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
+import me.bromen.podgo.app.mediaplayer.MediaPlayerService;
 import me.bromen.podgo.extras.structures.Feed;
 
 /**
@@ -22,9 +23,9 @@ import me.bromen.podgo.extras.structures.Feed;
 
 public class HomePresenterTest {
 
-    private HomePresenter homePresenter;
-    private HomeView homeView;
-    private HomeModel homeModel;
+    private HomePresenter presenter;
+    private HomeView view;
+    private HomeModel model;
 
     private final Feed[] feeds = {new Feed(), new Feed(), new Feed()};
     private final List<Feed> mockFeedList = new ArrayList<>(Arrays.asList(feeds));
@@ -35,166 +36,222 @@ public class HomePresenterTest {
     @Before
     public void setUp() throws Exception {
 
-        homeView = Mockito.mock(HomeView.class);
-        homeModel = Mockito.mock(HomeModel.class);
+        view = Mockito.mock(HomeView.class);
+        model = Mockito.mock(HomeModel.class);
 
-        homePresenter = new HomePresenter(homeView, homeModel);
+        presenter = new HomePresenter(view, model);
 
-        Mockito.when(homeView.observeMenuItemClick()).thenReturn(Observable.never());
-        Mockito.when(homeView.observeFeedTileClick()).thenReturn(Observable.never());
-        Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.never());
-        Mockito.when(homeView.observeFeedOptionMenuClick()).thenReturn(Observable.never());
+        Mockito.when(view.observeMenuItemClick()).thenReturn(Observable.never());
+        Mockito.when(view.observeFeedTileClick()).thenReturn(Observable.never());
+        Mockito.when(view.observeFeedOptionsClick()).thenReturn(Observable.never());
+        Mockito.when(view.observeFeedOptionMenuClick()).thenReturn(Observable.never());
 
-        Mockito.when(homeModel.loadFeeds()).thenReturn(mockFeedList);
+        Mockito.when(model.loadFeeds()).thenReturn(mockFeedList);
+        Mockito.when(model.getInitialMediaState()).thenReturn(MediaPlayerService.PLAYBACK_STOPPED);
+        Mockito.when(model.observeMediaState()).thenReturn(Observable.never());
     }
 
     @Test
     public void onObserveLoadFeedsNoFeeds() throws Exception {
-        Mockito.when(homeModel.loadFeeds()).thenReturn(new ArrayList<>());
+        Mockito.when(model.loadFeeds()).thenReturn(new ArrayList<>());
 
-        homePresenter.onCreate();
-        homePresenter.onResume();
+        presenter.onCreate();
+        presenter.onResume();
 
-        InOrder inOrder = Mockito.inOrder(homeView);
-        inOrder.verify(homeView).showLoading(true);
-        inOrder.verify(homeView).showLoading(false);
-        inOrder.verify(homeView).showNoFeeds();
-        Mockito.verify(homeView, Mockito.never()).showError();
+        InOrder inOrder = Mockito.inOrder(view);
+        inOrder.verify(view).showLoading(true);
+        inOrder.verify(view).showLoading(false);
+        inOrder.verify(view).showNoFeeds();
+        Mockito.verify(view, Mockito.never()).showError();
+        Mockito.verify(view).showMediaplayerBar(false);
     }
 
     @Test
     public void onObserveLoadFeedsWithFeeds() throws Exception {
 
-        homePresenter.onCreate();
-        homePresenter.onResume();
+        presenter.onCreate();
+        presenter.onResume();
 
-        InOrder inOrder = Mockito.inOrder(homeView);
-        inOrder.verify(homeView).showLoading(true);
-        inOrder.verify(homeView).showLoading(false);
-        inOrder.verify(homeView).showFeeds(mockFeedList);
-        Mockito.verify(homeView, Mockito.never()).showError();
+        InOrder inOrder = Mockito.inOrder(view);
+        inOrder.verify(view).showLoading(true);
+        inOrder.verify(view).showLoading(false);
+        inOrder.verify(view).showFeeds(mockFeedList);
+        Mockito.verify(view, Mockito.never()).showError();
     }
 
     @Test
     public void onObserveLoadFeedsWithError() throws Exception {
-        Mockito.when(homeModel.loadFeeds()).thenThrow(new Exception());
+        Mockito.when(model.loadFeeds()).thenThrow(new Exception());
 
-        homePresenter.onCreate();
-        homePresenter.onResume();
+        presenter.onCreate();
+        presenter.onResume();
 
-        InOrder inOrder = Mockito.inOrder(homeView);
-        inOrder.verify(homeView).showLoading(true);
-        inOrder.verify(homeView).showLoading(false);
-        inOrder.verify(homeView).showError();
+        InOrder inOrder = Mockito.inOrder(view);
+        inOrder.verify(view).showLoading(true);
+        inOrder.verify(view).showLoading(false);
+        inOrder.verify(view).showError();
     }
 
     @Test
     public void onNewFeedMenuItemClicked() throws Exception {
-        Mockito.when(homeView.observeMenuItemClick()).thenReturn(Observable.just(R.id.action_new_podcast));
+        Mockito.when(view.observeMenuItemClick()).thenReturn(Observable.just(R.id.action_new_podcast));
 
-        homePresenter.onCreate();
-        homePresenter.onResume();
+        presenter.onCreate();
+        presenter.onResume();
 
-        Mockito.verify(homeModel).startNewFeedActivity();
-        Mockito.verify(homeView, Mockito.never()).showError();
+        Mockito.verify(model).startNewFeedActivity();
+        Mockito.verify(view, Mockito.never()).showError();
     }
 
     @Test
     public void onOptionsMenuItemClicked() throws Exception {
-        Mockito.when(homeView.observeMenuItemClick()).thenReturn(Observable.just(R.id.action_settings));
+        Mockito.when(view.observeMenuItemClick()).thenReturn(Observable.just(R.id.action_settings));
 
-        homePresenter.onCreate();
-        homePresenter.onResume();
+        presenter.onCreate();
+        presenter.onResume();
 
-        Mockito.verify(homeModel).startOptionsActivity();
-        Mockito.verify(homeView, Mockito.never()).showError();
+        Mockito.verify(model).startOptionsActivity();
+        Mockito.verify(view, Mockito.never()).showError();
     }
 
     @Test
     public void onFeedTileClicked() throws Exception {
         Feed feed = new Feed();
-        Mockito.when(homeView.observeFeedTileClick()).thenReturn(Observable.just(feed));
+        Mockito.when(view.observeFeedTileClick()).thenReturn(Observable.just(feed));
 
-        homePresenter.onCreate();
-        homePresenter.onResume();
+        presenter.onCreate();
+        presenter.onResume();
 
-        Mockito.verify(homeModel).startFeedDetailActivity(feed.getId());
-        Mockito.verify(homeView, Mockito.never()).showError();
+        Mockito.verify(model).startFeedDetailActivity(feed.getId());
+        Mockito.verify(view, Mockito.never()).showError();
     }
 
     @Test
     public void onFeedOptionsClicked() throws Exception {
         Feed feed = new Feed();
-        Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
+        Mockito.when(view.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
 
-        homePresenter.onCreate();
-        homePresenter.onResume();
+        presenter.onCreate();
+        presenter.onResume();
 
-        Mockito.verify(homeView).showFeedOptions();
-        Mockito.verify(homeView, Mockito.never()).showError();
+        Mockito.verify(view).showFeedOptions();
+        Mockito.verify(view, Mockito.never()).showError();
     }
 
     @Test
     public void onFeedOptionsRefreshClickedSuccess() throws Exception {
         Feed feed = new Feed();
         final int newEps = 3;
-        Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
-        Mockito.when(homeView.observeFeedOptionMenuClick()).thenReturn(Observable.just(R.id.action_refresh_feed));
-        Mockito.when(homeModel.refreshFeed(feed)).thenReturn(newEps);
+        Mockito.when(view.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
+        Mockito.when(view.observeFeedOptionMenuClick()).thenReturn(Observable.just(R.id.action_refresh_feed));
+        Mockito.when(model.refreshFeed(feed)).thenReturn(newEps);
 
-        homePresenter.onCreate();
-        homePresenter.onResume();
+        presenter.onCreate();
+        presenter.onResume();
 
-        Mockito.verify(homeView).showFeedOptions();
-        Mockito.verify(homeModel).refreshFeed(feed);
-        Mockito.verify(homeView).showNewEpisodes(newEps);
-        Mockito.verify(homeView, Mockito.never()).showError();
+        Mockito.verify(view).showFeedOptions();
+        Mockito.verify(model).refreshFeed(feed);
+        Mockito.verify(view).showNewEpisodes(newEps);
+        Mockito.verify(view, Mockito.never()).showError();
     }
 
     @Test
     public void onFeedOptionsRefreshClickedError() throws Exception {
         Feed feed = new Feed();
-        Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
-        Mockito.when(homeView.observeFeedOptionMenuClick()).thenReturn(Observable.just(R.id.action_refresh_feed));
-        Mockito.when(homeModel.refreshFeed(feed)).thenThrow(new Exception());
+        Mockito.when(view.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
+        Mockito.when(view.observeFeedOptionMenuClick()).thenReturn(Observable.just(R.id.action_refresh_feed));
+        Mockito.when(model.refreshFeed(feed)).thenThrow(new Exception());
 
-        homePresenter.onCreate();
-        homePresenter.onResume();
+        presenter.onCreate();
+        presenter.onResume();
 
-        Mockito.verify(homeView).showFeedOptions();
-        Mockito.verify(homeModel).refreshFeed(feed);
-        Mockito.verify(homeView).showError();
+        Mockito.verify(view).showFeedOptions();
+        Mockito.verify(model).refreshFeed(feed);
+        Mockito.verify(view).showError();
     }
 
     @Test
     public void onFeedDeleteClickedSuccess() throws Exception {
         Feed feed = new Feed();
-        Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
-        Mockito.when(homeView.observeFeedOptionMenuClick()).thenReturn(Observable.just(R.id.action_delete_feed));
-        Mockito.when(homeModel.deleteFeed(feed)).thenReturn(true);
+        Mockito.when(view.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
+        Mockito.when(view.observeFeedOptionMenuClick()).thenReturn(Observable.just(R.id.action_delete_feed));
+        Mockito.when(model.deleteFeed(feed)).thenReturn(true);
 
-        homePresenter.onCreate();
-        homePresenter.onResume();
+        presenter.onCreate();
+        presenter.onResume();
 
-        Mockito.verify(homeView).showFeedOptions();
-        Mockito.verify(homeModel).deleteFeed(feed);
-        Mockito.verify(homeView, Mockito.times(2)).showFeeds(mockFeedList);
-        Mockito.verify(homeView, Mockito.never()).showError();
+        Mockito.verify(view).showFeedOptions();
+        Mockito.verify(model).deleteFeed(feed);
+        Mockito.verify(view, Mockito.times(2)).showFeeds(mockFeedList);
+        Mockito.verify(view, Mockito.never()).showError();
     }
 
     @Test
     public void onFeedDeleteClickedError() throws Exception {
         Feed feed = new Feed();
-        Mockito.when(homeView.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
-        Mockito.when(homeView.observeFeedOptionMenuClick()).thenReturn(Observable.just(R.id.action_delete_feed));
-        Mockito.when(homeModel.deleteFeed(feed)).thenThrow(new Exception());
+        Mockito.when(view.observeFeedOptionsClick()).thenReturn(Observable.just(feed));
+        Mockito.when(view.observeFeedOptionMenuClick()).thenReturn(Observable.just(R.id.action_delete_feed));
+        Mockito.when(model.deleteFeed(feed)).thenThrow(new Exception());
 
-        homePresenter.onCreate();
-        homePresenter.onResume();
+        presenter.onCreate();
+        presenter.onResume();
 
-        Mockito.verify(homeView).showFeedOptions();
-        Mockito.verify(homeModel).deleteFeed(feed);
-        Mockito.verify(homeView).showError();
-        Mockito.verify(homeView, Mockito.times(1)).showFeeds(mockFeedList);
+        Mockito.verify(view).showFeedOptions();
+        Mockito.verify(model).deleteFeed(feed);
+        Mockito.verify(view).showError();
+        Mockito.verify(view, Mockito.times(1)).showFeeds(mockFeedList);
+    }
+
+    @Test
+    public void onMediaStateChangedTest() throws Exception {
+        Mockito.when(model.observeMediaState()).thenReturn(Observable.just(
+                MediaPlayerService.PLAYBACK_PLAYING,
+                MediaPlayerService.PLAYBACK_PAUSED,
+                MediaPlayerService.PLAYBACK_STOPPED,
+                MediaPlayerService.PLAYBACK_PLAYING,
+                MediaPlayerService.PLAYBACK_STOPPED
+                ));
+
+        presenter.onCreate();
+        presenter.onDestroy();
+
+        InOrder inOrder = Mockito.inOrder(view);
+        // Initial load when stopped
+        inOrder.verify(view).showMediaplayerBar(false);
+        // Sequence of state changes
+        inOrder.verify(view, Mockito.times(2)).showMediaplayerBar(true);
+        inOrder.verify(view).showMediaplayerBar(false);
+        inOrder.verify(view).showMediaplayerBar(true);
+        inOrder.verify(view).showMediaplayerBar(false);
+    }
+
+    @Test
+    public void onMediaStateInitialStoppedTest() throws Exception {
+        Mockito.when(model.getInitialMediaState()).thenReturn(MediaPlayerService.PLAYBACK_STOPPED);
+
+        presenter.onCreate();
+        presenter.onDestroy();
+
+        Mockito.verify(view).showMediaplayerBar(false);
+    }
+
+    @Test
+    public void onMediaStateInitialPausedTest() throws Exception {
+        Mockito.when(model.getInitialMediaState()).thenReturn(MediaPlayerService.PLAYBACK_PAUSED);
+
+        presenter.onCreate();
+        presenter.onDestroy();
+
+        Mockito.verify(view).showMediaplayerBar(true);
+    }
+
+    @Test
+    public void onMediaStateInitialPlayTest() throws Exception {
+        Mockito.when(model.getInitialMediaState()).thenReturn(MediaPlayerService.PLAYBACK_PLAYING);
+
+        presenter.onCreate();
+        presenter.onDestroy();
+
+        Mockito.verify(view).showMediaplayerBar(true);
     }
 }

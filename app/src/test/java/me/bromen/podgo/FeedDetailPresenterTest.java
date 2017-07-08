@@ -10,6 +10,7 @@ import io.reactivex.Observable;
 import me.bromen.podgo.activities.feeddetail.mvp.FeedDetailPresenter;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailModel;
 import me.bromen.podgo.activities.feeddetail.mvp.contracts.FeedDetailView;
+import me.bromen.podgo.app.mediaplayer.MediaPlayerService;
 import me.bromen.podgo.extras.structures.Feed;
 import me.bromen.podgo.extras.structures.FeedItem;
 
@@ -41,6 +42,8 @@ public class FeedDetailPresenterTest {
         Mockito.when(view.observeItemTileClick()).thenReturn(Observable.never());
         Mockito.when(view.observeItemActionClick()).thenReturn(Observable.never());
         Mockito.when(model.observeDownloads()).thenReturn(Observable.never());
+        Mockito.when(model.getInitialMediaState()).thenReturn(MediaPlayerService.PLAYBACK_STOPPED);
+        Mockito.when(model.observeMediaState()).thenReturn(Observable.never());
     }
 
     @Test
@@ -133,5 +136,60 @@ public class FeedDetailPresenterTest {
 
         // Called once for initial load, then again for each of 3 downloads
         Mockito.verify(view, Mockito.times(4)).showFeed(feed);
+    }
+
+
+    @Test
+    public void onMediaStateChangedTest() throws Exception {
+        Mockito.when(model.observeMediaState()).thenReturn(Observable.just(
+                MediaPlayerService.PLAYBACK_PLAYING,
+                MediaPlayerService.PLAYBACK_STOPPED,
+                MediaPlayerService.PLAYBACK_PLAYING,
+                MediaPlayerService.PLAYBACK_STOPPED,
+                MediaPlayerService.PLAYBACK_PAUSED
+                ));
+
+        presenter.onCreate();
+        presenter.onDestroy();
+
+        InOrder inOrder = Mockito.inOrder(view);
+        // Initial load when stopped
+        inOrder.verify(view).showMediaplayerBar(false);
+        // Sequence of state changes
+        inOrder.verify(view).showMediaplayerBar(true);
+        inOrder.verify(view).showMediaplayerBar(false);
+        inOrder.verify(view).showMediaplayerBar(true);
+        inOrder.verify(view).showMediaplayerBar(false);
+        inOrder.verify(view).showMediaplayerBar(true);
+    }
+
+    @Test
+    public void onMediaStateInitialStoppedTest() throws Exception {
+        Mockito.when(model.getInitialMediaState()).thenReturn(MediaPlayerService.PLAYBACK_STOPPED);
+
+        presenter.onCreate();
+        presenter.onDestroy();
+
+        Mockito.verify(view).showMediaplayerBar(false);
+    }
+
+    @Test
+    public void onMediaStateInitialPausedTest() throws Exception {
+        Mockito.when(model.getInitialMediaState()).thenReturn(MediaPlayerService.PLAYBACK_PAUSED);
+
+        presenter.onCreate();
+        presenter.onDestroy();
+
+        Mockito.verify(view).showMediaplayerBar(true);
+    }
+
+    @Test
+    public void onMediaStateInitialPlayTest() throws Exception {
+        Mockito.when(model.getInitialMediaState()).thenReturn(MediaPlayerService.PLAYBACK_PLAYING);
+
+        presenter.onCreate();
+        presenter.onDestroy();
+
+        Mockito.verify(view).showMediaplayerBar(true);
     }
 }
