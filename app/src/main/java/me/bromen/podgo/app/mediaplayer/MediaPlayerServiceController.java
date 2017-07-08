@@ -151,6 +151,14 @@ public class MediaPlayerServiceController {
         context.sendBroadcast(intent);
     }
 
+    public void seekForward() {
+        seekRelative(30000);
+    }
+
+    public void seekBackward() {
+        seekRelative(-30000);
+    }
+
     public void seekDirect(int seekTo) {
         Intent intent = new Intent(MediaPlayerService.ACTION_SEEK_DIR);
         intent.putExtra("SEEKTO", seekTo);
