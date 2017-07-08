@@ -53,7 +53,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnInfoListener,
         MediaPlayer.OnBufferingUpdateListener, AudioManager.OnAudioFocusChangeListener {
 
-    public static boolean isRunning = false;
+    private static boolean isRunning = false;
+
+    public static boolean isRunning() {
+        return isRunning;
+    }
 
     private final IBinder iBinder = new LocalBinder();
 
@@ -567,20 +571,23 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
         lastPlaybackStatus = playbackStatus;
 
-        int notificationAction;
+        int playPauseIcon, smallIcon;
         String actionText;
         PendingIntent playPauseAction;
 
         if (playbackStatus == PLAYBACK_PLAYING) {
-            notificationAction = R.drawable.pause_icon;
+            playPauseIcon = R.drawable.pause_icon;
+            smallIcon = R.drawable.play_icon;
             actionText = getString(R.string.pause);
             playPauseAction = playBackAction(PLAYBACK_PAUSED);
         } else if (playbackStatus == PLAYBACK_PAUSED) {
-            notificationAction = R.drawable.play_icon;
+            playPauseIcon = R.drawable.play_icon;
+            smallIcon = R.drawable.pause_icon;
             actionText = getString(R.string.play);
             playPauseAction = playBackAction(PLAYBACK_PLAYING);
         } else {
-            notificationAction = R.drawable.pause_icon;
+            playPauseIcon = R.drawable.pause_icon;
+            smallIcon = R.drawable.play_icon;
             actionText = "Not Set";
             playPauseAction = null;
         }
@@ -605,11 +612,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 // Make visible on lock screen
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 // Set small icon image and color
-                .setSmallIcon(R.drawable.notification_icon)
+                .setSmallIcon(smallIcon)
                 .setColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
                 // Add action(s)
                 .addAction(R.drawable.seek_back_icon, getString(R.string.seek_back), playBackAction(PLAYBACK_SEEK_BACK))
-                .addAction(notificationAction, actionText, playPauseAction)
+                .addAction(playPauseIcon, actionText, playPauseAction)
                 .addAction(R.drawable.seek_forward_icon, getString(R.string.seek_forward), playBackAction(PLAYBACK_SEEK_FORWARD))
                 // Set layout style
                 .setStyle(new NotificationCompat.MediaStyle()

@@ -2,6 +2,7 @@ package me.bromen.podgo.activities.home;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import javax.inject.Inject;
 
@@ -31,8 +32,13 @@ public class MainActivity extends AppCompatActivity {
                 .inject(this);
 
         setContentView((HomeViewImpl) view);
-        ((HomeViewImpl) view).setUpMediaplayerBar();
-        PodGoApplication.get(this).component().mediaPlayerServiceController().bindService();
+
+        if (savedInstanceState == null) {
+            ((HomeViewImpl) view).createMediaplayerBar();
+            PodGoApplication.get(this).component().mediaPlayerServiceController().bindService();
+            PodGoApplication.get(this).component().episodeDownloads().registerReceiver();
+            PodGoApplication.get(this).component().episodeDownloads().validateDownloads();
+        }
 
         presenter.onCreate();
     }
@@ -41,23 +47,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         presenter.onResume();
-        PodGoApplication.get(this).component().episodeDownloads().validateDownloads();
-        PodGoApplication.get(this).component().episodeDownloads().registerReceiver();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        PodGoApplication.get(this).component().episodeDownloads().unregisterReceiver();
+        if (isFinishing()) {
+            ((HomeViewImpl) view).destroyMediaplayerBar();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         presenter.onDestroy();
-        ((HomeViewImpl) view).destroyMediaplayerBar();
         if (isFinishing()) {
             PodGoApplication.get(this).component().mediaPlayerServiceController().unbindService();
+            PodGoApplication.get(this).component().episodeDownloads().unregisterReceiver();
         }
     }
 }

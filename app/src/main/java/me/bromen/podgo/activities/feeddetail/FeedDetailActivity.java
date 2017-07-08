@@ -49,16 +49,30 @@ public class FeedDetailActivity extends AppCompatActivity {
                 .inject(this);
 
         setContentView((FeedDetailViewImpl) view);
-        ((FeedDetailViewImpl) view).createMediaplayerBar();
+
+        if (savedInstanceState == null) {
+            ((FeedDetailViewImpl) view).createMediaplayerBar();
+        }
 
         presenter.onCreate();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isFinishing()) {
+            ((FeedDetailViewImpl) view).destroyMediaplayerBar();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         presenter.onDestroy();
-
-        ((FeedDetailViewImpl) view).destroyMediaplayerBar();
     }
 }

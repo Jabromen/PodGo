@@ -25,13 +25,13 @@ public class MediaplayerBarModelImpl implements MediaplayerBarModel {
     @Override
     public void playPause() {
         controller.playPause();
-        Log.d("MODEL", "playPauseClicked");
+        Log.d(this.toString() , "playPauseClicked");
     }
 
     @Override
     public void clickBar() {
         // Start MediaPlayer Activity
-        Log.d("MODEL", "barClicked");
+        Log.d(this.toString(), "barClicked");
     }
 
     @Override

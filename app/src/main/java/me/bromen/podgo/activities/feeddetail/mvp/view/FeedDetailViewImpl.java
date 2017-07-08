@@ -2,9 +2,9 @@ package me.bromen.podgo.activities.feeddetail.mvp.view;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -81,12 +81,12 @@ public class FeedDetailViewImpl extends FrameLayout implements FeedDetailView {
 
     public void createMediaplayerBar() {
         MediaplayerBarFragment fragment = new MediaplayerBarFragment();
-        FragmentManager fm = activity.getFragmentManager();
+        FragmentManager fm = ((FeedDetailActivity) activity).getSupportFragmentManager();
         fm.beginTransaction().add(R.id.mediaplayer_bar_feeddetail, fragment, FRAGMENT_TAG).commit();
     }
 
     public void destroyMediaplayerBar() {
-        FragmentManager fm = activity.getFragmentManager();
+        FragmentManager fm = ((FeedDetailActivity) activity).getSupportFragmentManager();
         Fragment fragment = fm.findFragmentByTag(FRAGMENT_TAG);
         if (fragment != null) {
             fm.beginTransaction().remove(fragment).commit();

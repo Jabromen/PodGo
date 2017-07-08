@@ -2,13 +2,14 @@ package me.bromen.podgo.activities.home.mvp.view;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -94,15 +95,17 @@ public class HomeViewImpl extends FrameLayout implements HomeView {
         feedView.setAdapter(adapter);
     }
 
-    public void setUpMediaplayerBar() {
+    public void createMediaplayerBar() {
         MediaplayerBarFragment fragment = new MediaplayerBarFragment();
-        FragmentManager fm = activity.getFragmentManager();
-        fm.beginTransaction().add(R.id.mediaplayer_bar_main, fragment).commit();
+        FragmentManager fm = ((MainActivity) activity).getSupportFragmentManager();
+        fm.beginTransaction()
+                .replace(R.id.mediaplayer_bar_main, fragment, FRAGMENT_TAG)
+                .commit();
     }
 
     public void destroyMediaplayerBar() {
-        FragmentManager fm = activity.getFragmentManager();
-        android.app.Fragment fragment = fm.findFragmentByTag(FRAGMENT_TAG);
+        FragmentManager fm = ((MainActivity) activity).getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentByTag(FRAGMENT_TAG);
         if (fragment != null) {
             fm.beginTransaction().remove(fragment).commit();
         }

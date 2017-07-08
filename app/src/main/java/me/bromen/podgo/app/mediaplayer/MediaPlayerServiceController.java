@@ -23,7 +23,7 @@ public class MediaPlayerServiceController {
 
     private MediaPlayerService player;
 
-    private CompositeDisposable disposables;
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     private int state = MediaPlayerService.PLAYBACK_STOPPED;
     private int currentPosition;
@@ -36,7 +36,6 @@ public class MediaPlayerServiceController {
     private final PublishSubject<AudioFile> audioFileObservable = PublishSubject.create();
 
     private void initObservables() {
-        disposables = new CompositeDisposable();
         disposables.add(player.observeState().subscribe(state -> {
             this.state = state;
             stateObservable.onNext(state);
@@ -73,9 +72,6 @@ public class MediaPlayerServiceController {
             if (BuildConfig.DEBUG) {
                 Log.d("PodGo", "MediaPlayerService Disconnected");
             }
-            player = null;
-            disposables.dispose();
-            disposables = null;
         }
     };
 
@@ -88,15 +84,21 @@ public class MediaPlayerServiceController {
     public void bindService() {
         Intent intent = new Intent(context, MediaPlayerService.class);
         startService();
-        context.bindService(intent, serviceConn, 0);
+        context.bindService(intent, serviceConn, Context.BIND_AUTO_CREATE);
     }
 
     public void unbindService() {
         context.unbindService(serviceConn);
+        player = null;
+        disposables.clear();
     }
 
     public void startService() {
-        if (!MediaPlayerService.isRunning) {
+        if (!MediaPlayerService.isRunning()) {
+            if (BuildConfig.DEBUG) {
+                Log.d("PodGo", "MediaPlayerService Started");
+            }
+
             Intent intent = new Intent(context, MediaPlayerService.class);
             context.startService(intent);
         }
@@ -110,7 +112,7 @@ public class MediaPlayerServiceController {
     // Broadcast Intent Methods
 
     public void play(AudioFile audioFile) {
-        if (!MediaPlayerService.isRunning) {
+        if (!MediaPlayerService.isRunning()) {
             Intent intent = new Intent(context, MediaPlayerService.class);
             intent.putExtra("AUDIOFILE", audioFile);
             context.startService(intent);
