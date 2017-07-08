@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_mediacontrol"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="me.bromen.podgo.activities.mediacontrol.MediaControlActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_mediacontrol"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ToolbarTheme"
+        app:popupTheme="@style/AppTheme.NoActionBar"
+        />
+
+    <RelativeLayout
+        android:id="@+id/relativelayout_mediacontrol_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar_mediacontrol">
+
+        <TextView
+            android:id="@+id/textview_mediacontrol_episodetitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar_mediacontrol"
+            android:text="Episode Title"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:lines="1"
+            android:ellipsize="end"
+            />
+
+        <TextView
+            android:id="@+id/textview_mediacontrol_podcasttitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview_mediacontrol_episodetitle"
+            android:text="Podcast Title"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:lines="1"
+            android:ellipsize="end"
+            />
+
+        <ImageView
+            android:id="@+id/imageview_mediacontrol_episodeimage"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_below="@+id/textview_mediacontrol_podcasttitle"
+            android:layout_above="@+id/relativelayout_mediacontrol_seekbar"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:src="@drawable/ic_placeholder"
+            />
+
+        <RelativeLayout
+            android:id="@+id/relativelayout_mediacontrol_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/relativelayout_mediacontrol_buttons">
+
+            <SeekBar
+                android:id="@+id/seekbar_mediacontrol"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="5dp"
+                />
+
+            <TextView
+                android:id="@+id/textview_mediacontrol_elapsedtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/seekbar_mediacontrol"
+                android:layout_margin="3dp"
+                android:text="00:00:00"
+                />
+
+            <TextView
+                android:id="@+id/textview_mediacontrol_remainingtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/seekbar_mediacontrol"
+                android:layout_margin="3dp"
+                android:text="00:00:00"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relativelayout_mediacontrol_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+
+            <ImageView
+                android:id="@+id/imageview_mediacontrol_playPause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dp"
+                android:src="@mipmap/ic_media_play"
+                />
+
+            <ImageView
+                android:id="@+id/imageview_mediacontrol_skipBackward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/imageview_mediacontrol_playPause"
+                android:layout_margin="10dp"
+                android:src="@mipmap/ic_media_skipbackward"
+                />
+
+            <ImageView
+                android:id="@+id/imageview_mediacontrol_skipForward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/imageview_mediacontrol_playPause"
+                android:layout_margin="10dp"
+                android:src="@mipmap/ic_media_skipforward"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textview_mediacontrol_hidecontrols"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Nothing Currently Playing"
+        android:gravity="center_vertical"
+        android:textAlignment="center"
+        android:visibility="gone"/>
+
+</RelativeLayout>

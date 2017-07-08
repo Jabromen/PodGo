@@ -25,6 +25,8 @@ public class MediaPlayerServiceController {
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
+    private boolean isBound;
+
     private int state = MediaPlayerService.PLAYBACK_STOPPED;
     private int currentPosition;
     private int duration;
@@ -35,10 +37,17 @@ public class MediaPlayerServiceController {
     private final PublishSubject<Integer> durationObservable = PublishSubject.create();
     private final PublishSubject<AudioFile> audioFileObservable = PublishSubject.create();
 
+    public boolean isBound() {
+        return isBound;
+    }
+
     private void initObservables() {
         disposables.add(player.observeState().subscribe(state -> {
             this.state = state;
             stateObservable.onNext(state);
+            if (state == MediaPlayerService.PLAYBACK_STOPPED) {
+                unbindService();
+            }
         }));
         disposables.add(player.observeCurrentPosition().subscribe(currentPosition -> {
             this.currentPosition = currentPosition;
@@ -65,6 +74,7 @@ public class MediaPlayerServiceController {
             }
             player = ((MediaPlayerService.LocalBinder) service).getService();
             initObservables();
+            isBound = true;
         }
 
         @Override
@@ -88,9 +98,13 @@ public class MediaPlayerServiceController {
     }
 
     public void unbindService() {
+        if (BuildConfig.DEBUG) {
+            Log.d("PodGo", "Unbinding MediaPlayerService");
+        }
         context.unbindService(serviceConn);
         player = null;
         disposables.clear();
+        isBound = false;
     }
 
     public void startService() {

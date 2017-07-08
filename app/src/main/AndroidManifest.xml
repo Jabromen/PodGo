@@ -39,6 +39,12 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             />
+
+        <activity
+            android:name=".activities.mediacontrol.MediaControlActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         
         <service
             android:name=".app.mediaplayer.MediaPlayerService"

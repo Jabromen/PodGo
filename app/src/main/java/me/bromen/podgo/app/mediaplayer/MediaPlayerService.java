@@ -42,6 +42,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import me.bromen.podgo.BuildConfig;
 import me.bromen.podgo.R;
+import me.bromen.podgo.activities.mediacontrol.MediaControlActivity;
 import me.bromen.podgo.extras.structures.AudioFile;
 
 /**
@@ -417,8 +418,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             mediaPlayer.stop();
         }
         stateObservable.onNext(PLAYBACK_STOPPED);
-        currentAudioObservable.onNext(currentAudio);
-        currentPositionObservable.onNext(getCurrentPosition());
     }
 
     private void pauseMedia() {
@@ -485,10 +484,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         mediaSessionManager = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
         mediaSession = new MediaSessionCompat(getApplicationContext(), "PodGo");
 
-        // Testing session activity
-        //mediaSession.setSessionActivity(PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0));
-
-
+        mediaSession.setSessionActivity(PendingIntent
+                .getActivity(this, 0, new Intent(this, MediaControlActivity.class), 0));
 
         mediaSession.setActive(true);
         mediaSession.setFlags(MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);

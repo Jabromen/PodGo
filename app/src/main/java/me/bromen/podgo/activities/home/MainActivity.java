@@ -1,8 +1,9 @@
 package me.bromen.podgo.activities.home;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import javax.inject.Inject;
 
@@ -12,14 +13,27 @@ import me.bromen.podgo.activities.home.mvp.HomePresenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;
 import me.bromen.podgo.activities.home.mvp.view.HomeViewImpl;
 import me.bromen.podgo.app.PodGoApplication;
+import me.bromen.podgo.app.downloads.EpisodeDownloads;
+import me.bromen.podgo.app.mediaplayer.MediaPlayerServiceController;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static void start(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        context.startActivity(intent);
+    }
 
     @Inject
     HomeView view;
 
     @Inject
     HomePresenter presenter;
+
+    @Inject
+    MediaPlayerServiceController controller;
+
+    @Inject
+    EpisodeDownloads episodeDownloads;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +49,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             ((HomeViewImpl) view).createMediaplayerBar();
-            PodGoApplication.get(this).component().mediaPlayerServiceController().bindService();
-            PodGoApplication.get(this).component().episodeDownloads().registerReceiver();
-            PodGoApplication.get(this).component().episodeDownloads().validateDownloads();
+            if (!controller.isBound()) {
+                controller.bindService();
+            }
+            episodeDownloads.registerReceiver();
+            episodeDownloads.validateDownloads();
         }
 
         presenter.onCreate();
@@ -62,8 +78,10 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         presenter.onDestroy();
         if (isFinishing()) {
-            PodGoApplication.get(this).component().mediaPlayerServiceController().unbindService();
-            PodGoApplication.get(this).component().episodeDownloads().unregisterReceiver();
+            if (controller.isBound()) {
+                controller.unbindService();
+            }
+            episodeDownloads.unregisterReceiver();
         }
     }
 }

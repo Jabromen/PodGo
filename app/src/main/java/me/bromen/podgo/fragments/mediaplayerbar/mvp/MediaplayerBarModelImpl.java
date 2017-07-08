@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import io.reactivex.Observable;
+import me.bromen.podgo.activities.mediacontrol.MediaControlActivity;
 import me.bromen.podgo.app.mediaplayer.MediaPlayerServiceController;
 import me.bromen.podgo.extras.structures.AudioFile;
 import me.bromen.podgo.fragments.mediaplayerbar.mvp.contracts.MediaplayerBarModel;
@@ -32,6 +33,7 @@ public class MediaplayerBarModelImpl implements MediaplayerBarModel {
     public void clickBar() {
         // Start MediaPlayer Activity
         Log.d(this.toString(), "barClicked");
+        MediaControlActivity.start(activity);
     }
 
     @Override

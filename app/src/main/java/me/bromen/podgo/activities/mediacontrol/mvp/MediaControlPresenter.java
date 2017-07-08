@@ -1,5 +1,7 @@
 package me.bromen.podgo.activities.mediacontrol.mvp;
 
+import android.util.Log;
+
 import io.reactivex.disposables.CompositeDisposable;
 import me.bromen.podgo.activities.Presenter;
 import me.bromen.podgo.activities.mediacontrol.mvp.contracts.MediaControlModel;
@@ -26,8 +28,8 @@ public class MediaControlPresenter implements Presenter {
     public void onCreate() {
         // Set initial conditions
         setState(model.getInitialState());
-        view.setPosition(model.getInitialPosition());
         view.setDuration(model.getInitialDuration());
+        view.setPosition(model.getInitialPosition());
         view.setAudioFile(model.getInitialAudioFile());
 
         // Observe changes
