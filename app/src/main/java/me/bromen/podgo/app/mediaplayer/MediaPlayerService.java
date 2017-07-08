@@ -226,10 +226,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 return;
             }
 
-            if (!requestAudioFocus()) {
-                stopSelf();
-            }
-
             stopMedia();
             if (mediaPlayer != null) {
                 mediaPlayer.reset();
@@ -284,10 +280,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         if (audioFile != null) {
             audioQueue.clear();
             audioQueue.add(audioFile);
-
-            if (!requestAudioFocus()) {
-                stopSelf();
-            }
 
             stopMedia();
             if (mediaPlayer != null) {
@@ -403,11 +395,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private int resumePosition;
 
     private void playMedia() {
-        if (!mediaPlayer.isPlaying()) {
-            mediaPlayer.start();
+        if (requestAudioFocus()) {
+            if (!mediaPlayer.isPlaying()) {
+                mediaPlayer.start();
+            }
+            stateObservable.onNext(PLAYBACK_PLAYING);
+            currentAudioObservable.onNext(currentAudio);
         }
-        stateObservable.onNext(PLAYBACK_PLAYING);
-        currentAudioObservable.onNext(currentAudio);
     }
 
     private void stopMedia() {
@@ -415,6 +409,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             return;
         }
         if (mediaPlayer.isPlaying()) {
+            releaseAudioFocus();
             mediaPlayer.stop();
         }
         stateObservable.onNext(PLAYBACK_STOPPED);
@@ -424,6 +419,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void pauseMedia() {
         if (mediaPlayer.isPlaying()) {
+            releaseAudioFocus();
             mediaPlayer.pause();
             resumePosition = mediaPlayer.getCurrentPosition();
         }
@@ -432,12 +428,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     private void resumeMedia() {
-        if (!mediaPlayer.isPlaying()) {
-            mediaPlayer.seekTo(resumePosition);
-            mediaPlayer.start();
+        if (requestAudioFocus()) {
+            if (!mediaPlayer.isPlaying()) {
+                mediaPlayer.seekTo(resumePosition);
+                mediaPlayer.start();
+            }
+            stateObservable.onNext(getState());
+            currentAudioObservable.onNext(currentAudio);
         }
-        stateObservable.onNext(getState());
-        currentAudioObservable.onNext(currentAudio);
     }
 
     public static final String ACTION_PLAY = "me.bromen.podgo.action.PLAY";
