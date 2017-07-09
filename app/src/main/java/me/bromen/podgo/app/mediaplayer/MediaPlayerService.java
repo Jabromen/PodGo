@@ -43,6 +43,7 @@ import io.reactivex.subjects.PublishSubject;
 import me.bromen.podgo.BuildConfig;
 import me.bromen.podgo.R;
 import me.bromen.podgo.activities.mediacontrol.MediaControlActivity;
+import me.bromen.podgo.app.PodGoApplication;
 import me.bromen.podgo.extras.structures.AudioFile;
 
 /**
@@ -324,6 +325,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         durationObservable = PublishSubject.create();
         currentAudioObservable = PublishSubject.create();
 
+        picasso = PodGoApplication.get(this).component().picasso();
+
+        // Emit current position every 1 second while playing to update UI
         disposables.add(Observable.interval(1, TimeUnit.SECONDS)
                 .filter(__ -> getState() == PLAYBACK_PLAYING)
                 .subscribeOn(Schedulers.computation())
@@ -334,7 +338,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         isRunning = false;
 
         if (mediaPlayer != null) {
@@ -518,6 +521,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             public void onSeekTo(long pos) {
                 super.onSeekTo(pos);
                 mediaPlayer.seekTo((int) pos);
+                currentPositionObservable.onNext((int) pos);
             }
         });
 
@@ -525,6 +529,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         transportControls = mediaController.getTransportControls();
         updateMetaData();
     }
+
+    private Picasso picasso;
 
     private Target target = new Target() {
         @Override
@@ -548,8 +554,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, currentAudio.getPodcastTitle())
                 .build());
 
-        Picasso.with(this)
-                .load(currentAudio.getImageUrl())
+        picasso.load(currentAudio.getImageUrl())
                 .resize(150, 150)
                 .centerCrop()
                 .into(target);

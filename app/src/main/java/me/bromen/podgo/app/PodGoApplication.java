@@ -2,6 +2,7 @@ package me.bromen.podgo.app;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Service;
 import android.util.Log;
 
 import me.bromen.podgo.BuildConfig;
@@ -18,6 +19,10 @@ public class PodGoApplication extends Application {
 
     public static PodGoApplication get(Activity activity) {
         return (PodGoApplication) activity.getApplication();
+    }
+
+    public static PodGoApplication get(Service service) {
+        return (PodGoApplication) service.getApplication();
     }
 
     private AppComponent component;
