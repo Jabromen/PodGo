@@ -28,6 +28,7 @@ import me.bromen.podgo.R;
 import me.bromen.podgo.activities.mediacontrol.mvp.contracts.MediaControlView;
 import me.bromen.podgo.app.mediaplayer.MediaPlayerService;
 import me.bromen.podgo.extras.structures.AudioFile;
+import me.bromen.podgo.extras.utilities.TimeUtils;
 
 /**
  * Created by jeff on 7/8/17.
@@ -113,21 +114,8 @@ public class MediaControlViewImpl extends FrameLayout implements MediaControlVie
 
     private void updateSeekbar(int position) {
         seekBar.setProgress(position);
-        elapsedTime.setText(msecToHMS(position));
-        remainingTime.setText(msecToHMS(seekBar.getMax() - position));
-    }
-
-    private String msecToHMS(int msec) {
-
-        int hours = msec / 3600000;
-        int remaining = msec % 3600000;
-
-        int minutes = remaining / 60000;
-        remaining = remaining % 60000;
-
-        int seconds = remaining / 1000;
-
-        return String.format(new Locale("en-US"), "%01d:%02d:%02d", hours, minutes, seconds);
+        elapsedTime.setText(TimeUtils.msecToHMS(position));
+        remainingTime.setText(TimeUtils.msecToHMS(seekBar.getMax() - position));
     }
 
     @Override

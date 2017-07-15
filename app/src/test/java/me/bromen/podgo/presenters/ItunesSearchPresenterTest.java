@@ -1,4 +1,4 @@
-package me.bromen.podgo;
+package me.bromen.podgo.presenters;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Observable;
+import me.bromen.podgo.TrampolineSchedulerRule;
 import me.bromen.podgo.activities.itunessearch.mvp.ItunesSearchPresenter;
 import me.bromen.podgo.activities.itunessearch.mvp.contracts.ItunesSearchModel;
 import me.bromen.podgo.activities.itunessearch.mvp.contracts.ItunesSearchView;

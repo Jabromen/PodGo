@@ -15,7 +15,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import me.bromen.podgo.app.storage.DbHelper;
 import me.bromen.podgo.extras.structures.FeedItem;
-import me.bromen.podgo.extras.utilities.PodcastFileUtils;
+import me.bromen.podgo.extras.utilities.FileUtils;
 
 /**
  * Created by jeff on 5/19/17.
@@ -55,10 +55,10 @@ public class EpisodeDownloads {
 
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(item.getEnclosure().getUrl()));
 
-        request.setTitle("PodGo");
-        request.setDescription(item.getTitle());
+        request.setTitle(item.getTitle());
+        request.setDescription("PodGo");
 
-        String filename = PodcastFileUtils.sanitizeName(item.getTitle() + "-" + item.getId()) + ".mp3";
+        String filename = FileUtils.sanitizeName(item.getTitle() + "-" + item.getId()) + ".mp3";
 
         request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_PODCASTS,
                 filename);
@@ -66,7 +66,7 @@ public class EpisodeDownloads {
         reference = downloadManager.enqueue(request);
 
         dbHelper.saveDownloading(item.getId(), reference);
-        dbHelper.saveStorage(item.getId(), PodcastFileUtils.getFullAudioFilePath(context, filename));
+        dbHelper.saveStorage(item.getId(), FileUtils.getFullAudioFilePath(context, filename));
     }
 
     private boolean isDownloading(long reference) {
@@ -119,7 +119,7 @@ public class EpisodeDownloads {
         List<String> filenames = dbHelper.getFilenames();
 
         for (String filename: filenames) {
-            if (!PodcastFileUtils.isAudioDownloaded(filename)) {
+            if (!FileUtils.fileExists(filename)) {
                 dbHelper.deleteStorageFromFilename(filename);
             }
         }

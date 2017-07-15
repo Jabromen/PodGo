@@ -1,4 +1,4 @@
-package me.bromen.podgo;
+package me.bromen.podgo.presenters;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -7,6 +7,7 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import io.reactivex.Observable;
+import me.bromen.podgo.TrampolineSchedulerRule;
 import me.bromen.podgo.app.mediaplayer.MediaPlayerService;
 import me.bromen.podgo.extras.structures.AudioFile;
 import me.bromen.podgo.fragments.mediaplayerbar.mvp.MediaplayerBarPresenter;
@@ -17,7 +18,7 @@ import me.bromen.podgo.fragments.mediaplayerbar.mvp.contracts.MediaplayerBarView
  * Created by Jeffrey on 7/7/2017.
  */
 
-public class MediaplayerBarTest {
+public class MediaplayerBarPresenterTest {
 
     private MediaplayerBarPresenter presenter;
     private MediaplayerBarView view;

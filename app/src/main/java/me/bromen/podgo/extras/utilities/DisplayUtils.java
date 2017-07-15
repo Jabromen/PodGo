@@ -9,6 +9,8 @@ import android.util.DisplayMetrics;
 
 public class DisplayUtils {
 
+    private DisplayUtils() {}
+
     /**
      * Calculates the number of items of a certain width that can fit side by side on the screen
      * @param context   - Activity context

@@ -1,4 +1,4 @@
-package me.bromen.podgo;
+package me.bromen.podgo.presenters;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import io.reactivex.Observable;
+import me.bromen.podgo.TrampolineSchedulerRule;
 import me.bromen.podgo.activities.newfeed.mvp.NewFeedPresenter;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedModel;
 import me.bromen.podgo.activities.newfeed.mvp.contracts.NewFeedView;

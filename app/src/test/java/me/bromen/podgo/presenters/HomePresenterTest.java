@@ -1,4 +1,4 @@
-package me.bromen.podgo;
+package me.bromen.podgo.presenters;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Observable;
+import me.bromen.podgo.R;
+import me.bromen.podgo.TrampolineSchedulerRule;
 import me.bromen.podgo.activities.home.mvp.HomePresenter;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeModel;
 import me.bromen.podgo.activities.home.mvp.contracts.HomeView;

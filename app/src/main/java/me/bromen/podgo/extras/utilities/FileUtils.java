@@ -9,13 +9,15 @@ import java.io.File;
  * Created by jeff on 5/6/17.
  */
 
-public class PodcastFileUtils {
+public class FileUtils {
+
+    private FileUtils() {}
 
     public static String getFullAudioFilePath(Context context, String filename) {
         return new File(context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS), filename).getPath();
     }
 
-    public static boolean isAudioDownloaded(String filename) {
+    public static boolean fileExists(String filename) {
         return new File(filename).exists();
     }
 
