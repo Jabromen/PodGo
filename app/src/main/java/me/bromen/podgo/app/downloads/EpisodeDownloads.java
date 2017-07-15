@@ -132,7 +132,11 @@ public class EpisodeDownloads {
     }
 
     public void unregisterReceiver() {
-        context.unregisterReceiver(downloadReceiver);
+        try {
+            context.unregisterReceiver(downloadReceiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
     public void cancelDownload(FeedItem item) {

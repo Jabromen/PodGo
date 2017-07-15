@@ -83,6 +83,13 @@ dependencies {
     androidTestCompile('com.android.support.test:rules:0.5') {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
+    androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.2') {
+        // Necessary to avoid version conflicts
+        exclude group: 'com.android.support', module: 'appcompat'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude module: 'recyclerview-v7'
+    }
 
     // DateTime
     compile 'joda-time:joda-time:2.9.9'
