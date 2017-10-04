@@ -50,7 +50,7 @@ public class DbHelper extends SQLiteOpenHelper {
      */
     public boolean saveFeed(Feed feed) {
 
-        if (getFeedCount(feed.getTitle()) > 0) {
+        if (getFeedCount(feed.getFeedUrl()) > 0) {
             return false;
         }
 
